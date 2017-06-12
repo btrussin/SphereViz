@@ -1,0 +1,5057 @@
+{
+  "data": [
+    {
+      "comic": "300",
+      "movie": "300",
+      "year": 2006,
+      "publisher": "Dark Horse",
+      "grouping": "300",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Legendary Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Leonidas",
+          "actor": "Gerard Butler",
+          "name": "Leonidas"
+        },
+        {
+          "role": "Gorgo",
+          "actor": "Lena Headey",
+          "name": "Gorgo"
+        },
+        {
+          "role": "Theron",
+          "actor": "Dominic West",
+          "name": "Theron"
+        },
+        {
+          "role": "Dilios",
+          "actor": "David Wenham",
+          "name": "Dilios"
+        },
+        {
+          "role": "Stelios",
+          "actor": "Michael Fassbender",
+          "name": "Stelios"
+        },
+        {
+          "role": "Xerxes",
+          "actor": "Rodrigo Santoro",
+          "name": "Xerxes"
+        }
+      ]
+    },
+    {
+      "comic": "Ant-Man",
+      "movie": "Ant-Man",
+      "year": 2015,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Ant-Man",
+          "actor": "Paul Rudd",
+          "name": "Scott Lang"
+        },
+        {
+          "role": "Wasp",
+          "actor": "Evangeline Lily",
+          "name": "Hope Van Dyne"
+        },
+        {
+          "role": "Yellowjacket",
+          "actor": "Corey Stoll",
+          "name": "Darren Cross"
+        },
+        {
+          "role": "Falcon",
+          "actor": "Anthony Mackie",
+          "name": "Sam Wilson"
+        },
+        {
+          "role": "Ant-Man",
+          "actor": "Michael Douglas",
+          "name": "Hank Pym"
+        },
+        {
+          "role": "Peggy Carter",
+          "actor": "Hayley Atwell",
+          "name": "Peggy Carter"
+        },
+        {
+          "role": "Howard Stark",
+          "actor": "John Slattery",
+          "name": "Howard Stark"
+        },
+        {
+          "role": "Bartender",
+          "actor": "Stan Lee",
+          "name": "Bartender"
+        }
+      ]
+    },
+    {
+      "comic": "Avengers",
+      "movie": "Avengers",
+      "year": 2012,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Iron Man",
+          "actor": "Robert Downey Jr",
+          "name": "Tony Stark"
+        },
+        {
+          "role": "Captain America",
+          "actor": "Chris Evans",
+          "name": "Steve Rogers"
+        },
+        {
+          "role": "Hulk",
+          "actor": "Mark Ruffalo",
+          "name": "Bruce Banner"
+        },
+        {
+          "role": "Thor",
+          "actor": "Chris Hemsworth",
+          "name": "Thor"
+        },
+        {
+          "role": "Black Widow",
+          "actor": "Scarlett Johansson",
+          "name": "Natasha Romanoff"
+        },
+        {
+          "role": "Hawkeye",
+          "actor": "Jeremy Renner",
+          "name": "Clint Barton"
+        },
+        {
+          "role": "Loki",
+          "actor": "Tom Hiddleston",
+          "name": "Loki"
+        },
+        {
+          "role": "Nick Fury",
+          "actor": "Samuel L Jackson",
+          "name": "Nick Fury"
+        },
+        {
+          "role": "Phil Coulson",
+          "actor": "Clark Gregg",
+          "name": "Phil Coulson"
+        },
+        {
+          "role": "New Yorker",
+          "actor": "Stan Lee",
+          "name": "New Yorker"
+        }
+      ]
+    },
+    {
+      "comic": "Avengers",
+      "movie": "Avengers: Age of Ultron",
+      "year": 2015,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Iron Man",
+          "actor": "Robert Downey Jr",
+          "name": "Tony Stark"
+        },
+        {
+          "role": "Captain America",
+          "actor": "Chris Evans",
+          "name": "Steve Rogers"
+        },
+        {
+          "role": "Hulk",
+          "actor": "Mark Ruffalo",
+          "name": "Bruce Banner"
+        },
+        {
+          "role": "Thor",
+          "actor": "Chris Hemsworth",
+          "name": "Thor"
+        },
+        {
+          "role": "Black Widow",
+          "actor": "Scarlett Johansson",
+          "name": "Natasha Romanoff"
+        },
+        {
+          "role": "Hawkeye",
+          "actor": "Jeremy Renner",
+          "name": "Clint Barton"
+        },
+        {
+          "role": "Loki",
+          "actor": "Tom Hiddleston",
+          "name": "Loki"
+        },
+        {
+          "role": "Nick Fury",
+          "actor": "Samuel L Jackson",
+          "name": "Nick Fury"
+        },
+        {
+          "role": "Scarlet Witch",
+          "actor": "Mary Elizabeth Olsen",
+          "name": "Wanda Maximoff"
+        },
+        {
+          "role": "Quicksilver",
+          "actor": "Aaron Taylor-Johnson",
+          "name": "Pietro Maximoff"
+        },
+        {
+          "role": "Warmachine",
+          "actor": "Don Cheadle",
+          "name": "James Rhodes"
+        },
+        {
+          "role": "Vision",
+          "actor": "Paul Bettany",
+          "name": "Vision"
+        },
+        {
+          "role": "Falcon",
+          "actor": "Anthony Mackie",
+          "name": "Sam Wilson"
+        },
+        {
+          "role": "Ultron",
+          "actor": "James Spader",
+          "name": "Ultron"
+        },
+        {
+          "role": "Heimdal",
+          "actor": "Idris Elba",
+          "name": "Heimdal"
+        },
+        {
+          "role": "Veteran",
+          "actor": "Stan Lee",
+          "name": "Veteran"
+        }
+      ]
+    },
+    {
+      "comic": "Batman",
+      "movie": "Batman",
+      "year": 1989,
+      "publisher": "DC",
+      "grouping": "Batman 1",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Polygram Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Joker",
+          "actor": "Jack Nicholson",
+          "name": "Joker"
+        },
+        {
+          "role": "Batman",
+          "actor": "Michael Keaton",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Vicki Vale",
+          "actor": "Kim Basinger",
+          "name": "Vicki Vale"
+        },
+        {
+          "role": "Jim Gordon",
+          "actor": "Pat Hingle",
+          "name": "Jim Gordon"
+        },
+        {
+          "role": "Two-Face",
+          "actor": "Billy Dee Williams",
+          "name": "Harvey Dent"
+        },
+        {
+          "role": "Alfred",
+          "actor": "Michael Gough",
+          "name": "Alfred"
+        }
+      ]
+    },
+    {
+      "comic": "Batman",
+      "movie": "Batman Returns",
+      "year": 1992,
+      "publisher": "DC",
+      "grouping": "Batman 1",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Polygram Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Batman",
+          "actor": "Michael Keaton",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Penguin",
+          "actor": "Danny Devito",
+          "name": "Oswald Cobblepott"
+        },
+        {
+          "role": "Catwoman",
+          "actor": "Michelle Pfeiffer",
+          "name": "Selina Kyle"
+        },
+        {
+          "role": "Max Schreck",
+          "actor": "Christopher Walken",
+          "name": "Max Schreck"
+        },
+        {
+          "role": "Jim Gordon",
+          "actor": "Pat Hingle",
+          "name": "Jim Gordon"
+        },
+        {
+          "role": "Alfred",
+          "actor": "Michael Gough",
+          "name": "Alfred"
+        }
+      ]
+    },
+    {
+      "comic": "Batman",
+      "movie": "Batman Forever",
+      "year": 1995,
+      "publisher": "DC",
+      "grouping": "Batman 1",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Polygram Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Batman",
+          "actor": "Val Kilmer",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Two-Face",
+          "actor": "Tommy Lee Jones",
+          "name": "Harvey Dent"
+        },
+        {
+          "role": "Riddler",
+          "actor": "Jim Carrey",
+          "name": "Edward Nygma"
+        },
+        {
+          "role": "Chase Meridian",
+          "actor": "Nicole Kidman",
+          "name": "Chase Meridian"
+        },
+        {
+          "role": "Robin",
+          "actor": "Chris O\u0027Donnel",
+          "name": "Dick Grayson"
+        },
+        {
+          "role": "Jim Gordon",
+          "actor": "Pat Hingle",
+          "name": "Jim Gordon"
+        },
+        {
+          "role": "Alfred",
+          "actor": "Michael Gough",
+          "name": "Alfred"
+        }
+      ]
+    },
+    {
+      "comic": "Batman",
+      "movie": "Batman and Robin",
+      "year": 1997,
+      "publisher": "DC",
+      "grouping": "Batman 1",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Polygram Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Batman",
+          "actor": "Geroge Clooney",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Robin",
+          "actor": "Chris O\u0027Donnel",
+          "name": "Dick Grayson"
+        },
+        {
+          "role": "Batgirl",
+          "actor": "Alicia Silverstone",
+          "name": "Barbara Wilson"
+        },
+        {
+          "role": "Mister Freeze",
+          "actor": "Arnold Schwarzenegger",
+          "name": "Victor Fries"
+        },
+        {
+          "role": "Poison Ivy",
+          "actor": "Uma Thurman",
+          "name": "Pamela Isley"
+        },
+        {
+          "role": "Jim Gordon",
+          "actor": "Pat Hingle",
+          "name": "Jim Gordon"
+        },
+        {
+          "role": "Alfred",
+          "actor": "Michael Gough",
+          "name": "Alfred"
+        }
+      ]
+    },
+    {
+      "comic": "Batman",
+      "movie": "Batman Begins",
+      "year": 2005,
+      "publisher": "DC",
+      "grouping": "Batman 2",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Comics",
+        "Legendary Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Batman",
+          "actor": "Christian Bale",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Alfred",
+          "actor": "Michael Caine",
+          "name": "Alfred"
+        },
+        {
+          "role": "Jim Gordon",
+          "actor": "Gary Oldman",
+          "name": "Jim Gordon"
+        },
+        {
+          "role": "Ra\u0027s al Ghul",
+          "actor": "Liam Neeson",
+          "name": "Henri Ducard"
+        },
+        {
+          "role": "Rachel Dawes",
+          "actor": "Katie Holmes",
+          "name": "Rachel Dawes"
+        },
+        {
+          "role": "Scarecrow",
+          "actor": "Cillian Murphy",
+          "name": "Jonathan Crane"
+        },
+        {
+          "role": "Lucius Fox",
+          "actor": "Morgan Freeman",
+          "name": "Lucius Fox"
+        }
+      ]
+    },
+    {
+      "comic": "Batman",
+      "movie": "The Dark Knight",
+      "year": 2008,
+      "publisher": "DC",
+      "grouping": "Batman 2",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Comics",
+        "Legendary Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Batman",
+          "actor": "Christian Bale",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Joker",
+          "actor": "Heath Ledger",
+          "name": "Joker"
+        },
+        {
+          "role": "Alfred",
+          "actor": "Michael Caine",
+          "name": "Alfred"
+        },
+        {
+          "role": "Rachel Dawes",
+          "actor": "Maggie Gyllenhaal",
+          "name": "Rachel Dawes"
+        },
+        {
+          "role": "Two-Face",
+          "actor": "Aaron Ekhart",
+          "name": "Harvey Dent"
+        },
+        {
+          "role": "Jim Gordon",
+          "actor": "Gary Oldman",
+          "name": "Jim Gordon"
+        },
+        {
+          "role": "Lucius Fox",
+          "actor": "Morgan Freeman",
+          "name": "Lucius Fox"
+        }
+      ]
+    },
+    {
+      "comic": "Batman",
+      "movie": "The Dark Knight Rises",
+      "year": 2012,
+      "publisher": "DC",
+      "grouping": "Batman 2",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Comics",
+        "Legendary Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Batman",
+          "actor": "Christian Bale",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Bane",
+          "actor": "Tom Hardy",
+          "name": "Bane"
+        },
+        {
+          "role": "Jim Gordon",
+          "actor": "Gary Oldman",
+          "name": "Jim Gordon"
+        },
+        {
+          "role": "Catwoman",
+          "actor": "Anne Hathaway",
+          "name": "Selina Kyle"
+        },
+        {
+          "role": "Talia al Ghul",
+          "actor": "Marion Cotillard",
+          "name": "Miranda Tate"
+        },
+        {
+          "role": "John Blake",
+          "actor": "Joseph Gordon-Levitt",
+          "name": "John Blake"
+        },
+        {
+          "role": "Alfred",
+          "actor": "Michael Caine",
+          "name": "Alfred"
+        },
+        {
+          "role": "Lucius Fox",
+          "actor": "Morgan Freeman",
+          "name": "Lucius Fox"
+        },
+        {
+          "role": "Scarecrow",
+          "actor": "Cillian Murphy",
+          "name": "Jonathan Crane"
+        }
+      ]
+    },
+    {
+      "comic": "Blade",
+      "movie": "Blade",
+      "year": 1998,
+      "publisher": "Marvel",
+      "grouping": "Blade",
+      "distributor": "New Line Cinema",
+      "studios": [
+        "Marvel",
+        "Amen Ra Films"
+      ],
+      "roles": [
+        {
+          "role": "Blade",
+          "actor": "Wesley Snipes",
+          "name": "Blade"
+        },
+        {
+          "role": "Deacon Frost",
+          "actor": "Stephen Dorff",
+          "name": "Deacon Frost"
+        },
+        {
+          "role": "Whistler",
+          "actor": "Kris Kristofferson",
+          "name": "Whistler"
+        },
+        {
+          "role": "Quinn",
+          "actor": "Donal Logue",
+          "name": "Quinn"
+        },
+        {
+          "role": "Dragonetti",
+          "actor": "Udo Kier",
+          "name": "Dragonetti"
+        }
+      ]
+    },
+    {
+      "comic": "Blade",
+      "movie": "Blade 2",
+      "year": 2002,
+      "publisher": "Marvel",
+      "grouping": "Blade",
+      "distributor": "New Line Cinema",
+      "studios": [
+        "Marvel",
+        "Amen Ra Films"
+      ],
+      "roles": [
+        {
+          "role": "Blade",
+          "actor": "Wesley Snipes",
+          "name": "Blade"
+        },
+        {
+          "role": "Whistler",
+          "actor": "Kris Kristofferson",
+          "name": "Whistler"
+        },
+        {
+          "role": "Reinhardt",
+          "actor": "Ron Perlman",
+          "name": "Reinhardt"
+        },
+        {
+          "role": "Scud",
+          "actor": "Norman Reedus",
+          "name": "Scud"
+        },
+        {
+          "role": "Snowman",
+          "actor": "Donnie Yen",
+          "name": "Snowman"
+        }
+      ]
+    },
+    {
+      "comic": "Blade",
+      "movie": "Blade Trinity",
+      "year": 2004,
+      "publisher": "Marvel",
+      "grouping": "Blade",
+      "distributor": "New Line Cinema",
+      "studios": [
+        "New Line Cinema",
+        "Marvel",
+        "Amen Ra Films"
+      ],
+      "roles": [
+        {
+          "role": "Blade",
+          "actor": "Wesley Snipes",
+          "name": "Blade"
+        },
+        {
+          "role": "Whistler",
+          "actor": "Kris Kristofferson",
+          "name": "Whistler"
+        },
+        {
+          "role": "Abigail Whistler",
+          "actor": "Jennifer Biel",
+          "name": "Abigail Whistler"
+        },
+        {
+          "role": "Hannibal King",
+          "actor": "Ryan Reynolds",
+          "name": "Hannibal King"
+        },
+        {
+          "role": "Dracula",
+          "actor": "Dominic Purcell",
+          "name": "Drake"
+        },
+        {
+          "role": "Danica Talos",
+          "actor": "Parker Posey",
+          "name": "Danica Talos"
+        }
+      ]
+    },
+    {
+      "comic": "Captain America",
+      "movie": "Captain America: the First Avenger",
+      "year": 2011,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Paramount",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Captain America",
+          "actor": "Chris Evans",
+          "name": "Steve Rogers"
+        },
+        {
+          "role": "Chester Phillips",
+          "actor": "Tommy Lee Jones",
+          "name": "Chester Phillips"
+        },
+        {
+          "role": "Peggy Carter",
+          "actor": "Hayley Atwell",
+          "name": "Peggy Carter"
+        },
+        {
+          "role": "Bucky Barnes",
+          "actor": "Sebastian Stan",
+          "name": "Bucky Barnes"
+        },
+        {
+          "role": "Red Skull",
+          "actor": "Hugo Weaving",
+          "name": "Johann Schmidt"
+        },
+        {
+          "role": "Howard Stark",
+          "actor": "Dominic Cooper",
+          "name": "Howard Stark"
+        },
+        {
+          "role": "Nick Fury",
+          "actor": "Samuel L Jackson",
+          "name": "Nick Fury"
+        },
+        {
+          "role": "General",
+          "actor": "Stan Lee",
+          "name": "General"
+        }
+      ]
+    },
+    {
+      "comic": "Captain America",
+      "movie": "Captain America: the Winter Soldier",
+      "year": 2014,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Captain America",
+          "actor": "Chris Evans",
+          "name": "Steve Rogers"
+        },
+        {
+          "role": "Falcon",
+          "actor": "Anthony Mackie",
+          "name": "Sam Wilson"
+        },
+        {
+          "role": "Black Widow",
+          "actor": "Scarlett Johansson",
+          "name": "Natasha Romanoff"
+        },
+        {
+          "role": "Winter Soldier",
+          "actor": "Sebastian Stan",
+          "name": "Bucky Barnes"
+        },
+        {
+          "role": "Nick Fury",
+          "actor": "Samuel L Jackson",
+          "name": "Nick Fury"
+        },
+        {
+          "role": "Agent 13",
+          "actor": "Emily VanCamp",
+          "name": "Sharon Carter"
+        },
+        {
+          "role": "Alexander Pierce",
+          "actor": "Robert Redford",
+          "name": "Alexander Pierce"
+        },
+        {
+          "role": "Security Guard",
+          "actor": "Stan Lee",
+          "name": "Security Guard"
+        }
+      ]
+    },
+    {
+      "comic": "Captain America",
+      "movie": "Captain America: Civil War",
+      "year": 2016,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Captain America",
+          "actor": "Chris Evans",
+          "name": "Steve Rogers"
+        },
+        {
+          "role": "Iron Man",
+          "actor": "Robert Downey Jr",
+          "name": "Tony Stark"
+        },
+        {
+          "role": "Thaddeus Ross",
+          "actor": "William Hurt",
+          "name": "Thaddeus Ross"
+        },
+        {
+          "role": "Black Widow",
+          "actor": "Scarlett Johansson",
+          "name": "Natasha Romanoff"
+        },
+        {
+          "role": "Winter Soldier",
+          "actor": "Sebastian Stan",
+          "name": "Bucky Barnes"
+        },
+        {
+          "role": "Ant-Man",
+          "actor": "Paul Rudd",
+          "name": "Scott Lang"
+        },
+        {
+          "role": "Vision",
+          "actor": "Paul Bettany",
+          "name": "Vision"
+        },
+        {
+          "role": "Warmachine",
+          "actor": "Don Cheadle",
+          "name": "James Rhodes"
+        },
+        {
+          "role": "Falcon",
+          "actor": "Anthony Mackie",
+          "name": "Sam Wilson"
+        },
+        {
+          "role": "Scarlet Witch",
+          "actor": "Elizabeth Olsen",
+          "name": "Wanda Maximoff"
+        },
+        {
+          "role": "Hawkeye",
+          "actor": "Jeremy Renner",
+          "name": "Clint Barton"
+        },
+        {
+          "role": "Black Panther",
+          "actor": "Chadwick Boseman",
+          "name": "T\u0027Challa"
+        },
+        {
+          "role": "Agent 13",
+          "actor": "Emily VanCamp",
+          "name": "Sharon Carter"
+        },
+        {
+          "role": "Spiderman",
+          "actor": "Tom Holland",
+          "name": "Peter Parker"
+        },
+        {
+          "role": "May Parker",
+          "actor": "Marisa Tomei",
+          "name": "May Parker"
+        },
+        {
+          "role": "Howard Stark",
+          "actor": "John Slattery",
+          "name": "Howard Stark"
+        },
+        {
+          "role": "Postman",
+          "actor": "Stan Lee",
+          "name": "Postman"
+        }
+      ]
+    },
+    {
+      "comic": "Catwoman",
+      "movie": "Catwoman",
+      "year": 2004,
+      "publisher": "DC",
+      "grouping": "Catwoman",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Village Roadshow"
+      ],
+      "roles": [
+        {
+          "role": "Catwoman",
+          "actor": "Halle Berry",
+          "name": "Patience Phillips"
+        },
+        {
+          "role": "Tom Lone",
+          "actor": "Benjamin Bratt",
+          "name": "Tom Lone"
+        },
+        {
+          "role": "Laurel Hedare",
+          "actor": "Sharon Stone",
+          "name": "Laurel Hedare"
+        }
+      ]
+    },
+    {
+      "comic": "Constantine",
+      "movie": "Constantine",
+      "year": 2005,
+      "publisher": "Vertigo",
+      "grouping": "Constantine",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Village Roadshow"
+      ],
+      "roles": [
+        {
+          "role": "John Constantine",
+          "actor": "Keanu Reeves",
+          "name": "John Constantine"
+        },
+        {
+          "role": "Gabriel",
+          "actor": "Tilda Swinton",
+          "name": "Gabriel"
+        },
+        {
+          "role": "Angela Dodson",
+          "actor": "Rachel Weisz",
+          "name": "Angela Dodson"
+        },
+        {
+          "role": "Chas Kramer",
+          "actor": "Shia LaBeouf",
+          "name": "Chas Kramer"
+        },
+        {
+          "role": "Balthazar",
+          "actor": "Gavin Rossdale",
+          "name": "Balthazar"
+        },
+        {
+          "role": "Midnite",
+          "actor": "Djimon Hounsou",
+          "name": "Midnite"
+        },
+        {
+          "role": "Satan",
+          "actor": "Peter Stormare",
+          "name": "Satan"
+        }
+      ]
+    },
+    {
+      "comic": "Daredevil",
+      "movie": "Daredevil",
+      "year": 2003,
+      "publisher": "Marvel",
+      "grouping": "Daredevil",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "Regency Enterprises"
+      ],
+      "roles": [
+        {
+          "role": "Daredevil",
+          "actor": "Ben Affleck",
+          "name": "Matt Murdock"
+        },
+        {
+          "role": "Elektra",
+          "actor": "Jennifer Garner",
+          "name": "Elektra"
+        },
+        {
+          "role": "Kingpin",
+          "actor": "Michael Clarke Duncan",
+          "name": "Wilson Fiske"
+        },
+        {
+          "role": "Bullseye",
+          "actor": "Colin Farrel",
+          "name": "Bullseye"
+        },
+        {
+          "role": "Foggy Nelson",
+          "actor": "John Favreau",
+          "name": "Foggy Nelson"
+        },
+        {
+          "role": "Blind Man",
+          "actor": "Stan Lee",
+          "name": "Blind Man"
+        }
+      ]
+    },
+    {
+      "comic": "Daredevil",
+      "movie": "Elektra",
+      "year": 2005,
+      "publisher": "Marvel",
+      "grouping": "Daredevil",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "Regency Enterprises"
+      ],
+      "roles": [
+        {
+          "role": "Elektra",
+          "actor": "Jennifer Garner",
+          "name": "Elektra"
+        },
+        {
+          "role": "Stick",
+          "actor": "Terrence Stamp",
+          "name": "Stick"
+        }
+      ]
+    },
+    {
+      "comic": "Deadpool",
+      "movie": "Deadpool",
+      "year": 2016,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company"
+      ],
+      "roles": [
+        {
+          "role": "Deadpool",
+          "actor": "Ryan Reynolds",
+          "name": "Wade Wilson"
+        },
+        {
+          "role": "Vanessa",
+          "actor": "Morena Baccarin",
+          "name": "Vanessa"
+        },
+        {
+          "role": "Ajax",
+          "actor": "Ed Skrein",
+          "name": "Francis Freeman"
+        },
+        {
+          "role": "MC",
+          "actor": "Stan Lee",
+          "name": "MC"
+        },
+        {
+          "role": "Colossus",
+          "actor": "Stefan Kapucic",
+          "name": "Peter Rasputin"
+        },
+        {
+          "role": "Weasel",
+          "actor": "TJ Miller",
+          "name": "Weasel"
+        }
+      ]
+    },
+    {
+      "comic": "Doctor Strange",
+      "movie": "Doctor Strange",
+      "year": 2016,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Doctor Strange",
+          "actor": "Benedict Cumberbatch",
+          "name": "Stephen Strange"
+        },
+        {
+          "role": "Baron Mordo",
+          "actor": "Chiwetel Ejiofor",
+          "name": "Karl Mordo"
+        },
+        {
+          "role": "Christine Palmer",
+          "actor": "Rachel McAdams",
+          "name": "Christine Palmer"
+        },
+        {
+          "role": "Wong",
+          "actor": "Benedict Wong",
+          "name": "Wong"
+        },
+        {
+          "role": "Nicodemus West",
+          "actor": "Michael Stuhlbarg",
+          "name": "Nicodemus West"
+        },
+        {
+          "role": "Jonathan Pangborn",
+          "actor": "Benjamin Bratt",
+          "name": "Jonathan Pangborn"
+        },
+        {
+          "role": "Kaecilius",
+          "actor": "Mads Mikkelsen",
+          "name": "Kaecilius"
+        },
+        {
+          "role": "Ancient One",
+          "actor": "Tilda Swinton",
+          "name": "Ancient One"
+        }
+      ]
+    },
+    {
+      "comic": "Fantastic Four",
+      "movie": "Fantastic Four",
+      "year": 2005,
+      "publisher": "Marvel",
+      "grouping": "Fantastic Four v1",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "Constantin Productions"
+      ],
+      "roles": [
+        {
+          "role": "Mister Fantastic",
+          "actor": "Ioan Gruffudd",
+          "name": "Reed Richards"
+        },
+        {
+          "role": "Invisible Woman",
+          "actor": "Jessica Alba",
+          "name": "Sue Storm"
+        },
+        {
+          "role": "Human Torch",
+          "actor": "Chris Evans",
+          "name": "Johnny Storm"
+        },
+        {
+          "role": "Thing",
+          "actor": "Michael Chiklis",
+          "name": "Ben Grimm"
+        },
+        {
+          "role": "Doctor Doom",
+          "actor": "Julian McMahon",
+          "name": "Victor Von Doom"
+        },
+        {
+          "role": "Willie Lumpkin",
+          "actor": "Stan Lee",
+          "name": "Willie Lumpkin"
+        }
+      ]
+    },
+    {
+      "comic": "Fantastic Four",
+      "movie": "Fantastic Four: Rise of the Silver Surfer",
+      "year": 2007,
+      "publisher": "Marvel",
+      "grouping": "Fantastic Four v1",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "Constantin Productions"
+      ],
+      "roles": [
+        {
+          "role": "Mister Fantastic",
+          "actor": "Ioan Gruffudd",
+          "name": "Reed Richards"
+        },
+        {
+          "role": "Invisible Woman",
+          "actor": "Jessica Alba",
+          "name": "Sue Storm"
+        },
+        {
+          "role": "Human Torch",
+          "actor": "Chris Evans",
+          "name": "Johnny Storm"
+        },
+        {
+          "role": "Thing",
+          "actor": "Michael Chiklis",
+          "name": "Ben Grimm"
+        },
+        {
+          "role": "Doctor Doom",
+          "actor": "Julian McMahon",
+          "name": "Victor Von Doom"
+        },
+        {
+          "role": "Silver Surfer",
+          "actor": "Doug Jones",
+          "name": "Norrin Radd"
+        },
+        {
+          "role": "Silver Surfer",
+          "actor": "Laurence Fishburne",
+          "name": "Norrin Radd"
+        },
+        {
+          "role": "Stan Lee",
+          "actor": "Stan Lee",
+          "name": "Stan Lee"
+        }
+      ]
+    },
+    {
+      "comic": "Fantastic Four",
+      "movie": "Fantastic Four",
+      "year": 2015,
+      "publisher": "Marvel",
+      "grouping": "Fantastic Four v2",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "Constantin Productions"
+      ],
+      "roles": [
+        {
+          "role": "Mister Fantastic",
+          "actor": "Miles Teller",
+          "name": "Reed Richards"
+        },
+        {
+          "role": "Invisible Woman",
+          "actor": "Kate Mara",
+          "name": "Sue Storm"
+        },
+        {
+          "role": "Human Torch",
+          "actor": "Michael B Jordan",
+          "name": "Johnny Storm"
+        },
+        {
+          "role": "Thing",
+          "actor": "Jamie Bell",
+          "name": "Ben Grimm"
+        },
+        {
+          "role": "Doctor Doom",
+          "actor": "Toby Kebbell",
+          "name": "Victor Von Doom"
+        },
+        {
+          "role": "Franklin Storm",
+          "actor": "Reg Kathey",
+          "name": "Franklin Storm"
+        }
+      ]
+    },
+    {
+      "comic": "From Hell",
+      "movie": "From Hell",
+      "year": 2001,
+      "publisher": "Top Shelf",
+      "grouping": "From Hell",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "20th Century Fox"
+      ],
+      "roles": [
+        {
+          "role": "Frederick Abberline",
+          "actor": "Johnny Depp",
+          "name": "Frederick Abberline"
+        },
+        {
+          "role": "Mary Kelly",
+          "actor": "Heather Graham",
+          "name": "Mary Kelly"
+        },
+        {
+          "role": "William Gull",
+          "actor": "Ian Holm",
+          "name": "William Gull"
+        }
+      ]
+    },
+    {
+      "comic": "Green Lantern",
+      "movie": "Green Lantern",
+      "year": 2011,
+      "publisher": "DC",
+      "grouping": "Green Lantern",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Entertainment",
+        "De Line Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Green Lantern",
+          "actor": "Ryan Reynolds",
+          "name": "Hal Jordan"
+        },
+        {
+          "role": "Carol Ferris",
+          "actor": "Blake Lively",
+          "name": "Carol Ferris"
+        },
+        {
+          "role": "Sinestro",
+          "actor": "Mark Strong",
+          "name": "Sinestro"
+        },
+        {
+          "role": "Parallax",
+          "actor": "Peter Sarsgaard",
+          "name": "Hector Hammond"
+        },
+        {
+          "role": "Amanda Waller",
+          "actor": "Angela Basset",
+          "name": "Amanda Waller"
+        }
+      ]
+    },
+    {
+      "comic": "Ghost Rider",
+      "movie": "Ghost Rider",
+      "year": 2007,
+      "publisher": "Marvel",
+      "grouping": "Ghost Rider",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Marvel",
+        "Crystal Sky Productions"
+      ],
+      "roles": [
+        {
+          "role": "Ghost Rider",
+          "actor": "Nicolas Cage",
+          "name": "Johnny Blaze"
+        },
+        {
+          "role": "Roxanne Simpson",
+          "actor": "Eva Mendes",
+          "name": "Roxanne Simpson"
+        },
+        {
+          "role": "Legion",
+          "actor": "Wes Bentley",
+          "name": "Legion"
+        },
+        {
+          "role": "Carter Slade",
+          "actor": "Sam Elliot",
+          "name": "Carter Slade"
+        },
+        {
+          "role": "Mack",
+          "actor": "Donal Logue",
+          "name": "Mack"
+        }
+      ]
+    },
+    {
+      "comic": "Ghost Rider",
+      "movie": "Ghost Rider: Spirit of Vengeance",
+      "year": 2012,
+      "publisher": "Marvel",
+      "grouping": "Ghost Rider",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Marvel",
+        "Crystal Sky Productions"
+      ],
+      "roles": [
+        {
+          "role": "Ghost Rider",
+          "actor": "Nicolas Cage",
+          "name": "Johnny Blaze"
+        },
+        {
+          "role": "Ray Carrigan",
+          "actor": "Johnny Whitworth",
+          "name": "Ray Carrigan"
+        },
+        {
+          "role": "Mephistopheles",
+          "actor": "Ciaran Hinds",
+          "name": "Mephistopheles"
+        },
+        {
+          "role": "Danny Ketch",
+          "actor": "Fergus Riordan",
+          "name": "Danny Ketch"
+        },
+        {
+          "role": "Moreau",
+          "actor": "Idris Elba",
+          "name": "Moreau"
+        }
+      ]
+    },
+    {
+      "comic": "Guardians of the Galaxy",
+      "movie": "Guardians of the Galaxy",
+      "year": 2014,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Star-Lord",
+          "actor": "Chris Pratt",
+          "name": "Peter Quill"
+        },
+        {
+          "role": "Gamora",
+          "actor": "Zoe Saldana",
+          "name": "Gamora"
+        },
+        {
+          "role": "Drax",
+          "actor": "David Bautista",
+          "name": "Drax"
+        },
+        {
+          "role": "Groot",
+          "actor": "Vin Diesel",
+          "name": "Groot"
+        },
+        {
+          "role": "Rocket Raccoon",
+          "actor": "Bradley Cooper",
+          "name": "Rocket Raccoon"
+        },
+        {
+          "role": "Ronan",
+          "actor": "Lee Pace",
+          "name": "Ronan"
+        },
+        {
+          "role": "Yondu",
+          "actor": "Michael Rooker",
+          "name": "Yondu"
+        },
+        {
+          "role": "Nebula",
+          "actor": "Karen Gillen",
+          "name": "Nebula"
+        },
+        {
+          "role": "Korath",
+          "actor": "Djimon Hounsou",
+          "name": "Korath"
+        },
+        {
+          "role": "Thanos",
+          "actor": "Josh Brolin",
+          "name": "Thanos"
+        },
+        {
+          "role": "Xandarian",
+          "actor": "Stan Lee",
+          "name": "Xandarian"
+        },
+        {
+          "role": "Howard the Duck",
+          "actor": "Seth Green",
+          "name": "Howard the Duck"
+        }
+      ]
+    },
+    {
+      "comic": "Hellboy",
+      "movie": "Hellboy",
+      "year": 2004,
+      "publisher": "Dark Horse",
+      "grouping": "Hellboy",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Revolution Studios"
+      ],
+      "roles": [
+        {
+          "role": "Hellboy",
+          "actor": "Ron Perlman",
+          "name": "Hellboy"
+        },
+        {
+          "role": "Liz Sherman",
+          "actor": "Selma Blair",
+          "name": "Liz Sherman"
+        },
+        {
+          "role": "Tom Manning",
+          "actor": "Jeffrey Tambor",
+          "name": "Tom Manning"
+        },
+        {
+          "role": "Trevor Bruttenholm",
+          "actor": "John Hurt",
+          "name": "Trevor Bruttenholm"
+        },
+        {
+          "role": "Abe Sapien",
+          "actor": "Doug Jones",
+          "name": "Abe Sapien"
+        },
+        {
+          "role": "Rasputin",
+          "actor": "Karel Rodan",
+          "name": "Rasputin"
+        }
+      ]
+    },
+    {
+      "comic": "Hellboy",
+      "movie": "Hellboy 2: the Golden Army",
+      "year": 2008,
+      "publisher": "Dark Horse",
+      "grouping": "Hellboy",
+      "distributor": "Universal Pictures",
+      "studios": [
+        "Relativity Media"
+      ],
+      "roles": [
+        {
+          "role": "Hellboy",
+          "actor": "Ron Perlman",
+          "name": "Hellboy"
+        },
+        {
+          "role": "Liz Sherman",
+          "actor": "Selma Blair",
+          "name": "Liz Sherman"
+        },
+        {
+          "role": "Tom Manning",
+          "actor": "Jeffrey Tambor",
+          "name": "Tom Manning"
+        },
+        {
+          "role": "Trevor Bruttenholm",
+          "actor": "John Hurt",
+          "name": "Trevor Bruttenholm"
+        },
+        {
+          "role": "Abe Sapien",
+          "actor": "Doug Jones",
+          "name": "Abe Sapien"
+        },
+        {
+          "role": "Nuada",
+          "actor": "Luke Goss",
+          "name": "Nuada"
+        },
+        {
+          "role": "Nuala",
+          "actor": "Anna Walton",
+          "name": "Nuala"
+        },
+        {
+          "role": "Balor",
+          "actor": "Roy Dotrice",
+          "name": "Balor"
+        }
+      ]
+    },
+    {
+      "comic": "Howard the Duck",
+      "movie": "Howard the Duck",
+      "year": 1986,
+      "publisher": "Marvel",
+      "grouping": "Howard the Duck",
+      "distributor": "Universal Pictures",
+      "studios": [
+        "Lucasfilm"
+      ],
+      "roles": [
+        {
+          "role": "Beverly Switzler",
+          "actor": "Lea Thompson",
+          "name": "Beverly Switzler"
+        },
+        {
+          "role": "Phil Blumburtt",
+          "actor": "Tim Robbins",
+          "name": "Phil Blumburtt"
+        },
+        {
+          "role": "Walter Jenning",
+          "actor": "Jeffrey Jones",
+          "name": "Walter Jenning"
+        },
+        {
+          "role": "Howard the Duck",
+          "actor": "Chip Zien",
+          "name": "Howard the Duck"
+        }
+      ]
+    },
+    {
+      "comic": "Hulk",
+      "movie": "Hulk",
+      "year": 2003,
+      "publisher": "Marvel",
+      "grouping": "Hulk v1",
+      "distributor": "Universal Pictures",
+      "studios": [
+        "Marvel",
+        "Universal Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Hulk",
+          "actor": "Eric Bana",
+          "name": "Bruce Banner"
+        },
+        {
+          "role": "Betty Ross",
+          "actor": "Jennifer Connelly",
+          "name": "Betty Ross"
+        },
+        {
+          "role": "Thaddeus Ross",
+          "actor": "Sam Elliot",
+          "name": "Thaddeus Ross"
+        },
+        {
+          "role": "Glenn Talbot",
+          "actor": "Josh Lucas",
+          "name": "Glenn Talbot"
+        },
+        {
+          "role": "David Banner",
+          "actor": "Nick Nolte",
+          "name": "David Banner"
+        },
+        {
+          "role": "Security Guard",
+          "actor": "Stan Lee",
+          "name": "Security Guard"
+        },
+        {
+          "role": "Security Guard",
+          "actor": "Lou Ferrigno",
+          "name": "Security Guard"
+        }
+      ]
+    },
+    {
+      "comic": "Hulk",
+      "movie": "The Incredible Hulk",
+      "year": 2008,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Universal Pictures",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Hulk",
+          "actor": "Edward Norton",
+          "name": "Bruce Banner"
+        },
+        {
+          "role": "Betty Ross",
+          "actor": "Liv Tyler",
+          "name": "Betty Ross"
+        },
+        {
+          "role": "Thaddeus Ross",
+          "actor": "William Hurt",
+          "name": "Thaddeus Ross"
+        },
+        {
+          "role": "Abomination",
+          "actor": "Tim Roth",
+          "name": "Emil Blonsky"
+        },
+        {
+          "role": "Stan Lee",
+          "actor": "Stan Lee",
+          "name": "Stan Lee"
+        }
+      ]
+    },
+    {
+      "comic": "Iron Man",
+      "movie": "Iron Man",
+      "year": 2008,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Paramount",
+      "studios": [
+        "Marvel",
+        "Fairview Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Iron Man",
+          "actor": "Robert Downey Jr",
+          "name": "Tony Stark"
+        },
+        {
+          "role": "Warmachine",
+          "actor": "Terrence Howard",
+          "name": "James Rhodes"
+        },
+        {
+          "role": "Pepper Potts",
+          "actor": "Gwyneth Paltrow",
+          "name": "Pepper Potts"
+        },
+        {
+          "role": "Iron Monger",
+          "actor": "Jeff Bridges",
+          "name": "Obadiah Stane"
+        },
+        {
+          "role": "Happy Hogan",
+          "actor": "John Favreau",
+          "name": "Happy Hogan"
+        },
+        {
+          "role": "Phil Coulson",
+          "actor": "Clark Gregg",
+          "name": "Phil Coulson"
+        },
+        {
+          "role": "Nick Fury",
+          "actor": "Samuel L Jackson",
+          "name": "Nick Fury"
+        },
+        {
+          "role": "Stan Lee",
+          "actor": "Stan Lee",
+          "name": "Stan Lee"
+        }
+      ]
+    },
+    {
+      "comic": "Iron Man",
+      "movie": "Iron Man 2",
+      "year": 2010,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Paramount",
+      "studios": [
+        "Marvel",
+        "Fairview Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Iron Man",
+          "actor": "Robert Downey Jr",
+          "name": "Tony Stark"
+        },
+        {
+          "role": "Warmachine",
+          "actor": "Don Cheadle",
+          "name": "James Rhodes"
+        },
+        {
+          "role": "Pepper Potts",
+          "actor": "Gwyneth Paltrow",
+          "name": "Pepper Potts"
+        },
+        {
+          "role": "Whiplash",
+          "actor": "Mickey Rourke",
+          "name": "Ivan Vanko"
+        },
+        {
+          "role": "Happy Hogan",
+          "actor": "John Favreau",
+          "name": "Happy Hogan"
+        },
+        {
+          "role": "Justin Hammer",
+          "actor": "Sam Rockwell",
+          "name": "Justin Hammer"
+        },
+        {
+          "role": "Black Widow",
+          "actor": "Scarlett Johansson",
+          "name": "Natasha Romanoff"
+        },
+        {
+          "role": "Nick Fury",
+          "actor": "Samuel L Jackson",
+          "name": "Nick Fury"
+        },
+        {
+          "role": "Stan Lee",
+          "actor": "Stan Lee",
+          "name": "Stan Lee"
+        }
+      ]
+    },
+    {
+      "comic": "Iron Man",
+      "movie": "Iron Man 3",
+      "year": 2013,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Iron Man",
+          "actor": "Robert Downey Jr",
+          "name": "Tony Stark"
+        },
+        {
+          "role": "Pepper Potts",
+          "actor": "Gwyneth Paltrow",
+          "name": "Pepper Potts"
+        },
+        {
+          "role": "Mandarin",
+          "actor": "Guy Pearce",
+          "name": "Aldrich Killian"
+        },
+        {
+          "role": "Maya Hansen",
+          "actor": "Rebecca Hall",
+          "name": "Maya Hansen"
+        },
+        {
+          "role": "Happy Hogan",
+          "actor": "John Favreau",
+          "name": "Happy Hogan"
+        },
+        {
+          "role": "Warmachine",
+          "actor": "Don Cheadle",
+          "name": "James Rhodes"
+        },
+        {
+          "role": "Mandarin",
+          "actor": "Ben Kingsley",
+          "name": "Trevor Slattery"
+        },
+        {
+          "role": "Pageant Judge",
+          "actor": "Stan Lee",
+          "name": "Pageant Judge"
+        }
+      ]
+    },
+    {
+      "comic": "Jonah Hex",
+      "movie": "Jonah Hex",
+      "year": 2010,
+      "publisher": "DC",
+      "grouping": "Jonah Hex",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Comics",
+        "Legendary Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Jonah Hex",
+          "actor": "Josh Brolin",
+          "name": "Jonah Hex"
+        },
+        {
+          "role": "Tallulah Black",
+          "actor": "Megan Fox",
+          "name": "Tallulah Black"
+        },
+        {
+          "role": "Burke",
+          "actor": "Michael Fassbender",
+          "name": "Burke"
+        },
+        {
+          "role": "Quentin Turnbull",
+          "actor": "John Malkovich",
+          "name": "Quentin Turnbull"
+        },
+        {
+          "role": "Cross Williams",
+          "actor": "Michael Shannon",
+          "name": "Cross Williams"
+        }
+      ]
+    },
+    {
+      "comic": "Judge Dredd",
+      "movie": "Judge Dredd",
+      "year": 1995,
+      "publisher": "2000 AD",
+      "grouping": "Dredd v1",
+      "distributor": "Buena Vista",
+      "studios": [
+        "Hollywood Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Dredd",
+          "actor": "Sylvester Stallone",
+          "name": "Dredd"
+        },
+        {
+          "role": "Rico",
+          "actor": "Armand Assante",
+          "name": "Rico"
+        },
+        {
+          "role": "Hershey",
+          "actor": "Diane Lane",
+          "name": "Hershey"
+        },
+        {
+          "role": "Fergee",
+          "actor": "Rob Schneider",
+          "name": "Fergee"
+        },
+        {
+          "role": "Griffin",
+          "actor": "Jurgen Prochnow",
+          "name": "Griffin"
+        },
+        {
+          "role": "Fargo",
+          "actor": "Max von Sydow",
+          "name": "Fargo"
+        }
+      ]
+    },
+    {
+      "comic": "Judge Dredd",
+      "movie": "Dredd",
+      "year": 2012,
+      "publisher": "2000 AD",
+      "grouping": "Dredd v2",
+      "distributor": "Lionsgate",
+      "studios": [
+        "DNA Films"
+      ],
+      "roles": [
+        {
+          "role": "Dredd",
+          "actor": "Karl Urban",
+          "name": "Dredd"
+        },
+        {
+          "role": "Anderson",
+          "actor": "Olivia Thirlby",
+          "name": "Anderson"
+        },
+        {
+          "role": "Ma-Ma",
+          "actor": "Lena Headey",
+          "name": "Ma-Ma"
+        }
+      ]
+    },
+    {
+      "comic": "Justice League",
+      "movie": "Batman v Superman: Dawn of Justice",
+      "year": 2016,
+      "publisher": "DC",
+      "grouping": "DC Extended Universe",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Entertainment",
+        "RatPac-Dune Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Superman",
+          "actor": "Henry Cavill",
+          "name": "Clark Kent"
+        },
+        {
+          "role": "Batman",
+          "actor": "Ben Affleck",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Lois Lane",
+          "actor": "Amy Adams",
+          "name": "Lois Lane"
+        },
+        {
+          "role": "Lex Luthor",
+          "actor": "Jesse Eisenberg",
+          "name": "Lex Luthor"
+        },
+        {
+          "role": "Wonder Woman",
+          "actor": "Gal Gadot",
+          "name": "Diana Prince"
+        },
+        {
+          "role": "Martha Kent",
+          "actor": "Diane Lane",
+          "name": "Martha Kent"
+        },
+        {
+          "role": "Jonathan Kent",
+          "actor": "Kevin Costner",
+          "name": "Jonathan Kent"
+        },
+        {
+          "role": "Alfred",
+          "actor": "Jeremy Irons",
+          "name": "Alfred"
+        },
+        {
+          "role": "Perry White",
+          "actor": "Laurence Fishburne",
+          "name": "Perry White"
+        }
+      ]
+    },
+    {
+      "comic": "Kick-ass",
+      "movie": "Kick-ass",
+      "year": 2010,
+      "publisher": "Icon",
+      "grouping": "Kick-ass",
+      "distributor": "Lionsgate",
+      "studios": [
+        "Marv Films"
+      ],
+      "roles": [
+        {
+          "role": "Kick-Ass",
+          "actor": "Aaron Taylor-Johnson",
+          "name": "Dave Lizewski"
+        },
+        {
+          "role": "Frank D\u0027Amico",
+          "actor": "Mark Strong",
+          "name": "Frank D\u0027Amico"
+        },
+        {
+          "role": "Hit Girl",
+          "actor": "Chloe Grace Moretz",
+          "name": "Mindy Macready"
+        },
+        {
+          "role": "Big Daddy",
+          "actor": "Nicolas Cage",
+          "name": "Damon Macready"
+        },
+        {
+          "role": "Todd Haynes",
+          "actor": "Evan Peters",
+          "name": "Todd Haynes"
+        },
+        {
+          "role": "Scarlet Mist",
+          "actor": "Christopher Mintz-Plasse",
+          "name": "Chris D\u0027Amico"
+        }
+      ]
+    },
+    {
+      "comic": "Kick-ass",
+      "movie": "Kick-ass 2",
+      "year": 2013,
+      "publisher": "Icon",
+      "grouping": "Kick-ass",
+      "distributor": "Universal Pictures",
+      "studios": [
+        "Marv Films"
+      ],
+      "roles": [
+        {
+          "role": "Kick-Ass",
+          "actor": "Aaron Taylor-Johnson",
+          "name": "Dave Lizewski"
+        },
+        {
+          "role": "Hit Girl",
+          "actor": "Chloe Grace Moretz",
+          "name": "Mindy Macready"
+        },
+        {
+          "role": "Scarlet Mist",
+          "actor": "Christopher Mintz-Plasse",
+          "name": "Chris D\u0027Amico"
+        },
+        {
+          "role": "Colonel Stars and Stripes",
+          "actor": "Jim Carrey",
+          "name": "Sal Bertolinni"
+        },
+        {
+          "role": "Ralph D\u0027Amico",
+          "actor": "Iain Glen",
+          "name": "Ralph D\u0027Amico"
+        },
+        {
+          "role": "Ass-Kicker",
+          "actor": "Augustus Prew",
+          "name": "Todd Haynes"
+        },
+        {
+          "role": "Javier",
+          "actor": "John Leguizamo",
+          "name": "Javier"
+        }
+      ]
+    },
+    {
+      "comic": "Kingsman",
+      "movie": "Kingsman: The Secret Service",
+      "year": 2015,
+      "publisher": "Icon",
+      "grouping": "Kingsman",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marv Films"
+      ],
+      "roles": [
+        {
+          "role": "Galahad",
+          "actor": "Colin Firth",
+          "name": "Harry Hart"
+        },
+        {
+          "role": "Arthur",
+          "actor": "Michael Caine",
+          "name": "Chester King"
+        },
+        {
+          "role": "Richmond Valentine",
+          "actor": "Samuel L Jackson",
+          "name": "Richmond Valentine"
+        },
+        {
+          "role": "Eggsy",
+          "actor": "Taron Egerton",
+          "name": "Gary Unwin"
+        },
+        {
+          "role": "Merlin",
+          "actor": "Mark Strong",
+          "name": "Merlin"
+        },
+        {
+          "role": "Lancelot",
+          "actor": "Sophie Cookson",
+          "name": "Roxanne Morton"
+        },
+        {
+          "role": "Gazelle",
+          "actor": "Sofia Boutella",
+          "name": "Gazelle"
+        },
+        {
+          "role": "James Arnold",
+          "actor": "Mark Hamill",
+          "name": "James Arnold"
+        }
+      ]
+    },
+    {
+      "comic": "League of Extraordinary Gentlemen",
+      "movie": "League of Extraordinary Gentlemen",
+      "year": 2003,
+      "publisher": "Wildstorm",
+      "grouping": "LXG",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "20th Century Fox"
+      ],
+      "roles": [
+        {
+          "role": "Alan Quartermain",
+          "actor": "Sean Connery",
+          "name": "Alan Quartermain"
+        },
+        {
+          "role": "Nemo",
+          "actor": "Naseeruddin Shah",
+          "name": "Nemo"
+        },
+        {
+          "role": "Mina Harker",
+          "actor": "Peta Wilson",
+          "name": "Mina Harker"
+        },
+        {
+          "role": "Rodney Skinner",
+          "actor": "Tony Curran",
+          "name": "Rodney Skinner"
+        },
+        {
+          "role": "Dorian Gray",
+          "actor": "Stuart Townsend",
+          "name": "Dorian Gray"
+        },
+        {
+          "role": "Tom Sawyer",
+          "actor": "Shane West",
+          "name": "Tom Sawyer"
+        },
+        {
+          "role": "Jekyll",
+          "actor": "Jason Flemyng",
+          "name": "Jekyll"
+        },
+        {
+          "role": "Moriarty",
+          "actor": "Richard Roxburgh",
+          "name": "Moriarty"
+        }
+      ]
+    },
+    {
+      "comic": "Men In Black",
+      "movie": "Men In Black",
+      "year": 1997,
+      "publisher": "Aircell",
+      "grouping": "MiB",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Amblin Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "K",
+          "actor": "Tommy Lee Jones",
+          "name": "K"
+        },
+        {
+          "role": "J",
+          "actor": "Will Smith",
+          "name": "J"
+        },
+        {
+          "role": "L",
+          "actor": "Linda Fiorentino",
+          "name": "Laurel Weaver"
+        },
+        {
+          "role": "Edgar",
+          "actor": "Vincent D\u0027Onnofrio",
+          "name": "Edgar"
+        },
+        {
+          "role": "Zed",
+          "actor": "Rip Torn",
+          "name": "Zed"
+        }
+      ]
+    },
+    {
+      "comic": "Men In Black",
+      "movie": "Men In Black 2",
+      "year": 2002,
+      "publisher": "Aircell",
+      "grouping": "MiB",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Amblin Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "K",
+          "actor": "Tommy Lee Jones",
+          "name": "K"
+        },
+        {
+          "role": "J",
+          "actor": "Will Smith",
+          "name": "J"
+        },
+        {
+          "role": "Serleena",
+          "actor": "Lara Flynn Boyle",
+          "name": "Serleena"
+        },
+        {
+          "role": "Scrad",
+          "actor": "Johnny Knoxville",
+          "name": "Scrad"
+        },
+        {
+          "role": "Zed",
+          "actor": "Rip Torn",
+          "name": "Zed"
+        },
+        {
+          "role": "Laura Vasquez",
+          "actor": "Rosario Dawson",
+          "name": "Laura Vasquez"
+        }
+      ]
+    },
+    {
+      "comic": "Men In Black",
+      "movie": "Men In Black 3",
+      "year": 2012,
+      "publisher": "Aircell",
+      "grouping": "MiB",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Amblin Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "K",
+          "actor": "Tommy Lee Jones",
+          "name": "K"
+        },
+        {
+          "role": "J",
+          "actor": "Will Smith",
+          "name": "J"
+        },
+        {
+          "role": "K",
+          "actor": "Josh Brolin",
+          "name": "K"
+        },
+        {
+          "role": "Boris",
+          "actor": "Jermaine Clement",
+          "name": "Boris"
+        },
+        {
+          "role": "O",
+          "actor": "Emma Thomspon",
+          "name": "O"
+        },
+        {
+          "role": "O",
+          "actor": "Alice Eve",
+          "name": "O"
+        }
+      ]
+    },
+    {
+      "comic": "Mystery Men",
+      "movie": "Mystery Men",
+      "year": 1999,
+      "publisher": "Dark Horse",
+      "grouping": "Mystery Men",
+      "distributor": "Universal Pictures",
+      "studios": [
+        "Golar Productions"
+      ],
+      "roles": [
+        {
+          "role": "Blue Raja",
+          "actor": "Hank Azaria",
+          "name": "Jeff"
+        },
+        {
+          "role": "Monica",
+          "actor": "Claire Forlani",
+          "name": "Monica"
+        },
+        {
+          "role": "Bowler",
+          "actor": "Janeane Garofalo",
+          "name": "Carol"
+        },
+        {
+          "role": "Shoveler",
+          "actor": "William H Macy",
+          "name": "Eddy"
+        },
+        {
+          "role": "Captain Amazing",
+          "actor": "Greg Kinnear",
+          "name": "Lance Hunt"
+        },
+        {
+          "role": "Invisible Boy",
+          "actor": "Kel Mitchell",
+          "name": "Invisible Boy"
+        },
+        {
+          "role": "Annabel Leek",
+          "actor": "Lena Olin",
+          "name": "Annabel Leek"
+        },
+        {
+          "role": "Spleen",
+          "actor": "Paul Reubens",
+          "name": "Spleen"
+        },
+        {
+          "role": "Frankenstein Casanova",
+          "actor": "Geoffrey Rush",
+          "name": "Frankenstein Casanova"
+        },
+        {
+          "role": "Mister Furious",
+          "actor": "Ben Stiller",
+          "name": "Roy"
+        },
+        {
+          "role": "Sphinx",
+          "actor": "Wes Studi",
+          "name": "Sphinx"
+        }
+      ]
+    },
+    {
+      "comic": "Punisher",
+      "movie": "Punisher",
+      "year": 1989,
+      "publisher": "Marvel",
+      "grouping": "Punisher v1",
+      "distributor": "New World Pictures",
+      "studios": [
+        "Live Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Punisher",
+          "actor": "Dolph Lundgren",
+          "name": "Frank Castle"
+        },
+        {
+          "role": "Jake Berkowitz",
+          "actor": "Louis Gossett Jr",
+          "name": "Jake Berkowitz"
+        },
+        {
+          "role": "Gianni Franco",
+          "actor": "Jeroen Krabbe",
+          "name": "Gianni Franco"
+        },
+        {
+          "role": "Lady Tanaka",
+          "actor": "Kim Myori",
+          "name": "Lady Tanaka"
+        },
+        {
+          "role": "Dino Moretti",
+          "actor": "Bryan Marshall",
+          "name": "Dino Moretti"
+        },
+        {
+          "role": "Sam Leary",
+          "actor": "Nancy Everhard",
+          "name": "Sam Leary"
+        }
+      ]
+    },
+    {
+      "comic": "Punisher",
+      "movie": "Punisher",
+      "year": 2004,
+      "publisher": "Marvel",
+      "grouping": "Punisher v2",
+      "distributor": "Lionsgate",
+      "studios": [
+        "Marvel Knights",
+        "Valhalla Motion Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Punisher",
+          "actor": "Thomas Jane",
+          "name": "Frank Castle"
+        },
+        {
+          "role": "Howard Saint",
+          "actor": "John Travolta",
+          "name": "Howard Saint"
+        },
+        {
+          "role": "Quentin Glass",
+          "actor": "Will Patton",
+          "name": "Quentin Glass"
+        },
+        {
+          "role": "Livia Saint",
+          "actor": "Laura Harring",
+          "name": "Livia Saint"
+        },
+        {
+          "role": "Spacker Dave",
+          "actor": "Ben Foster",
+          "name": "Spacker Dave"
+        },
+        {
+          "role": "Joan",
+          "actor": "Rebecca Romijn",
+          "name": "Joan"
+        }
+      ]
+    },
+    {
+      "comic": "Punisher",
+      "movie": "Punisher: War Zone",
+      "year": 2008,
+      "publisher": "Marvel",
+      "grouping": "Punisher v3",
+      "distributor": "Lionsgate",
+      "studios": [
+        "Marvel Knights",
+        "Valhalla Motion Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Punisher",
+          "actor": "Ray Stevenson",
+          "name": "Frank Castle"
+        },
+        {
+          "role": "Jigsaw",
+          "actor": "Dominic West",
+          "name": "Billy Rusotti"
+        },
+        {
+          "role": "Angela Donatelli",
+          "actor": "Julie Benz",
+          "name": "Angela Donatelli"
+        },
+        {
+          "role": "Paul Budiansky",
+          "actor": "Colin Salmon",
+          "name": "Paul Budiansky"
+        },
+        {
+          "role": "James Rusotti",
+          "actor": "Doug Hutchinson",
+          "name": "James Rusotti"
+        },
+        {
+          "role": "Martin Soap",
+          "actor": "Dash Mihok",
+          "name": "Martin Soap"
+        }
+      ]
+    },
+    {
+      "comic": "Red",
+      "movie": "Red",
+      "year": 2010,
+      "publisher": "Wildstorm",
+      "grouping": "Red",
+      "distributor": "Summit Entertainment",
+      "studios": [
+        "DC Entertainment",
+        "di Bonaventura Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Frank Moses",
+          "actor": "Bruce Willis",
+          "name": "Frank Moses"
+        },
+        {
+          "role": "Sarah Walsh",
+          "actor": "Mary-Louise Parker",
+          "name": "Sarah Walsh"
+        },
+        {
+          "role": "Joe Matheson",
+          "actor": "Morgan Freeman",
+          "name": "Joe Matheson"
+        },
+        {
+          "role": "William Cooper",
+          "actor": "Karl Urban",
+          "name": "William Cooper"
+        },
+        {
+          "role": "Marvin Boggs",
+          "actor": "John Malkovich",
+          "name": "Marvin Boggs"
+        },
+        {
+          "role": "Victoria",
+          "actor": "Helen Mirren",
+          "name": "Victoria"
+        }
+      ]
+    },
+    {
+      "comic": "Red",
+      "movie": "Red 2",
+      "year": 2013,
+      "publisher": "Wildstorm",
+      "grouping": "Red",
+      "distributor": "Lionsgate",
+      "studios": [
+        "DC Entertainment",
+        "di Bonaventura Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Frank Moses",
+          "actor": "Bruce Willis",
+          "name": "Frank Moses"
+        },
+        {
+          "role": "Sarah Walsh",
+          "actor": "Mary-Louise Parker",
+          "name": "Sarah Walsh"
+        },
+        {
+          "role": "Joe Matheson",
+          "actor": "Morgan Freeman",
+          "name": "Joe Matheson"
+        },
+        {
+          "role": "Marvin Boggs",
+          "actor": "John Malkovich",
+          "name": "Marvin Boggs"
+        },
+        {
+          "role": "Victoria",
+          "actor": "Helen Mirren",
+          "name": "Victoria"
+        },
+        {
+          "role": "Katja",
+          "actor": "Catherine Zeta-Jones",
+          "name": "Katja"
+        },
+        {
+          "role": "Edward Bailey",
+          "actor": "Anthony Hopkins",
+          "name": "Edward Bailey"
+        },
+        {
+          "role": "Jack Horton",
+          "actor": "Neil McDonough",
+          "name": "Jack Horton"
+        },
+        {
+          "role": "Han Cho-Bai",
+          "actor": "Byung-hun Lee",
+          "name": "Han Cho-Bai"
+        }
+      ]
+    },
+    {
+      "comic": "Scott Pilgrim",
+      "movie": "Scott Pilgrim vs the World",
+      "year": 2010,
+      "publisher": "Oni Press",
+      "grouping": "Scott Pilgrim",
+      "distributor": "Universal Pictures",
+      "studios": [
+        "Big Talk Films"
+      ],
+      "roles": [
+        {
+          "role": "Scott Pilgrim",
+          "actor": "Michael Cera",
+          "name": "Scott Pilgrim"
+        },
+        {
+          "role": "Ramona Flowers",
+          "actor": "Mary Elizabeth Winstead",
+          "name": "Ramona Flowers"
+        },
+        {
+          "role": "Wallace Wells",
+          "actor": "Kieran Culkin",
+          "name": "Wallace Wells"
+        },
+        {
+          "role": "Knives Chau",
+          "actor": "Ellen Wong",
+          "name": "Knives Chau"
+        },
+        {
+          "role": "Kim Pine",
+          "actor": "Alison Pill",
+          "name": "Kim Pine"
+        },
+        {
+          "role": "Matthew Patel",
+          "actor": "Satya Bhabha",
+          "name": "Matthew Patel"
+        },
+        {
+          "role": "Lucas Lee",
+          "actor": "Chris Evans",
+          "name": "Lucas Lee"
+        },
+        {
+          "role": "Todd Ingram",
+          "actor": "Brandon Routh",
+          "name": "Todd Ingram"
+        },
+        {
+          "role": "Roxanne Richter",
+          "actor": "Mae Whitman",
+          "name": "Roxanne Richter"
+        },
+        {
+          "role": "Kyle Katayanagi",
+          "actor": "Shota Saito",
+          "name": "Kyle Katayanagi"
+        },
+        {
+          "role": "Ken Katayanagi",
+          "actor": "Keita Saito",
+          "name": "Ken Katayanagi"
+        },
+        {
+          "role": "Gideon Gordon Graves",
+          "actor": "Jason Schwartzman",
+          "name": "Gideon Gordon Graves"
+        }
+      ]
+    },
+    {
+      "comic": "Sin City",
+      "movie": "Sin City",
+      "year": 2005,
+      "publisher": "Dark Horse",
+      "grouping": "Sin City",
+      "distributor": "Miramax Films",
+      "studios": [
+        "Troublemaker Studios",
+        "Dimension Films"
+      ],
+      "roles": [
+        {
+          "role": "Nancy Callahan",
+          "actor": "Jessica Alba",
+          "name": "Nancy Callahan"
+        },
+        {
+          "role": "Miho",
+          "actor": "Devon Aoki",
+          "name": "Miho"
+        },
+        {
+          "role": "Becky",
+          "actor": "Alexis Bledel",
+          "name": "Becky"
+        },
+        {
+          "role": "Gail",
+          "actor": "Rosario Dawson",
+          "name": "Gail"
+        },
+        {
+          "role": "Jack Rafferty",
+          "actor": "Benicio Del Toro",
+          "name": "Jack Rafferty"
+        },
+        {
+          "role": "Manute",
+          "actor": "Michael Clarke Duncan",
+          "name": "Manute"
+        },
+        {
+          "role": "Lucille",
+          "actor": "Carla Gugino",
+          "name": "Lucille"
+        },
+        {
+          "role": "Bob",
+          "actor": "Michael Madsen",
+          "name": "Bob"
+        },
+        {
+          "role": "Shellie",
+          "actor": "Brittney Murphy",
+          "name": "Shellie"
+        },
+        {
+          "role": "Dwight McCarthy",
+          "actor": "Clive Owen",
+          "name": "Dwight McCarthy"
+        },
+        {
+          "role": "Marv",
+          "actor": "Mickey Roarke",
+          "name": "Marv"
+        },
+        {
+          "role": "John Hartigan",
+          "actor": "Bruce Willis",
+          "name": "John Hartigan"
+        },
+        {
+          "role": "Kevin",
+          "actor": "Elijah Wood",
+          "name": "Kevin"
+        }
+      ]
+    },
+    {
+      "comic": "Sin City",
+      "movie": "Sin City 2",
+      "year": 2013,
+      "publisher": "Dark Horse",
+      "grouping": "Sin City",
+      "distributor": "Miramax Films",
+      "studios": [
+        "The Weinstein  Company"
+      ],
+      "roles": [
+        {
+          "role": "Marv",
+          "actor": "Mickey Roarke",
+          "name": "Marv"
+        },
+        {
+          "role": "Nancy Callahan",
+          "actor": "Jessica Alba",
+          "name": "Nancy Callahan"
+        },
+        {
+          "role": "Dwight McCarthy",
+          "actor": "Josh Brolin",
+          "name": "Dwight McCarthy"
+        },
+        {
+          "role": "Johnny",
+          "actor": "Joseph Gordon-Levitt",
+          "name": "Johnny"
+        },
+        {
+          "role": "Gail",
+          "actor": "Rosario Dawson",
+          "name": "Gail"
+        },
+        {
+          "role": "John Hartigan",
+          "actor": "Bruce Willis",
+          "name": "John Hartigan"
+        },
+        {
+          "role": "Ava Lord",
+          "actor": "Eva Green",
+          "name": "Ava Lord"
+        },
+        {
+          "role": "Senator Roarke",
+          "actor": "Powers Boothe",
+          "name": "Senator Roarke"
+        },
+        {
+          "role": "Manute",
+          "actor": "Dennis Haysbert",
+          "name": "Manute"
+        },
+        {
+          "role": "Joey",
+          "actor": "Ray Liotta",
+          "name": "Joey"
+        },
+        {
+          "role": "Goldie",
+          "actor": "Jaime King",
+          "name": "Goldie"
+        },
+        {
+          "role": "Koenig",
+          "actor": "Christopher Lloyd",
+          "name": "Koenig"
+        },
+        {
+          "role": "Miho",
+          "actor": "Jamie Chung",
+          "name": "Miho"
+        },
+        {
+          "role": "Bob",
+          "actor": "Jeremy Piven",
+          "name": "Bob"
+        },
+        {
+          "role": "Mort",
+          "actor": "Christopher Meloni",
+          "name": "Mort"
+        }
+      ]
+    },
+    {
+      "comic": "Spawn",
+      "movie": "Spawn",
+      "year": 1997,
+      "publisher": "Image",
+      "grouping": "Spawn",
+      "distributor": "New Line Cinema",
+      "studios": [
+        "Todd McFarlane Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Spawn",
+          "actor": "Michael Jai White",
+          "name": "Al Simmons"
+        },
+        {
+          "role": "Violator",
+          "actor": "John Leguizamo",
+          "name": "Violator"
+        },
+        {
+          "role": "Jason Wynn",
+          "actor": "Martin Sheen",
+          "name": "Jason Wynn"
+        },
+        {
+          "role": "Wanda Blake Simmons-Fitzgerald",
+          "actor": "Theresa Randle",
+          "name": "Wanda Blake Simmons-Fitzgerald"
+        },
+        {
+          "role": "Cogliostro",
+          "actor": "Nicol Williamson",
+          "name": "Cogliostro"
+        }
+      ]
+    },
+    {
+      "comic": "Spiderman",
+      "movie": "Spiderman",
+      "year": 2002,
+      "publisher": "Marvel",
+      "grouping": "Spiderman v1",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Spiderman",
+          "actor": "Tobey Maguire",
+          "name": "Peter Parker"
+        },
+        {
+          "role": "Mary Jane Watson",
+          "actor": "Kirsten Dunst",
+          "name": "Mary Jane Watson"
+        },
+        {
+          "role": "Harry Osborn",
+          "actor": "James Franco",
+          "name": "Harry Osborn"
+        },
+        {
+          "role": "Ben Parker",
+          "actor": "Cliff Robertson",
+          "name": "Ben Parker"
+        },
+        {
+          "role": "Green Goblin",
+          "actor": "Willem Dafoe",
+          "name": "Norman Osborn"
+        },
+        {
+          "role": "May Parker",
+          "actor": "Rosemary Harris",
+          "name": "May Parker"
+        },
+        {
+          "role": "New Yorker",
+          "actor": "Stan Lee",
+          "name": "New Yorker"
+        }
+      ]
+    },
+    {
+      "comic": "Spiderman",
+      "movie": "Spiderman 2",
+      "year": 2004,
+      "publisher": "Marvel",
+      "grouping": "Spiderman v1",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Spiderman",
+          "actor": "Tobey Maguire",
+          "name": "Peter Parker"
+        },
+        {
+          "role": "Mary Jane Watson",
+          "actor": "Kirsten Dunst",
+          "name": "Mary Jane Watson"
+        },
+        {
+          "role": "Harry Osborn",
+          "actor": "James Franco",
+          "name": "Harry Osborn"
+        },
+        {
+          "role": "Ben Parker",
+          "actor": "Cliff Robertson",
+          "name": "Ben Parker"
+        },
+        {
+          "role": "May Parker",
+          "actor": "Rosemary Harris",
+          "name": "May Parker"
+        },
+        {
+          "role": "Doctor Octopus",
+          "actor": "Alfred Molina",
+          "name": "Otto Octavius"
+        },
+        {
+          "role": "Curt Connors",
+          "actor": "Dylan Baker",
+          "name": "Curt Connors"
+        },
+        {
+          "role": "New Yorker",
+          "actor": "Stan Lee",
+          "name": "New Yorker"
+        }
+      ]
+    },
+    {
+      "comic": "Spiderman",
+      "movie": "Spiderman 3",
+      "year": 2007,
+      "publisher": "Marvel",
+      "grouping": "Spiderman v1",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Spiderman",
+          "actor": "Tobey Maguire",
+          "name": "Peter Parker"
+        },
+        {
+          "role": "Mary Jane Watson",
+          "actor": "Kirsten Dunst",
+          "name": "Mary Jane Watson"
+        },
+        {
+          "role": "Gwen Stacy",
+          "actor": "Bryce Dallas Howard",
+          "name": "Gwen Stacy"
+        },
+        {
+          "role": "New Goblin",
+          "actor": "James Franco",
+          "name": "Harry Osborn"
+        },
+        {
+          "role": "Sandman",
+          "actor": "Thomas Haden Church",
+          "name": "Flint Marko"
+        },
+        {
+          "role": "Venom",
+          "actor": "Topher Grace",
+          "name": "Eddie Brock"
+        },
+        {
+          "role": "May Parker",
+          "actor": "Rosemary Harris",
+          "name": "May Parker"
+        },
+        {
+          "role": "Ben Parker",
+          "actor": "Cliff Robertson",
+          "name": "Ben Parker"
+        },
+        {
+          "role": "George Stacy",
+          "actor": "James Cromwell",
+          "name": "George Stacy"
+        },
+        {
+          "role": "New Yorker",
+          "actor": "Stan Lee",
+          "name": "New Yorker"
+        }
+      ]
+    },
+    {
+      "comic": "Spiderman",
+      "movie": "Amazing Spiderman",
+      "year": 2012,
+      "publisher": "Marvel",
+      "grouping": "Spiderman v2",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Spiderman",
+          "actor": "Andrew Garfield",
+          "name": "Peter Parker"
+        },
+        {
+          "role": "Gwen Stacy",
+          "actor": "Emma Stone",
+          "name": "Gwen Stacy"
+        },
+        {
+          "role": "Lizard",
+          "actor": "Rhys Ifans",
+          "name": "Curt Connors"
+        },
+        {
+          "role": "Ben Parker",
+          "actor": "Martin Sheen",
+          "name": "Ben Parker"
+        },
+        {
+          "role": "May Parker",
+          "actor": "Sally Fields",
+          "name": "May Parker"
+        },
+        {
+          "role": "George Stacy",
+          "actor": "Denis Leary",
+          "name": "George Stacy"
+        },
+        {
+          "role": "Librarian",
+          "actor": "Stan Lee",
+          "name": "Librarian"
+        }
+      ]
+    },
+    {
+      "comic": "Spiderman",
+      "movie": "Amazing Spiderman 2",
+      "year": 2014,
+      "publisher": "Marvel",
+      "grouping": "Spiderman v2",
+      "distributor": "Columbia Pictures",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Spiderman",
+          "actor": "Andrew Garfield",
+          "name": "Peter Parker"
+        },
+        {
+          "role": "Gwen Stacy",
+          "actor": "Emma Stone",
+          "name": "Gwen Stacy"
+        },
+        {
+          "role": "May Parker",
+          "actor": "Sally Fields",
+          "name": "May Parker"
+        },
+        {
+          "role": "George Stacy",
+          "actor": "Denis Leary",
+          "name": "George Stacy"
+        },
+        {
+          "role": "Electro",
+          "actor": "Jaime Foxx",
+          "name": "Max Dillon"
+        },
+        {
+          "role": "Green Goblin",
+          "actor": "Dane DeHaan",
+          "name": "Harry Osborn"
+        },
+        {
+          "role": "Norman Osborn",
+          "actor": "Chris Cooper",
+          "name": "Norman Osborn"
+        },
+        {
+          "role": "Man at Graduation",
+          "actor": "Stan Lee",
+          "name": "Man at Graduation"
+        }
+      ]
+    },
+    {
+      "comic": "Suicide Squad",
+      "movie": "Suicide Squad",
+      "year": 2016,
+      "publisher": "DC",
+      "grouping": "DC Extended Universe",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Entertainment",
+        "RatPac-Dune Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Deadshot",
+          "actor": "Will Smith",
+          "name": "Floyd Lawton"
+        },
+        {
+          "role": "Joker",
+          "actor": "Jared Leto",
+          "name": "Joker"
+        },
+        {
+          "role": "Harley Quinn",
+          "actor": "Margot Robbie",
+          "name": "Harleen Quinzel"
+        },
+        {
+          "role": "Amanda Waller",
+          "actor": "Viola Davis",
+          "name": "Amanda Waller"
+        },
+        {
+          "role": "Rick Flag",
+          "actor": "Joel Kinnaman",
+          "name": "Rick Flag"
+        },
+        {
+          "role": "Captain Boomerang",
+          "actor": "Jai Courtney",
+          "name": "Digger Harkness"
+        },
+        {
+          "role": "El Diablo",
+          "actor": "Jay Hernandez",
+          "name": "Chato Santana"
+        },
+        {
+          "role": "Killer Croc",
+          "actor": "Adewale Akinnuoye-Agbaje",
+          "name": "Waylon Jones"
+        },
+        {
+          "role": "Enchantress",
+          "actor": "Cara Delevingne",
+          "name": "June Moone"
+        },
+        {
+          "role": "Katana",
+          "actor": "Karen Fukuhara",
+          "name": "Tatsu Yamashiro"
+        },
+        {
+          "role": "Batman",
+          "actor": "Ben Affleck",
+          "name": "Bruce Wayne"
+        },
+        {
+          "role": "Flash",
+          "actor": "Ezra Miller",
+          "name": "Barry Allen"
+        }
+      ]
+    },
+    {
+      "comic": "Supergirl",
+      "movie": "Supergirl",
+      "year": 1984,
+      "publisher": "DC",
+      "grouping": "Superman v1",
+      "distributor": "Tri-Star Pictures",
+      "studios": [
+        "Artistry Investors in Industry"
+      ],
+      "roles": [
+        {
+          "role": "Supergirl",
+          "actor": "Helen Slater",
+          "name": "Linda Danvers"
+        },
+        {
+          "role": "Selena",
+          "actor": "Faye Dunaway",
+          "name": "Selena"
+        },
+        {
+          "role": "Jimmy Olsen",
+          "actor": "Marc McClure",
+          "name": "Jimmy Olsen"
+        }
+      ]
+    },
+    {
+      "comic": "Superman",
+      "movie": "Superman",
+      "year": 1978,
+      "publisher": "DC",
+      "grouping": "Superman v1",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Dovemead Ltd.",
+        "Film Export A.G."
+      ],
+      "roles": [
+        {
+          "role": "Superman",
+          "actor": "Christopher Reeve",
+          "name": "Clark Kent"
+        },
+        {
+          "role": "Jor-El",
+          "actor": "Marlon Brando",
+          "name": "Jor-El"
+        },
+        {
+          "role": "Lex Luthor",
+          "actor": "Gene Hackman",
+          "name": "Lex Luthor"
+        },
+        {
+          "role": "Lois Lane",
+          "actor": "Margot Kidder",
+          "name": "Lois Lane"
+        },
+        {
+          "role": "Perry White",
+          "actor": "Jackie Cooper",
+          "name": "Perry White"
+        },
+        {
+          "role": "Jonathan Kent",
+          "actor": "Glenn Ford",
+          "name": "Jonathan Kent"
+        },
+        {
+          "role": "Martha Kent",
+          "actor": "Phyllis Thaxter",
+          "name": "Martha Kent"
+        },
+        {
+          "role": "Jimmy Olsen",
+          "actor": "Marc McClure",
+          "name": "Jimmy Olsen"
+        },
+        {
+          "role": "Ursa",
+          "actor": "Sarah Douglas",
+          "name": "Ursa"
+        },
+        {
+          "role": "Non",
+          "actor": "Jack O\u0027Halloran",
+          "name": "Non"
+        },
+        {
+          "role": "Otis",
+          "actor": "Ned Beatty",
+          "name": "Otis"
+        },
+        {
+          "role": "Eve Tessmacher",
+          "actor": "Valerie Perrine",
+          "name": "Eve Tessmacher"
+        }
+      ]
+    },
+    {
+      "comic": "Superman",
+      "movie": "Superman 2",
+      "year": 1980,
+      "publisher": "DC",
+      "grouping": "Superman v1",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Dovemead Ltd.",
+        "Film Export A.G."
+      ],
+      "roles": [
+        {
+          "role": "Superman",
+          "actor": "Christopher Reeve",
+          "name": "Clark Kent"
+        },
+        {
+          "role": "Jor-El",
+          "actor": "Marlon Brando",
+          "name": "Jor-El"
+        },
+        {
+          "role": "Lex Luthor",
+          "actor": "Gene Hackman",
+          "name": "Lex Luthor"
+        },
+        {
+          "role": "Lois Lane",
+          "actor": "Margot Kidder",
+          "name": "Lois Lane"
+        },
+        {
+          "role": "Perry White",
+          "actor": "Jackie Cooper",
+          "name": "Perry White"
+        },
+        {
+          "role": "Ursa",
+          "actor": "Sarah Douglas",
+          "name": "Ursa"
+        },
+        {
+          "role": "Non",
+          "actor": "Jack O\u0027Halloran",
+          "name": "Non"
+        },
+        {
+          "role": "Otis",
+          "actor": "Ned Beatty",
+          "name": "Otis"
+        },
+        {
+          "role": "Eve Tessmacher",
+          "actor": "Valerie Perrine",
+          "name": "Eve Tessmacher"
+        }
+      ]
+    },
+    {
+      "comic": "Superman",
+      "movie": "Superman 3",
+      "year": 1983,
+      "publisher": "DC",
+      "grouping": "Superman v1",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Dovemead Films"
+      ],
+      "roles": [
+        {
+          "role": "Superman",
+          "actor": "Christopher Reeve",
+          "name": "Clark Kent"
+        },
+        {
+          "role": "Gus Gorman",
+          "actor": "Richard Pryor",
+          "name": "Gus Gorman"
+        },
+        {
+          "role": "Ross Webster",
+          "actor": "Robert Vaughn",
+          "name": "Ross Webster"
+        },
+        {
+          "role": "Lana Lang",
+          "actor": "Annette O\u0027Toole",
+          "name": "Lana Lang"
+        },
+        {
+          "role": "Vera Webster",
+          "actor": "Annie Ross",
+          "name": "Vera Webster"
+        },
+        {
+          "role": "Perry White",
+          "actor": "Jackie Cooper",
+          "name": "Perry White"
+        },
+        {
+          "role": "Lois Lane",
+          "actor": "Margot Kidder",
+          "name": "Lois Lane"
+        },
+        {
+          "role": "Jimmy Olsen",
+          "actor": "Marc McClure",
+          "name": "Jimmy Olsen"
+        }
+      ]
+    },
+    {
+      "comic": "Superman",
+      "movie": "Superman 4: the Quest for Peace",
+      "year": 1987,
+      "publisher": "DC",
+      "grouping": "Superman v1",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Canon Films"
+      ],
+      "roles": [
+        {
+          "role": "Superman",
+          "actor": "Christopher Reeve",
+          "name": "Clark Kent"
+        },
+        {
+          "role": "Lex Luthor",
+          "actor": "Gene Hackman",
+          "name": "Lex Luthor"
+        },
+        {
+          "role": "Lois Lane",
+          "actor": "Margot Kidder",
+          "name": "Lois Lane"
+        },
+        {
+          "role": "Perry White",
+          "actor": "Jackie Cooper",
+          "name": "Perry White"
+        },
+        {
+          "role": "Jimmy Olsen",
+          "actor": "Marc McClure",
+          "name": "Jimmy Olsen"
+        },
+        {
+          "role": "Lenny Luthor",
+          "actor": "Jon Cryer",
+          "name": "Lenny Luthor"
+        },
+        {
+          "role": "Nuclear Man",
+          "actor": "Marc Pillow",
+          "name": "Nuclear Man"
+        }
+      ]
+    },
+    {
+      "comic": "Superman",
+      "movie": "Superman Returns",
+      "year": 2006,
+      "publisher": "DC",
+      "grouping": "Superman v2",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Comics",
+        "Legendary Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Superman",
+          "actor": "Brandon Routh",
+          "name": "Clark Kent"
+        },
+        {
+          "role": "Lois Lane",
+          "actor": "Kate Bosworth",
+          "name": "Lois Lane"
+        },
+        {
+          "role": "Lex Luthor",
+          "actor": "Kevin Spacey",
+          "name": "Lex Luthor"
+        },
+        {
+          "role": "Richard White",
+          "actor": "James Marsden",
+          "name": "Richard White"
+        },
+        {
+          "role": "Kitty Kowalski",
+          "actor": "Parker Posey",
+          "name": "Kitty Kowalski"
+        },
+        {
+          "role": "Perry White",
+          "actor": "Frank Langella",
+          "name": "Perry White"
+        },
+        {
+          "role": "Jimmy Olsen",
+          "actor": "Sam Huntington",
+          "name": "Jimmy Olsen"
+        },
+        {
+          "role": "Martha Kent",
+          "actor": "Eva Marie Saint",
+          "name": "Martha Kent"
+        }
+      ]
+    },
+    {
+      "comic": "Superman",
+      "movie": "Man of Steel",
+      "year": 2013,
+      "publisher": "DC",
+      "grouping": "DC Extended Universe",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Comics",
+        "Legendary Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Superman",
+          "actor": "Henry Cavill",
+          "name": "Clark Kent"
+        },
+        {
+          "role": "Lois Lane",
+          "actor": "Amy Adams",
+          "name": "Lois Lane"
+        },
+        {
+          "role": "Perry White",
+          "actor": "Laurence Fishburne",
+          "name": "Perry White"
+        },
+        {
+          "role": "Jonathan Kent",
+          "actor": "Kevin Costner",
+          "name": "Jonathan Kent"
+        },
+        {
+          "role": "Martha Kent",
+          "actor": "Diane Lane",
+          "name": "Martha Kent"
+        },
+        {
+          "role": "Jor-El",
+          "actor": "Russel Crowe",
+          "name": "Jor-El"
+        },
+        {
+          "role": "Lara",
+          "actor": "Ayelet Zurer",
+          "name": "Lara"
+        },
+        {
+          "role": "Zod",
+          "actor": "Michael Shannon",
+          "name": "Zod"
+        },
+        {
+          "role": "Nathan Hardy",
+          "actor": "Christopher Meloni",
+          "name": "Nathan Hardy"
+        },
+        {
+          "role": "Faora",
+          "actor": "Antje Traue",
+          "name": "Faora"
+        }
+      ]
+    },
+    {
+      "comic": "Swamp Thing",
+      "movie": "Swamp Thing",
+      "year": 1982,
+      "publisher": "DC",
+      "grouping": "Swamp Thing",
+      "distributor": "Embassy Pictures",
+      "studios": [
+        "Swampfilms"
+      ],
+      "roles": [
+        {
+          "role": "Swamp Thing",
+          "actor": "Ray Wise",
+          "name": "Alec Holland"
+        },
+        {
+          "role": "Alice Cable",
+          "actor": "Adrienne Barbeau",
+          "name": "Alice Cable"
+        },
+        {
+          "role": "Anton Arcane",
+          "actor": "Louis Jourdan",
+          "name": "Anton Arcane"
+        },
+        {
+          "role": "Swamp Thing",
+          "actor": "Dick Durock",
+          "name": "Swamp Thing"
+        }
+      ]
+    },
+    {
+      "comic": "Swamp Thing",
+      "movie": "Return of Swamp Thing",
+      "year": 1989,
+      "publisher": "DC",
+      "grouping": "Swamp Thing",
+      "distributor": "Millimeter Films",
+      "studios": [
+        "Lightyear Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Swamp Thing",
+          "actor": "Dick Durock",
+          "name": "Swamp Thing"
+        },
+        {
+          "role": "Abigail Arcane",
+          "actor": "Heather Locklear",
+          "name": "Abigail Arcane"
+        },
+        {
+          "role": "Anton Arcane",
+          "actor": "Louis Jourdan",
+          "name": "Anton Arcane"
+        },
+        {
+          "role": "Lana Zurrell",
+          "actor": "Sarah Douglas",
+          "name": "Lana Zurrell"
+        }
+      ]
+    },
+    {
+      "comic": "The Mask",
+      "movie": "The Mask",
+      "year": 1994,
+      "publisher": "Dark Horse",
+      "grouping": "The Mask",
+      "distributor": "New Line Cinema",
+      "studios": [
+        "Dark Horse Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Mask",
+          "actor": "Jim Carrey",
+          "name": "Stanley Ipkiss"
+        },
+        {
+          "role": "Tina Carlyle",
+          "actor": "Cameron Diaz",
+          "name": "Tina Carlyle"
+        },
+        {
+          "role": "Dorian Tyrell",
+          "actor": "Peter Green",
+          "name": "Dorian Tyrell"
+        }
+      ]
+    },
+    {
+      "comic": "TMNT",
+      "movie": "Teenage Mutant Ninja Turtles",
+      "year": 1990,
+      "publisher": "Mirage Studios",
+      "grouping": "TMNT v1",
+      "distributor": "New Line Cinema",
+      "studios": [
+        "Golden Harvest"
+      ],
+      "roles": [
+        {
+          "role": "April O\u0027Neil",
+          "actor": "Judith Hoag",
+          "name": "April O\u0027Neil"
+        },
+        {
+          "role": "Casey Jones",
+          "actor": "Elias Koteas",
+          "name": "Casey Jones"
+        },
+        {
+          "role": "Shredder",
+          "actor": "James Saito",
+          "name": "Shredder"
+        },
+        {
+          "role": "Raphael",
+          "actor": "Josh Pais",
+          "name": "Raphael"
+        },
+        {
+          "role": "Michelangelo",
+          "actor": "Robbie Rist",
+          "name": "Michelangelo"
+        },
+        {
+          "role": "Leonardo",
+          "actor": "Brian Tochi",
+          "name": "Leonardo"
+        },
+        {
+          "role": "Donatello",
+          "actor": "Corey Feldman",
+          "name": "Donatello"
+        },
+        {
+          "role": "Splinter",
+          "actor": "Kevin Clash",
+          "name": "Splinter"
+        },
+        {
+          "role": "Head Thug",
+          "actor": "Sam Rockwell",
+          "name": "Head Thug"
+        }
+      ]
+    },
+    {
+      "comic": "TMNT",
+      "movie": "Teenage Mutant Ninja Turtles 2: the Secret of the Ooze",
+      "year": 1991,
+      "publisher": "Mirage Studios",
+      "grouping": "TMNT v1",
+      "distributor": "New Line Cinema",
+      "studios": [
+        "Golden Harvest"
+      ],
+      "roles": [
+        {
+          "role": "April O\u0027Neil",
+          "actor": "Paige Turco",
+          "name": "April O\u0027Neil"
+        },
+        {
+          "role": "Jordan Perry",
+          "actor": "David Warner",
+          "name": "Jordan Perry"
+        },
+        {
+          "role": "Keno",
+          "actor": "Ernie Reyes Jr",
+          "name": "Keno"
+        },
+        {
+          "role": "Shredder",
+          "actor": "Francois Chau",
+          "name": "Shredder"
+        },
+        {
+          "role": "Super Shredder",
+          "actor": "Kevin Nash",
+          "name": "Super Shredder"
+        },
+        {
+          "role": "Donatello",
+          "actor": "Adam Carl",
+          "name": "Donatello"
+        },
+        {
+          "role": "Raphael",
+          "actor": "Laurie Faso",
+          "name": "Raphael"
+        },
+        {
+          "role": "Michelangelo",
+          "actor": "Robbie Rist",
+          "name": "Michelangelo"
+        },
+        {
+          "role": "Leonardo",
+          "actor": "Brian Tochi",
+          "name": "Leonardo"
+        },
+        {
+          "role": "Splinter",
+          "actor": "Kevin Clash",
+          "name": "Splinter"
+        }
+      ]
+    },
+    {
+      "comic": "TMNT",
+      "movie": "Teenage Mutant Ninja Turtles 3",
+      "year": 1993,
+      "publisher": "Mirage Studios",
+      "grouping": "TMNT v1",
+      "distributor": "New Line Cinema",
+      "studios": [
+        "Golden Harvest"
+      ],
+      "roles": [
+        {
+          "role": "April O\u0027Neil",
+          "actor": "Paige Turco",
+          "name": "April O\u0027Neil"
+        },
+        {
+          "role": "Casey Jones",
+          "actor": "Elias Koteas",
+          "name": "Casey Jones"
+        },
+        {
+          "role": "Raphael",
+          "actor": "Tim Kelleher",
+          "name": "Raphael"
+        },
+        {
+          "role": "Donatello",
+          "actor": "Corey Feldman",
+          "name": "Donatello"
+        },
+        {
+          "role": "Michelangelo",
+          "actor": "Robbie Rist",
+          "name": "Michelangelo"
+        },
+        {
+          "role": "Leonardo",
+          "actor": "Brian Tochi",
+          "name": "Leonardo"
+        },
+        {
+          "role": "Splinter",
+          "actor": "James Murray",
+          "name": "Splinter"
+        }
+      ]
+    },
+    {
+      "comic": "TMNT",
+      "movie": "Teenage Mutant Ninja Turtles",
+      "year": 2014,
+      "publisher": "Mirage Studios",
+      "grouping": "TMNT v2",
+      "distributor": "Paramount",
+      "studios": [
+        "Nickelodeon Movies"
+      ],
+      "roles": [
+        {
+          "role": "April O\u0027Neil",
+          "actor": "Megan Fox",
+          "name": "April O\u0027Neil"
+        },
+        {
+          "role": "Vern Fenwick",
+          "actor": "Will Arnett",
+          "name": "Vern Fenwick"
+        },
+        {
+          "role": "Eric Sacks",
+          "actor": "William Fichtner",
+          "name": "Eric Sacks"
+        },
+        {
+          "role": "Shredder",
+          "actor": "Tohoru Masamune",
+          "name": "Shredder"
+        },
+        {
+          "role": "Leonardo",
+          "actor": "Johnny Knoxville",
+          "name": "Leonardo"
+        },
+        {
+          "role": "Raphael",
+          "actor": "Alan Ritchson",
+          "name": "Raphael"
+        },
+        {
+          "role": "Michelangelo",
+          "actor": "Noel Fisher",
+          "name": "Michelangelo"
+        },
+        {
+          "role": "Donatello",
+          "actor": "Jeremy Howard",
+          "name": "Donatello"
+        },
+        {
+          "role": "Splinter",
+          "actor": "Tony Shaloub",
+          "name": "Splinter"
+        },
+        {
+          "role": "Baxter Stockman",
+          "actor": "Todd Freeman",
+          "name": "Baxter Stockman"
+        }
+      ]
+    },
+    {
+      "comic": "TMNT",
+      "movie": "Teenage Mutant Ninja Turtles: Out of the Shadows",
+      "year": 2016,
+      "publisher": "Mirage Studios",
+      "grouping": "TMNT v2",
+      "distributor": "Paramount",
+      "studios": [
+        "Nickelodeon Movies"
+      ],
+      "roles": [
+        {
+          "role": "April O\u0027Neil",
+          "actor": "Megan Fox",
+          "name": "April O\u0027Neil"
+        },
+        {
+          "role": "Casey Jones",
+          "actor": "Stephen Amell",
+          "name": "Casey Jones"
+        },
+        {
+          "role": "Vern Fenwick",
+          "actor": "Will Arnett",
+          "name": "Vern Fenwick"
+        },
+        {
+          "role": "Shredder",
+          "actor": "Brian Tee",
+          "name": "Shredder"
+        },
+        {
+          "role": "Leonardo",
+          "actor": "Johnny Knoxville",
+          "name": "Leonardo"
+        },
+        {
+          "role": "Raphael",
+          "actor": "Alan Ritchson",
+          "name": "Raphael"
+        },
+        {
+          "role": "Michelangelo",
+          "actor": "Noel Fisher",
+          "name": "Michelangelo"
+        },
+        {
+          "role": "Donatello",
+          "actor": "Jeremy Howard",
+          "name": "Donatello"
+        },
+        {
+          "role": "Splinter",
+          "actor": "Tony Shaloub",
+          "name": "Splinter"
+        },
+        {
+          "role": "Baxter Stockman",
+          "actor": "Tyler Perry",
+          "name": "Baxter Stockman"
+        },
+        {
+          "role": "Krang",
+          "actor": "Brad Garret",
+          "name": "Krang"
+        }
+      ]
+    },
+    {
+      "comic": "Thor",
+      "movie": "Thor",
+      "year": 2011,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Paramount",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Thor",
+          "actor": "Chris Hemsworth",
+          "name": "Thor"
+        },
+        {
+          "role": "Jane Foster",
+          "actor": "Natalie Portman",
+          "name": "Jane Foster"
+        },
+        {
+          "role": "Loki",
+          "actor": "Tom Hiddleston",
+          "name": "Loki"
+        },
+        {
+          "role": "Erik Selvig",
+          "actor": "Stellan Skarsgaard",
+          "name": "Erik Selvig"
+        },
+        {
+          "role": "Laufey",
+          "actor": "Colm Feore",
+          "name": "Laufey"
+        },
+        {
+          "role": "Volstagg",
+          "actor": "Ray Stevenson",
+          "name": "Volstagg"
+        },
+        {
+          "role": "Heimdall",
+          "actor": "Idris Elba",
+          "name": "Heimdall"
+        },
+        {
+          "role": "Darcy Lewis",
+          "actor": "Kat Dennings",
+          "name": "Darcy Lewis"
+        },
+        {
+          "role": "Frigga",
+          "actor": "Renee Russo",
+          "name": "Frigga"
+        },
+        {
+          "role": "Odin",
+          "actor": "Anthony Hopkins",
+          "name": "Odin"
+        },
+        {
+          "role": "Hogun",
+          "actor": "Tadanobu Asano",
+          "name": "Hogun"
+        },
+        {
+          "role": "Fandral",
+          "actor": "Josh Dallas",
+          "name": "Fandral"
+        },
+        {
+          "role": "Sif",
+          "actor": "Jaimie Alexander",
+          "name": "Sif"
+        },
+        {
+          "role": "Phil Coulson",
+          "actor": "Clark Gregg",
+          "name": "Phil Coulson"
+        },
+        {
+          "role": "Stan the Man",
+          "actor": "Stan Lee",
+          "name": "Stan the Man"
+        }
+      ]
+    },
+    {
+      "comic": "Thor",
+      "movie": "Thor: the Dark World",
+      "year": 2013,
+      "publisher": "Marvel",
+      "grouping": "MCU",
+      "distributor": "Walt Disney",
+      "studios": [
+        "Marvel"
+      ],
+      "roles": [
+        {
+          "role": "Thor",
+          "actor": "Chris Hemsworth",
+          "name": "Thor"
+        },
+        {
+          "role": "Jane Foster",
+          "actor": "Natalie Portman",
+          "name": "Jane Foster"
+        },
+        {
+          "role": "Loki",
+          "actor": "Tom Hiddleston",
+          "name": "Loki"
+        },
+        {
+          "role": "Erik Selvig",
+          "actor": "Stellan Skarsgaard",
+          "name": "Erik Selvig"
+        },
+        {
+          "role": "Volstagg",
+          "actor": "Ray Stevenson",
+          "name": "Volstagg"
+        },
+        {
+          "role": "Heimdall",
+          "actor": "Idris Elba",
+          "name": "Heimdall"
+        },
+        {
+          "role": "Darcy Lewis",
+          "actor": "Kat Dennings",
+          "name": "Darcy Lewis"
+        },
+        {
+          "role": "Frigga",
+          "actor": "Renee Russo",
+          "name": "Frigga"
+        },
+        {
+          "role": "Odin",
+          "actor": "Anthony Hopkins",
+          "name": "Odin"
+        },
+        {
+          "role": "Hogun",
+          "actor": "Tadanobu Asano",
+          "name": "Hogun"
+        },
+        {
+          "role": "Fandral",
+          "actor": "Zachary Levi",
+          "name": "Fandral"
+        },
+        {
+          "role": "Sif",
+          "actor": "Jaimie Alexander",
+          "name": "Sif"
+        },
+        {
+          "role": "Malekith",
+          "actor": "Christopher Eccleston",
+          "name": "Malekith"
+        },
+        {
+          "role": "Kurse",
+          "actor": "Adewale Akinnuoye-Agbaje",
+          "name": "Kurse"
+        },
+        {
+          "role": "Patient",
+          "actor": "Stan Lee",
+          "name": "Patient"
+        }
+      ]
+    },
+    {
+      "comic": "V for Vendetta",
+      "movie": "V for Vendetta",
+      "year": 2006,
+      "publisher": "Vertigo",
+      "grouping": "V",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "Virtual Studios"
+      ],
+      "roles": [
+        {
+          "role": "V",
+          "actor": "Hugo Weaving",
+          "name": "V"
+        },
+        {
+          "role": "Evey Hammond",
+          "actor": "Natalie Portman",
+          "name": "Evey Hammond"
+        },
+        {
+          "role": "Eric Finch",
+          "actor": "Stephen Rhea",
+          "name": "Eric Finch"
+        },
+        {
+          "role": "Adam Sutler",
+          "actor": "John Hurt",
+          "name": "Adam Sutler"
+        },
+        {
+          "role": "Gordon Deitrich",
+          "actor": "Stephen Fry",
+          "name": "Gordon Deitrich"
+        }
+      ]
+    },
+    {
+      "comic": "Wanted",
+      "movie": "Wanted",
+      "year": 2008,
+      "publisher": "Top Cow",
+      "grouping": "Wanted",
+      "distributor": "Universal Pictures",
+      "studios": [
+        "Spyglass Entertainment"
+      ],
+      "roles": [
+        {
+          "role": "Wesley Gibson",
+          "actor": "James McAvoy",
+          "name": "Wesley Gibson"
+        },
+        {
+          "role": "Sloan",
+          "actor": "Morgan Freeman",
+          "name": "Sloan"
+        },
+        {
+          "role": "Fox",
+          "actor": "Angelina Jolie",
+          "name": "Fox"
+        },
+        {
+          "role": "Cross",
+          "actor": "Thomas Kretschmann",
+          "name": "Cross"
+        },
+        {
+          "role": "Earl Spellman",
+          "actor": "Common",
+          "name": "Earl Spellman"
+        },
+        {
+          "role": "Pekwarsky",
+          "actor": "Terence Stamp",
+          "name": "Pekwarsky"
+        },
+        {
+          "role": "Barry",
+          "actor": "Chris Pratt",
+          "name": "Barry"
+        }
+      ]
+    },
+    {
+      "comic": "Watchmen",
+      "movie": "Watchmen",
+      "year": 2009,
+      "publisher": "DC",
+      "grouping": "Watchmen",
+      "distributor": "Warner Brothers",
+      "studios": [
+        "DC Comics",
+        "Legendary Pictures"
+      ],
+      "roles": [
+        {
+          "role": "Rorschach",
+          "actor": "Jackie Earle Haley",
+          "name": "Walter Kovacs"
+        },
+        {
+          "role": "Nite Owl",
+          "actor": "Patrick Wilson",
+          "name": "Daniel Dreiberg"
+        },
+        {
+          "role": "Doctor Manhattan",
+          "actor": "Billy Crudup",
+          "name": "Jon Osterman"
+        },
+        {
+          "role": "Silk Spectre",
+          "actor": "Malin Akerman",
+          "name": "Laurie Juspeczyk"
+        },
+        {
+          "role": "Comedian",
+          "actor": "Jeffrey Dean Morgan",
+          "name": "Edward Morgan Blake"
+        },
+        {
+          "role": "Ozymandias",
+          "actor": "Matthew Goode",
+          "name": "Adrian Veidt"
+        },
+        {
+          "role": "Silk Spectre",
+          "actor": "Carla Gugiino",
+          "name": "Sally Jupiter"
+        }
+      ]
+    },
+    {
+      "comic": "Wolverine",
+      "movie": "X-Men Origins: Wolverine",
+      "year": 2009,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company"
+      ],
+      "roles": [
+        {
+          "role": "Wolverine",
+          "actor": "Hugh Jackman",
+          "name": "Logan"
+        },
+        {
+          "role": "Sabertooth",
+          "actor": "Liev Schreiber",
+          "name": "Victor Creed"
+        },
+        {
+          "role": "William Stryker",
+          "actor": "Danny Huston",
+          "name": "William Stryker"
+        },
+        {
+          "role": "Kayla Silverfox",
+          "actor": "Lynn Collins",
+          "name": "Kayla Silverfox"
+        },
+        {
+          "role": "Blob",
+          "actor": "Kevin Durand",
+          "name": "Fred J Dukes"
+        },
+        {
+          "role": "Deadpool",
+          "actor": "Ryan Reynolds",
+          "name": "Wade Wilson"
+        }
+      ]
+    },
+    {
+      "comic": "Wolverine",
+      "movie": "The Wolverine",
+      "year": 2013,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company"
+      ],
+      "roles": [
+        {
+          "role": "Wolverine",
+          "actor": "Hugh Jackman",
+          "name": "Logan"
+        },
+        {
+          "role": "Professor X",
+          "actor": "Patrick Stewart",
+          "name": "Charles Xavier"
+        },
+        {
+          "role": "Magneto",
+          "actor": "Ian McKellen",
+          "name": "Erik Lehnsherr"
+        },
+        {
+          "role": "Shingen Yashida",
+          "actor": "Hiroyuki Sanada",
+          "name": "Shingen Yashida"
+        },
+        {
+          "role": "Mariko Yashida",
+          "actor": "Tao Okamoto",
+          "name": "Mariko Yashida"
+        },
+        {
+          "role": "Yukio",
+          "actor": "Rila Fukushima",
+          "name": "Yukio"
+        },
+        {
+          "role": "Phoenix",
+          "actor": "Famke Janssen",
+          "name": "Jean Grey"
+        },
+        {
+          "role": "Kenuichio Harada",
+          "actor": "Will Yun Lee",
+          "name": "Kenuichio Harada"
+        },
+        {
+          "role": "Viper",
+          "actor": "Svetlana Khodchenkova",
+          "name": "Green"
+        },
+        {
+          "role": "Yashida",
+          "actor": "Haruhiko Yamanouchi",
+          "name": "Yashida"
+        },
+        {
+          "role": "Noburo Mori",
+          "actor": "Brian Tee",
+          "name": "Noburo Mori"
+        }
+      ]
+    },
+    {
+      "comic": "X-Men",
+      "movie": "X-Men",
+      "year": 2000,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company"
+      ],
+      "roles": [
+        {
+          "role": "Professor X",
+          "actor": "Patrick Stewart",
+          "name": "Charles Xavier"
+        },
+        {
+          "role": "Magneto",
+          "actor": "Ian McKellen",
+          "name": "Erik Lehnsherr"
+        },
+        {
+          "role": "Wolverine",
+          "actor": "Hugh Jackman",
+          "name": "Logan"
+        },
+        {
+          "role": "Storm",
+          "actor": "Halle Berry",
+          "name": "Ororo Munroe"
+        },
+        {
+          "role": "Phoenix",
+          "actor": "Famke Janssen",
+          "name": "Jean Grey"
+        },
+        {
+          "role": "Cyclops",
+          "actor": "James Marsden",
+          "name": "Scott Summers"
+        },
+        {
+          "role": "Mystique",
+          "actor": "Rebecca Romijn-Stamos",
+          "name": "Raven Darkholme"
+        },
+        {
+          "role": "Toad",
+          "actor": "Ray Park",
+          "name": "Mortimer Toynbee"
+        },
+        {
+          "role": "Sabertooth",
+          "actor": "Tyler Mane",
+          "name": "Victor Creed"
+        },
+        {
+          "role": "Rogue",
+          "actor": "Anna Paquin",
+          "name": "Marie"
+        },
+        {
+          "role": "Vendor",
+          "actor": "Stan Lee",
+          "name": "Vendor"
+        }
+      ]
+    },
+    {
+      "comic": "X-Men",
+      "movie": "X2",
+      "year": 2003,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company"
+      ],
+      "roles": [
+        {
+          "role": "Professor X",
+          "actor": "Patrick Stewart",
+          "name": "Charles Xavier"
+        },
+        {
+          "role": "Magneto",
+          "actor": "Ian McKellen",
+          "name": "Erik Lehnsherr"
+        },
+        {
+          "role": "Wolverine",
+          "actor": "Hugh Jackman",
+          "name": "Logan"
+        },
+        {
+          "role": "Storm",
+          "actor": "Halle Berry",
+          "name": "Ororo Munroe"
+        },
+        {
+          "role": "Phoenix",
+          "actor": "Famke Janssen",
+          "name": "Jean Grey"
+        },
+        {
+          "role": "Cyclops",
+          "actor": "James Marsden",
+          "name": "Scott Summers"
+        },
+        {
+          "role": "Mystique",
+          "actor": "Rebecca Romijn-Stamos",
+          "name": "Raven Darkholme"
+        },
+        {
+          "role": "Rogue",
+          "actor": "Anna Paquin",
+          "name": "Marie"
+        },
+        {
+          "role": "William Stryker",
+          "actor": "Brian Cox",
+          "name": "William Stryker"
+        },
+        {
+          "role": "Nightcrawler",
+          "actor": "Alan Cumming",
+          "name": "Kurt Wagner"
+        },
+        {
+          "role": "Iceman",
+          "actor": "Shawn Ashmore",
+          "name": "Bobby Drake"
+        },
+        {
+          "role": "Pyro",
+          "actor": "Aaron Stanford",
+          "name": "John Allerdyce"
+        },
+        {
+          "role": "Deathstrike",
+          "actor": "Kelly Hu",
+          "name": "Yuriko Oyama"
+        }
+      ]
+    },
+    {
+      "comic": "X-Men",
+      "movie": "X-Men: Last Stand",
+      "year": 2006,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company"
+      ],
+      "roles": [
+        {
+          "role": "Professor X",
+          "actor": "Patrick Stewart",
+          "name": "Charles Xavier"
+        },
+        {
+          "role": "Magneto",
+          "actor": "Ian McKellen",
+          "name": "Erik Lehnsherr"
+        },
+        {
+          "role": "Wolverine",
+          "actor": "Hugh Jackman",
+          "name": "Logan"
+        },
+        {
+          "role": "Storm",
+          "actor": "Halle Berry",
+          "name": "Ororo Munroe"
+        },
+        {
+          "role": "Phoenix",
+          "actor": "Famke Janssen",
+          "name": "Jean Grey"
+        },
+        {
+          "role": "Cyclops",
+          "actor": "James Marsden",
+          "name": "Scott Summers"
+        },
+        {
+          "role": "Mystique",
+          "actor": "Rebecca Romijn-Stamos",
+          "name": "Raven Darkholme"
+        },
+        {
+          "role": "Rogue",
+          "actor": "Anna Paquin",
+          "name": "Marie"
+        },
+        {
+          "role": "Iceman",
+          "actor": "Shawn Ashmore",
+          "name": "Bobby Drake"
+        },
+        {
+          "role": "Pyro",
+          "actor": "Aaron Stanford",
+          "name": "John Allerdyce"
+        },
+        {
+          "role": "Beast",
+          "actor": "Kelsey Grammer",
+          "name": "Hank McCoy"
+        },
+        {
+          "role": "Juggernaut",
+          "actor": "Vinnie Jones",
+          "name": "Cain Marko"
+        },
+        {
+          "role": "Shadowcat",
+          "actor": "Ellen Page",
+          "name": "Kitty Pryde"
+        },
+        {
+          "role": "Angel",
+          "actor": "Ben Foster",
+          "name": "Warren Worthington"
+        },
+        {
+          "role": "Bolivar Trask",
+          "actor": "Bill Duke",
+          "name": "Bolivar Trask"
+        },
+        {
+          "role": "Colossus",
+          "actor": "Daniel Cudmore",
+          "name": "Peter Rasputin"
+        },
+        {
+          "role": "Multiple Man",
+          "actor": "Eric Dane",
+          "name": "James Madrox"
+        },
+        {
+          "role": "Moira MacTaggert",
+          "actor": "Olivia Williams",
+          "name": "Moira MacTaggert"
+        },
+        {
+          "role": "Waterhose Neighbor",
+          "actor": "Stan Lee",
+          "name": "Waterhose Neighbor"
+        }
+      ]
+    },
+    {
+      "comic": "X-Men",
+      "movie": "X-Men: First Class",
+      "year": 2011,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company"
+      ],
+      "roles": [
+        {
+          "role": "Professor X",
+          "actor": "James McAvoy",
+          "name": "Charles Xavier"
+        },
+        {
+          "role": "Magneto",
+          "actor": "Michael Fassbender",
+          "name": "Erik Lehnsherr"
+        },
+        {
+          "role": "Moira MacTaggert",
+          "actor": "Rose Byrne",
+          "name": "Moira MacTaggert"
+        },
+        {
+          "role": "Mystique",
+          "actor": "Jennifer Lawrence",
+          "name": "Raven Darkholme"
+        },
+        {
+          "role": "Emma Frost",
+          "actor": "January Jones",
+          "name": "Emma Frost"
+        },
+        {
+          "role": "Beast",
+          "actor": "Nicholas Hoult",
+          "name": "Hank McCoy"
+        },
+        {
+          "role": "Havok",
+          "actor": "Lucas Till",
+          "name": "Alex Summers"
+        },
+        {
+          "role": "Darwin",
+          "actor": "Edi Gathegi",
+          "name": "Armando Munoz"
+        },
+        {
+          "role": "Klaus Schmidt",
+          "actor": "Kevin Bacon",
+          "name": "Klaus Schmidt"
+        },
+        {
+          "role": "Banshee",
+          "actor": "Caleb Landry Jones",
+          "name": "Sean Cassidy"
+        },
+        {
+          "role": "Angel Salvadore",
+          "actor": "Zoe Kravitz",
+          "name": "Angel Salvadore"
+        },
+        {
+          "role": "Wolverine",
+          "actor": "Hugh Jackman",
+          "name": "Logan"
+        }
+      ]
+    },
+    {
+      "comic": "X-Men",
+      "movie": "X-Men: Days of Future Past",
+      "year": 2014,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company",
+        "20th Century Fox"
+      ],
+      "roles": [
+        {
+          "role": "Professor X",
+          "actor": "James McAvoy",
+          "name": "Charles Xavier"
+        },
+        {
+          "role": "Magneto",
+          "actor": "Michael Fassbender",
+          "name": "Erik Lehnsherr"
+        },
+        {
+          "role": "Mystique",
+          "actor": "Jennifer Lawrence",
+          "name": "Raven Darkholme"
+        },
+        {
+          "role": "Beast",
+          "actor": "Nicholas Hoult",
+          "name": "Hank McCoy"
+        },
+        {
+          "role": "Havok",
+          "actor": "Lucas Till",
+          "name": "Alex Summers"
+        },
+        {
+          "role": "Wolverine",
+          "actor": "Hugh Jackman",
+          "name": "Logan"
+        },
+        {
+          "role": "Bolivar Trask",
+          "actor": "Peter Dinklage",
+          "name": "Bolivar Trask"
+        },
+        {
+          "role": "Professor X",
+          "actor": "Patrick Stewart",
+          "name": "Charles Xavier"
+        },
+        {
+          "role": "Magneto",
+          "actor": "Ian McKellen",
+          "name": "Erik Lehnsherr"
+        },
+        {
+          "role": "Phoenix",
+          "actor": "Famke Jannsen",
+          "name": "Jean Grey"
+        },
+        {
+          "role": "Quicksilver",
+          "actor": "Evan Peters",
+          "name": "Pietro Maximoff"
+        },
+        {
+          "role": "Storm",
+          "actor": "Halle Berry",
+          "name": "Ororo Munroe"
+        },
+        {
+          "role": "Iceman",
+          "actor": "Shawn Ashmore",
+          "name": "Bobby Drake"
+        },
+        {
+          "role": "Shadowcat",
+          "actor": "Ellen Page",
+          "name": "Kitty Pryde"
+        },
+        {
+          "role": "Beast",
+          "actor": "Kelsey Grammer",
+          "name": "Hank McCoy"
+        },
+        {
+          "role": "Rogue",
+          "actor": "Anna Paquin",
+          "name": "Marie"
+        },
+        {
+          "role": "Bishop",
+          "actor": "Omar Sy",
+          "name": "Bishop"
+        },
+        {
+          "role": "William Stryker",
+          "actor": "Josh Helman",
+          "name": "William Stryker"
+        },
+        {
+          "role": "Colossus",
+          "actor": "Daniel Cudmore",
+          "name": "Peter Rasputin"
+        },
+        {
+          "role": "Blink",
+          "actor": "Fan Bingbing",
+          "name": "Blink"
+        },
+        {
+          "role": "Sunspot",
+          "actor": "Adan Canto",
+          "name": "Sunspot"
+        },
+        {
+          "role": "Warpath",
+          "actor": "Booboo Stewart",
+          "name": "Warpath"
+        }
+      ]
+    },
+    {
+      "comic": "X-Men",
+      "movie": "X-Men: Age of Apocalypse",
+      "year": 2016,
+      "publisher": "Marvel",
+      "grouping": "X-Men",
+      "distributor": "20th Century Fox",
+      "studios": [
+        "Marvel",
+        "The Donners\u0027 Company"
+      ],
+      "roles": [
+        {
+          "role": "Professor X",
+          "actor": "James McAvoy",
+          "name": "Charles Xavier"
+        },
+        {
+          "role": "Magneto",
+          "actor": "Michael Fassbender",
+          "name": "Erik Lehnsherr"
+        },
+        {
+          "role": "Mystique",
+          "actor": "Jennifer Lawrence",
+          "name": "Raven Darkholme"
+        },
+        {
+          "role": "Beast",
+          "actor": "Nicholas Hoult",
+          "name": "Hank McCoy"
+        },
+        {
+          "role": "Apocalypse",
+          "actor": "Oscar Isaac",
+          "name": "En Sabah Nur"
+        },
+        {
+          "role": "Wolverine",
+          "actor": "Hugh Jackman",
+          "name": "Logan"
+        },
+        {
+          "role": "Moira MacTaggert",
+          "actor": "Rose Byrne",
+          "name": "Moira MacTaggert"
+        },
+        {
+          "role": "Quicksilver",
+          "actor": "Evan Peters",
+          "name": "Pietro Maximoff"
+        },
+        {
+          "role": "Cyclops",
+          "actor": "Tye Sheridan",
+          "name": "Scott Summers"
+        },
+        {
+          "role": "Phoenix",
+          "actor": "Sophie Turner",
+          "name": "Jean Grey"
+        },
+        {
+          "role": "Psylocke",
+          "actor": "Olivia Munn",
+          "name": "Psylocke"
+        },
+        {
+          "role": "Nightcrawler",
+          "actor": "Kodi Smit-McPhee",
+          "name": "Kurt Wagner"
+        },
+        {
+          "role": "Storm",
+          "actor": "Alexandra Shipp",
+          "name": "Ororo Munroe"
+        },
+        {
+          "role": "William Stryker",
+          "actor": "Josh Helman",
+          "name": "William Stryker"
+        },
+        {
+          "role": "Angel",
+          "actor": "Ben Hardy",
+          "name": "Warren Worthington"
+        }
+      ]
+    }
+  ]
+}

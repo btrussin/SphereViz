@@ -1,0 +1,32 @@
+Library/
+Temp/
+
+# following tutorial for git setup from http://blog.hfarazm.com/git-for-unity-create-projects/
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+obj/
+*.svd
+*.userprefs
+/*.csproj
+*.pidb
+*.suo
+/*.sln
+*.user
+*.unityproj
+*.booproj
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store*
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Brian thinks this should also be ignored #
+.vs/
