@@ -8,8 +8,10 @@ public class JSONLoader : MonoBehaviour {
     public GameObject nodePrefab;
     public GameObject edgePrefab;
     public GameObject bezierPrefab;
+    public GameObject bSplinePrefab;
 
     public bool useBezierBars = true;
+    public bool useBSplineBars = true;
 
     public CMData[] cmData;
     public NLNode[] nlNodes;
@@ -98,8 +100,15 @@ public class JSONLoader : MonoBehaviour {
 
     void populateEdges()
     {
-        Vector3[] basePts = new Vector3[4];
+        Vector3[] basePts;
+
+        if( useBSplineBars ) basePts = new Vector3[5];
+        else basePts = new Vector3[4];
+
+        
         Vector3[] pts;
+        Vector3 tVec;
+        float mag;
         string fromKey, toKey;
 
         foreach (KeyValuePair<string, EdgeData> kv in m_edgeMap)
@@ -109,14 +118,24 @@ public class JSONLoader : MonoBehaviour {
             toKey = getMovieKey(kv.Value.dataTo);
 
             basePts[0] = m_nodeCoords[fromKey];
-            basePts[3] = m_nodeCoords[toKey];
+            basePts[basePts.Length-1] = m_nodeCoords[toKey];
 
             basePts[1] = basePts[0] * 2.0f;
-            basePts[2] = basePts[3] * 2.0f;
+            basePts[basePts.Length - 2] = basePts[basePts.Length - 1] * 2.0f;
 
-            
+            if( useBSplineBars )
+            {
+                tVec = ((basePts[1] - basePts[3]) * 0.5f + basePts[3])*1.5f;
+                
 
-            if(useBezierBars)
+                basePts[2] = tVec;
+
+                GameObject edge = (GameObject)Instantiate(bSplinePrefab);
+                BasisSpline bspline = edge.GetComponent<BasisSpline>();
+                bspline.useSphericalInterpolation = true;
+                bspline.init(basePts);
+            }
+            else if(useBezierBars)
             {
                 GameObject edge = (GameObject)Instantiate(bezierPrefab);
                 BezierBar bezBar = edge.GetComponent<BezierBar>();

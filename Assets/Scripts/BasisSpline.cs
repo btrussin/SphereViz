@@ -4,44 +4,69 @@ using UnityEngine;
 
 public class BasisSpline : MonoBehaviour 
 {
-	public int numMajorDivisions = 100;
+    public MeshFilter meshFilter;
+
+    public int numMajorDivisions = 100;
     public int numMinorDivisions = 30;
     public float radius = 0.02f;
 
-    public bool bar = false;
-
     public Vector3[] basisPoints;
-    float[] basisWeights;
-    int n = 0; // number of control points (zero-based)
-    int m = 0; // number of weights
-    int p = 0;
+    protected float[] basisWeights;
+    protected int n = 0; // number of control points (zero-based)
+    protected int m = 0; // number of weights
+    protected int p = 0;
 
-    Vector3[] bsPoints;
-    Vector3[] bsTangents;
+    protected Vector3[] bsPoints;
+    protected Vector3[] bsTangents;
 
-    public LineRenderer lineRend;
-    public MeshFilter meshFilter;
+    public bool useSphericalInterpolation = false;
+
+    
 
     // Use this for initialization
     void Start () {
 
+        init();
+    }
+
+    public void init()
+    {
+        if (basisPoints == null || basisPoints.Length < 4) return;
+
+        setup();
+        populateMesh();
+    }
+
+    public void init(Vector3[] bPts)
+    {
+        basisPoints = new Vector3[bPts.Length];
+        for( int i = 0; i < bPts.Length; i++ )
+        {
+            basisPoints[i] = bPts[i];
+        }
+
+        init();
+    }
+
+    protected void setup()
+    {
         n = basisPoints.Length - 1;
 
         int numOutWts = 4;
-        int numInnerWts = n-3;
+        int numInnerWts = n - 3;
         m = numOutWts * 2 + numInnerWts - 1;
-        basisWeights = new float[m+1];
+        basisWeights = new float[m + 1];
         int i = 0;
-        for( i = 0; i < numOutWts; i++ )
+        for (i = 0; i < numOutWts; i++)
         {
             basisWeights[i] = 0f;
             basisWeights[m - i] = 1f;
         }
 
-        float inc = 1f / (float)(numInnerWts+1);
-        for( int j = 0; j < numInnerWts; j++ )
+        float inc = 1f / (float)(numInnerWts + 1);
+        for (int j = 0; j < numInnerWts; j++)
         {
-            basisWeights[i+j] = inc*(j+1);
+            basisWeights[i + j] = inc * (j + 1);
         }
 
 
@@ -54,15 +79,6 @@ public class BasisSpline : MonoBehaviour
 
         calcBSplinePoints();
         calcBSplineTangents();
-
-        if( bar ) populateMesh();
-		else populateLine();
-    }
-
-    void populateLine()
-    {
-        lineRend.positionCount = bsPoints.Length;
-        lineRend.SetPositions(bsPoints);
     }
 	
 	// Update is called once per frame
@@ -124,28 +140,75 @@ public class BasisSpline : MonoBehaviour
         if( u == 1f ) return basisPoints[n];
 
         Vector3 result = Vector3.zero;
-        float val;
-        for(int i = 0; i <= n; i++ )
+
+        if(useSphericalInterpolation)
         {
-            val = getN(i, p, u);
-            result += basisPoints[i] * val;
+            for (int i = 0; i < n; i++)
+            {
+                result += basisPoints[i] * getNVector(i, p, u);
+            }
         }
+        else
+        {
+            float val;
+            for (int i = 0; i <= n; i++)
+            {
+                val = getN(i, p, u);
+                result += basisPoints[i] * val;
+            }
+        }
+
+        
 
         return result;
     }
 
-    float getN(int i, int j, float u)
+    float getNVector(int i, int j, float u)
     {
-        if( j == 0 )
+        Vector3 result = Vector3.zero;
+
+        if (j == 0)
         {
             if (basisWeights[i] == basisWeights[i + 1]) return 0f;
             else if (u >= basisWeights[i] && u < basisWeights[i + 1]) return 1f;
             else return 0f;
         }
-    
+
+        float v1, v2, t, sn;
+        Vector3 tv1 = basisPoints[i]; tv1.Normalize();
+        Vector3 tv2 = basisPoints[i+1]; tv2.Normalize();
+        float angle = Mathf.Acos(Vector3.Dot(tv1, tv2));
+
+        if (basisWeights[i + j] == basisWeights[i])
+        {
+            v1 = 1.0f;
+            v2 = 0.0f;
+        }
+        else
+        {
+            t = (u - basisWeights[i]) / (basisWeights[i + j] - basisWeights[i]);
+            sn = Mathf.Sin(angle);
+
+            v1 = Mathf.Sin((1f - t) * angle) / sn;
+            v2 = Mathf.Sin(t * angle) / sn;
+        }
+
+        return v1 * getNVector(i, j - 1, u) + v2 * getNVector(i+1, j - 1, u);
+    }
+
+
+    float getN(int i, int j, float u)
+    {
+        if (j == 0)
+        {
+            if (basisWeights[i] == basisWeights[i + 1]) return 0f;
+            else if (u >= basisWeights[i] && u < basisWeights[i + 1]) return 1f;
+            else return 0f;
+        }
+
         float v1, v2;
 
-        if( basisWeights[i + j] == basisWeights[i] )
+        if (basisWeights[i + j] == basisWeights[i])
         {
             v1 = 0f;
         }
@@ -179,9 +242,6 @@ public class BasisSpline : MonoBehaviour
         Vector3 currForward;
         Vector3 currUp;
 
-        Vector3 flatDirVector = basePoints[basePoints.Length-1] - basePoints[0];
-        flatDirVector.Normalize();
-
         Vector3[] meshPoints = new Vector3[numMinorDivisions * numMajorDivisions];
         Vector3[] meshNormals = new Vector3[numMinorDivisions * numMajorDivisions];
 
@@ -195,33 +255,47 @@ public class BasisSpline : MonoBehaviour
 
             currForward = baseTangents[i];
             
-            tgtDirVector = currForward;
-            for( int j = i+1; j < basePoints.Length; j++ )
+            if( i == 0 )
             {
-                tgtDirVector = basePoints[j] - basePoints[i];
-                tgtDirVector.Normalize();
-                float dot = Vector3.Dot(currForward, tgtDirVector);
-   
-                if (dot <= 0.95f )
+                tgtDirVector = currForward;
+                for (int j = 1; j < basePoints.Length; j++)
                 {
-                    currRight = Vector3.Cross(tgtDirVector, currForward);
-                    break;
+                    tgtDirVector = basePoints[j] - basePoints[i];
+                    tgtDirVector.Normalize();
+                    float dot = Vector3.Dot(currForward, tgtDirVector);
+
+                    if (dot <= 0.95f)
+                    {
+                        currRight = Vector3.Cross(tgtDirVector, currForward);
+                        break;
+                    }
                 }
+
+                if (Mathf.Abs(Vector3.Dot(currForward, tgtDirVector)) > 0.95f)
+                {
+                    currRight.x = -currForward.y;
+                    currRight.y = currForward.x;
+                    currRight.z = currForward.z;
+
+                    if (Mathf.Abs(Vector3.Dot(currForward, currRight)) > 0.99f)
+                    {
+                        currRight.x = -currForward.z;
+                        currRight.y = currForward.y;
+                        currRight.z = currForward.x;
+                    }
+                }
+                
+
             }
 
-            if (Mathf.Abs(Vector3.Dot(currForward, tgtDirVector)) > 0.95f)
-            {
-                currRight = Vector3.Cross(currForward, flatDirVector);
-            }
+
             
-            if( i > 0 ) currRight = Vector3.Cross(currForward, prevUp);
+            else currRight = Vector3.Cross(currForward, prevUp);
 
             currRight.Normalize();
 
-            if( i > 0 && Vector3.Dot(prevRight, currRight) < 0.0f )
-            {
-            	currRight = -currRight;
-            }
+            //if( i > 0 && Vector3.Dot(prevRight, currRight) < 0.0f ) currRight = -currRight;
+           
           
           	prevRight = currRight;
 
