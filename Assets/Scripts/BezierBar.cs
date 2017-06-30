@@ -8,13 +8,19 @@ public class BezierBar : MonoBehaviour {
     public int numMinorDivisions = 30;
     public float radius = 0.02f;
 
+    Color color0;
+    Color color1;
+
 	// Use this for initialization
 	void Start () {
-        
+
 	}
 
-    public void populateMesh(Vector3[] controlPoints)
+    public void populateMesh(Vector3[] controlPoints, Color c0, Color c1)
     {
+
+    	color0 = c0;
+    	color1 = c1;
 
         Vector3[] basePoints = Utils.getBezierPoints(controlPoints, numMajorDivisions);
         Vector3[] baseTangents = Utils.getBezierPointTangents(controlPoints, numMajorDivisions);
@@ -30,8 +36,14 @@ public class BezierBar : MonoBehaviour {
 
         Vector3[] meshPoints = new Vector3[numMinorDivisions * numMajorDivisions];
         Vector3[] meshNormals = new Vector3[numMinorDivisions * numMajorDivisions];
+        Color[] meshColors = new Color[numMinorDivisions * numMajorDivisions];
 
         int currIdx = 0;
+
+        float rInc = ( color1.r - color0.r ) / (float)(numMajorDivisions-1);
+        float gInc = ( color1.g - color0.g ) / (float)(numMajorDivisions-1);
+        float bInc = ( color1.b - color0.b ) / (float)(numMajorDivisions-1);
+        Color currColor = color0;
 
         for (int i = 0; i < basePoints.Length; i++)
         {
@@ -71,10 +83,15 @@ public class BezierBar : MonoBehaviour {
                 meshPoints[currIdx] = currVertex + basePoints[i];
                 meshNormals[currIdx] = currVertex;
                 meshNormals[currIdx].Normalize();
+                meshColors[currIdx] = currColor;
 
                 currVertex = rotation * currVertex;
                 currIdx++;
             }
+
+            currColor.r += rInc;
+            currColor.g += gInc;
+            currColor.b += bInc;
         }
 
         int[] faceList = new int[(numMajorDivisions - 1)*(numMinorDivisions)*6];
@@ -109,6 +126,7 @@ public class BezierBar : MonoBehaviour {
         GetComponent<MeshFilter>().mesh = mesh;
         mesh.vertices = meshPoints;
         mesh.normals = meshNormals;
+        mesh.colors = meshColors;
         mesh.triangles = faceList;
 
 
