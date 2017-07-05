@@ -14,9 +14,9 @@ public class JSONLoader : MonoBehaviour {
     public bool useBSplineBars = true;
 
     public CMData[] cmData;
-    public NLNode[] nlNodes;
-    public NLLink[] nlLinks;
-    public NLCoord[] nlCoords;
+    public CMNode[] nlNodes;
+    public CMLink[] nlLinks;
+    public CMCoord[] nlCoords;
 
     Dictionary<string, List<string> > m_publisherMap = new Dictionary<string, List<string>>();
     Dictionary<string, CMData> m_cmMap = new Dictionary<string, CMData>();
@@ -289,20 +289,20 @@ public class CMType
 
 public class NLDataArray
 {
-    public NLNode[] nodes;
-    public NLLink[] links;
-    public NLCoord[] coords;
+    public CMNode[] nodes;
+    public CMLink[] links;
+    public CMCoord[] coords;
 }
 
 [System.Serializable]
-public class NLNode
+public class CMNode
 {
     public string id;
     public int year;
 }
 
 [System.Serializable]
-public class NLLink
+public class CMLink
 {
     public string source;
     public string target;
@@ -310,10 +310,29 @@ public class NLLink
 }
 
 [System.Serializable]
-public class NLCoord
+public class CMCoord
 {
     public string id;
     public double x;
     public double y;
 }
- 
+
+public class NodeInfo2D
+{
+    public string name;
+    public string groupName;
+    public Vector2 position2;
+    public Vector3 position3;
+}
+
+
+public class GroupInfo
+{
+    public string name;
+    public List<NodeInfo2D> nodeList;
+    public Vector2 center2;
+    public Vector3 center3;
+}
+
+
+
