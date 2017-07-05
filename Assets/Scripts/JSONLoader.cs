@@ -12,6 +12,7 @@ public class JSONLoader : MonoBehaviour {
 
     public bool useBezierBars = true;
     public bool useBSplineBars = true;
+    public bool useSLERP = false;
 
     public CMData[] cmData;
     public CMNode[] nlNodes;
@@ -19,10 +20,12 @@ public class JSONLoader : MonoBehaviour {
     public CMCoord[] nlCoords;
 
     Dictionary<string, List<string> > m_publisherMap = new Dictionary<string, List<string>>();
+    Dictionary<string, Vector3> m_publisherPointMap = new Dictionary<string, Vector3>();
     Dictionary<string, CMData> m_cmMap = new Dictionary<string, CMData>();
     Dictionary<string, EdgeData> m_edgeMap = new Dictionary<string, EdgeData>();
     Dictionary<string, Vector2> m_nodeCoordsNormalized = new Dictionary<string, Vector2>();
     Dictionary<string, Vector3> m_nodeCoords = new Dictionary<string, Vector3>();
+    Dictionary<string, Color> m_catColorMap = new Dictionary<string, Color>();
 
     // Use this for initialization
     void Start () {
@@ -84,9 +87,49 @@ public class JSONLoader : MonoBehaviour {
             m_nodeCoords.Add(kv.Key, currVec);
         }
 
+        populatePublisherPoints();
+        populatePublisherColors();
+
         populatePts();
         populateEdges();
 
+    }
+
+    void populatePublisherPoints()
+    {
+    	foreach(KeyValuePair<string, List<string> > kv in m_publisherMap)
+    	{
+    		Vector3 v = Vector3.zero;
+
+    		foreach( string s in kv.Value )
+    		{
+    			v += m_nodeCoords[s];
+    		}
+
+    		v /= (float)kv.Value.Count;
+    		v.Normalize();
+    		v *= radius * 1.2f;
+
+    		m_publisherPointMap.Add(kv.Key, v);
+
+    	}
+    }
+
+    void populatePublisherColors()
+    {
+    	
+    	Color[] colors = ColorUtils.getColorPalette();
+    	ColorUtils.randomizeColorPalette(colors, 6);
+    	Color currColor;
+    	int idx = 0;
+    	int maxIdx = colors.Length;
+
+    	foreach(KeyValuePair<string, Vector3> kv in m_publisherPointMap)
+    	{
+    		currColor = colors[idx % maxIdx];
+    		m_catColorMap.Add(kv.Key, currColor);
+    		idx++;
+    	}
     }
 
     void populatePts()
@@ -100,16 +143,14 @@ public class JSONLoader : MonoBehaviour {
 
     void populateEdges()
     {
-        Vector3[] basePts;
-
-        if( useBSplineBars ) basePts = new Vector3[5];
-        else basePts = new Vector3[4];
-
+        Vector3[] basePts = new Vector3[4];
         
         Vector3[] pts;
-        Vector3 tVec;
-        float mag;
+        Vector3 tVec1, tVec2;
+        
         string fromKey, toKey;
+        Color c0;
+        Color c1;
 
         foreach (KeyValuePair<string, EdgeData> kv in m_edgeMap)
         {
@@ -117,29 +158,88 @@ public class JSONLoader : MonoBehaviour {
             fromKey = getMovieKey(kv.Value.dataFrom);
             toKey = getMovieKey(kv.Value.dataTo);
 
-            basePts[0] = m_nodeCoords[fromKey];
-            basePts[basePts.Length-1] = m_nodeCoords[toKey];
+            c0 = m_catColorMap[kv.Value.dataFrom.publisher];
+            c1 = m_catColorMap[kv.Value.dataTo.publisher];
 
-            basePts[1] = basePts[0] * 2.0f;
-            basePts[basePts.Length - 2] = basePts[basePts.Length - 1] * 2.0f;
+            if( !useBSplineBars )
+            {
+            	basePts[0] = m_nodeCoords[fromKey];
+            	basePts[basePts.Length-1] = m_nodeCoords[toKey];
+
+            	basePts[1] = basePts[0] * 2.0f;
+            	basePts[basePts.Length - 2] = basePts[basePts.Length - 1] * 2.0f;
+            }
 
             if( useBSplineBars )
             {
-                tVec = ((basePts[1] - basePts[3]) * 0.5f + basePts[3])*1.5f;
+            	
+            	tVec1 = m_publisherPointMap[kv.Value.dataFrom.publisher];
+            	tVec2 = m_publisherPointMap[kv.Value.dataTo.publisher];
+            	Vector3 dirVec = tVec2 - tVec1;
+
+            	if( dirVec.magnitude < 0.0001f )
+            	{
+            		basePts = new Vector3[4];
+
+            		basePts[0] = m_nodeCoords[fromKey];
+            		basePts[1] = basePts[0] * 1.1f;
+                		
+                	basePts[3] = m_nodeCoords[toKey];
+                	basePts[2] = basePts[3] * 1.1f;
+
+                	GameObject edge = (GameObject)Instantiate(bezierPrefab);
+                	BezierBar bezBar = edge.GetComponent<BezierBar>();
+                	bezBar.populateMesh(basePts, c0, c1);
+                	
+            	}
+				else
+				{
+					basePts = new Vector3[7];
+
+            		basePts[0] = m_nodeCoords[fromKey];
+            		basePts[6] = m_nodeCoords[toKey];
+
+                	basePts[1] = tVec1 * 1.1f;
+                	basePts[2] = tVec1 * 1.4f;
+
+                	basePts[4] = tVec2 * 1.4f;
+                	basePts[5] = tVec2 * 1.1f;
+
+                	basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+
+
+                	/*
+                	basePts = new Vector3[9];
+
+            		basePts[0] = m_nodeCoords[fromKey];
+            		basePts[8] = m_nodeCoords[toKey];
+
+            		basePts[1] = basePts[0] * 1.1f;
+                	basePts[2] = tVec1 * 1.1f;
+                	basePts[3] = tVec1 * 1.4f;
+
+                	basePts[5] = tVec2 * 1.4f;
+                	basePts[6] = tVec2 * 1.1f;
+                	basePts[7] = basePts[8] * 1.1f;
+
+                	basePts[4] = (basePts[3] + basePts[5]) * 0.5f;
+					*/
+
+					GameObject edge = (GameObject)Instantiate(bSplinePrefab);
+                	BasisSpline bspline = edge.GetComponent<BasisSpline>();
+                	bspline.useSphericalInterpolation = useSLERP;
+                	bspline.init(basePts, c0, c1);
+
+				}                
+            
+
                 
-
-                basePts[2] = tVec;
-
-                GameObject edge = (GameObject)Instantiate(bSplinePrefab);
-                BasisSpline bspline = edge.GetComponent<BasisSpline>();
-                bspline.useSphericalInterpolation = true;
-                bspline.init(basePts);
             }
             else if(useBezierBars)
             {
                 GameObject edge = (GameObject)Instantiate(bezierPrefab);
                 BezierBar bezBar = edge.GetComponent<BezierBar>();
-                bezBar.populateMesh(basePts);
+                bezBar.populateMesh(basePts, c0, c1);
             }
             else
             {

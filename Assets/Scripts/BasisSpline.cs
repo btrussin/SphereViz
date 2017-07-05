@@ -20,7 +20,8 @@ public class BasisSpline : MonoBehaviour
     protected Vector3[] bsTangents;
 
     public bool useSphericalInterpolation = false;
-
+    Color color0;
+    Color color1;
     
 
     // Use this for initialization
@@ -37,8 +38,11 @@ public class BasisSpline : MonoBehaviour
         populateMesh();
     }
 
-    public void init(Vector3[] bPts)
+    public void init(Vector3[] bPts, Color c0, Color c1)
     {
+    	color0 = c0;
+    	color1 = c1;
+
         basisPoints = new Vector3[bPts.Length];
         for( int i = 0; i < bPts.Length; i++ )
         {
@@ -72,10 +76,11 @@ public class BasisSpline : MonoBehaviour
 
         p = m - n - 1;
 
+        /*
         Debug.Log("M: " + m);
         Debug.Log("N: " + n);
         Debug.Log("P: " + p);
-
+		*/
 
         calcBSplinePoints();
         calcBSplineTangents();
@@ -244,10 +249,16 @@ public class BasisSpline : MonoBehaviour
 
         Vector3[] meshPoints = new Vector3[numMinorDivisions * numMajorDivisions];
         Vector3[] meshNormals = new Vector3[numMinorDivisions * numMajorDivisions];
+        Color[] meshColors = new Color[numMinorDivisions * numMajorDivisions];
 
         int currIdx = 0;
         Vector3 prevUp = Vector3.zero;
         Vector3 prevRight = Vector3.zero;
+
+        float rInc = ( color1.r - color0.r ) / (float)(numMajorDivisions-1);
+        float gInc = ( color1.g - color0.g ) / (float)(numMajorDivisions-1);
+        float bInc = ( color1.b - color0.b ) / (float)(numMajorDivisions-1);
+        Color currColor = color0;
 
         for (int i = 0; i < basePoints.Length; i++)
         {
@@ -313,10 +324,15 @@ public class BasisSpline : MonoBehaviour
                 meshPoints[currIdx] = currVertex + basePoints[i];
                 meshNormals[currIdx] = currVertex;
                 meshNormals[currIdx].Normalize();
+                meshColors[currIdx] = currColor;
 
                 currVertex = rotation * currVertex;
                 currIdx++;
             }
+
+            currColor.r += rInc;
+            currColor.g += gInc;
+            currColor.b += bInc;
         }
 
         int[] faceList = new int[(numMajorDivisions - 1)*(numMinorDivisions)*6];
@@ -351,6 +367,7 @@ public class BasisSpline : MonoBehaviour
         meshFilter.mesh = mesh;
         mesh.vertices = meshPoints;
         mesh.normals = meshNormals;
+        mesh.colors = meshColors;
         mesh.triangles = faceList;
 
 
