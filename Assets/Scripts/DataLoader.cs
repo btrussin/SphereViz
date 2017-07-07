@@ -28,6 +28,16 @@ public class DataLoader : MonoBehaviour {
 
 	public int randomColorSeed = 6;
 
+    float C1 = 0.1f;
+    float C2 = 0.05f;
+    float C3 = 0.05f;
+    float C4 = 0.005f;
+
+    public bool interpolateSpherical = true;
+
+    // for best results, this value should be <= 0.04
+    public float gravityAmt = 0.01f;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -179,6 +189,7 @@ public class DataLoader : MonoBehaviour {
         {
         	currNode = kv.Value;
         	currNode.position3 = getProjectedPoint(currNode.position2);
+            currNode.sphereCoords = get3DPointProjectionSphereCoords(currNode.position2);
         }
 
         GroupInfo currGroup;
@@ -186,6 +197,7 @@ public class DataLoader : MonoBehaviour {
         {
         	currGroup = kv.Value;
         	currGroup.center3 = getProjectedPoint(currGroup.center2);
+            currGroup.sphereCoords = get3DPointProjectionSphereCoords(currGroup.center2);
         }
 
 
@@ -200,8 +212,8 @@ public class DataLoader : MonoBehaviour {
     {
         Vector3 result = new Vector3(r, 0.0f, 0.0f);
 
-        float horizontalAngle = v.x * 180.0f;
-        float verticalAngle = v.y * 90.0f;
+        float horizontalAngle = v.x * 170.0f;
+        float verticalAngle = v.y * 60.0f;
 
         Quaternion rotation = Quaternion.Euler(0.0f, horizontalAngle, verticalAngle);
 
@@ -209,15 +221,16 @@ public class DataLoader : MonoBehaviour {
         return result;
     }
 
-    float W = 2.0f;
-    float L = 2.0f;
+    private Vector3 get3DPointProjectionSphereCoords(Vector3 v)
+    {
+        return get3DPointProjectionSphereCoords(v, radius);
+    }
 
-    float C1 = 0.1f;
-    float C2 = 0.05f;
-    float C3 = 0.05f;
-    float C4 = 0.005f;
-
-    float gravityAmt = 0.04f;
+    private Vector3 get3DPointProjectionSphereCoords(Vector3 v, float r)
+    {
+        Vector3 result = new Vector3(v.x * 170.0f, v.y * 60.0f, r);
+        return result;
+    }
 
     Vector2 forceDirCenter = Vector2.zero;
 
@@ -368,15 +381,29 @@ public class DataLoader : MonoBehaviour {
             	{
             		basePts = new Vector3[4];
 
-            		basePts[0] = edge.startNode.position3;
-            		basePts[1] = basePts[0] * 1.1f;
-                		
-                	basePts[3] = edge.endNode.position3;
-                	basePts[2] = basePts[3] * 1.1f;
+                    if( interpolateSpherical )
+                    {
+                        basePts[0] = edge.startNode.sphereCoords;
+                        basePts[1] = basePts[0];
+                        basePts[1].z *= 1.1f;
+                        
+                        basePts[3] = basePts[2] = edge.endNode.sphereCoords;
+                        basePts[2].z *= 1.1f;
+                    }
+                    else
+                    {
+                        basePts[0] = edge.startNode.position3;
+                        basePts[1] = basePts[0] * 1.1f;
+                        
+                        basePts[3] = edge.endNode.position3;
+                        basePts[2] = basePts[3] * 1.1f;
 
-                	GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
-                	BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
-                	bezBar.populateMesh(basePts, c0, c1);
+                        
+                    }
+
+                    GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
+                    BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
+                    bezBar.populateMesh(basePts, c0, c1, interpolateSpherical);
                 	
             	}
 				else
@@ -384,26 +411,52 @@ public class DataLoader : MonoBehaviour {
 					fromGroup = groupMap[edge.startNode.groupName];
 					toGroup = groupMap[edge.endNode.groupName];
 
-					tVec1 = fromGroup.center3;
-            		tVec2 = toGroup.center3;
+                    if( interpolateSpherical )
+                    {
+                        tVec1 = fromGroup.sphereCoords;
+                        tVec2 = toGroup.sphereCoords;
 
-					basePts = new Vector3[7];
+                        basePts = new Vector3[7];
 
-            		basePts[0] = edge.startNode.position3;
-            		basePts[6] = edge.endNode.position3;
+                        basePts[0] = edge.startNode.sphereCoords;
+                        basePts[6] = edge.endNode.sphereCoords;
 
-                	basePts[1] = tVec1 * 1.1f;
-                	basePts[2] = tVec1 * 1.4f;
+                        basePts[1] = basePts[2] = tVec1;
+                        basePts[1].z *= 1.1f;
+                        basePts[2].z *= 1.4f;
 
-                	basePts[4] = tVec2 * 1.4f;
-                	basePts[5] = tVec2 * 1.1f;
+                        basePts[4] = basePts[5] = tVec2;
+                        basePts[4].z *= 1.4f;
+                        basePts[5].z *= 1.1f;
 
-                	basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+                        basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+                    }
+                    else
+                    {
+                        tVec1 = fromGroup.center3;
+                        tVec2 = toGroup.center3;
+
+                        basePts = new Vector3[7];
+
+                        basePts[0] = edge.startNode.position3;
+                        basePts[6] = edge.endNode.position3;
+
+                        basePts[1] = tVec1 * 1.1f;
+                        basePts[2] = tVec1 * 1.4f;
+
+                        basePts[4] = tVec2 * 1.4f;
+                        basePts[5] = tVec2 * 1.1f;
+
+                        basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+
+                    }
+
+					
 
 
 					GameObject edgeObj = (GameObject)Instantiate(bSplinePrefab);
                 	BasisSpline bspline = edgeObj.GetComponent<BasisSpline>();
-                	bspline.useSphericalInterpolation = useSLERP;
+                	bspline.useSphericalInterpolation = interpolateSpherical;
                 	bspline.init(basePts, c0, c1);
 
 				}                
@@ -446,6 +499,7 @@ public class NodeInfo
     public string groupName = "";
     public Vector2 position2 = Vector2.zero;
     public Vector3 position3 = Vector3.zero;
+    public Vector3 sphereCoords = Vector3.zero;
 
     public Vector2 dir = Vector2.zero;
 }
@@ -457,6 +511,7 @@ public class GroupInfo
     public List<NodeInfo> nodeList = null;
     public Vector2 center2 = Vector2.zero;
     public Vector3 center3 = Vector3.zero;
+    public Vector3 sphereCoords = Vector3.zero;
 }
 
 public class EdgeInfo

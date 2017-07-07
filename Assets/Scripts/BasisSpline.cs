@@ -83,7 +83,34 @@ public class BasisSpline : MonoBehaviour
 		*/
 
         calcBSplinePoints();
-        calcBSplineTangents();
+
+        if( useSphericalInterpolation )
+        {
+    		Vector3 tmpVec;
+    		Quaternion rotation;
+    		for( i = 0; i < bsPoints.Length; i++ )
+    		{
+				tmpVec = new Vector3(bsPoints[i].z, 0.0f, 0.0f);
+        		rotation = Quaternion.Euler(0.0f, bsPoints[i].x, bsPoints[i].y);
+        		bsPoints[i] = rotation * tmpVec;
+    		}
+
+    		bsTangents = new Vector3[bsPoints.Length];
+
+    		for( i = 1; i < bsPoints.Length; i++ )
+    		{
+    			tmpVec = bsPoints[i] - bsPoints[i-1];
+    			tmpVec.Normalize();
+    			bsTangents[i] = tmpVec;
+    		}
+
+    		bsTangents[0] = bsTangents[1];
+        }
+        else
+        {
+			calcBSplineTangents();
+        }
+        
     }
 	
 	// Update is called once per frame
@@ -146,21 +173,11 @@ public class BasisSpline : MonoBehaviour
 
         Vector3 result = Vector3.zero;
 
-        if(useSphericalInterpolation)
+        float val;
+        for (int i = 0; i <= n; i++)
         {
-            for (int i = 0; i < n; i++)
-            {
-                result += basisPoints[i] * getNVector(i, p, u);
-            }
-        }
-        else
-        {
-            float val;
-            for (int i = 0; i <= n; i++)
-            {
-                val = getN(i, p, u);
-                result += basisPoints[i] * val;
-            }
+            val = getN(i, p, u);
+            result += basisPoints[i] * val;
         }
 
         

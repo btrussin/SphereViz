@@ -16,6 +16,8 @@ public class CMJSONLoader : DataLoader {
     Dictionary<string, EdgeData> m_edgeMap = new Dictionary<string, EdgeData>();
     Dictionary<string, Vector3> m_nodeCoords = new Dictionary<string, Vector3>();
 
+    public bool purgeStanLee = true;
+
 	// Use this for initialization
 	void Start () {
 		loadData();
@@ -46,6 +48,7 @@ public class CMJSONLoader : DataLoader {
         }
 
         for (int i = 0; i < cmData.Length; i++)
+        //for (int i = 0; i < 2; i++)
         {
             for (int j = i+1; j < cmData.Length; j++)
             {
@@ -53,9 +56,11 @@ public class CMJSONLoader : DataLoader {
 
                 for (int m = 0; m < cmData[i].roles.Length; m++)
                 {
+                	if( purgeStanLee && cmData[i].roles[m].actor.Equals("Stan Lee")) continue;
+
                     for (int n = 0; n < cmData[j].roles.Length; n++)
                     {
-                        if( cmData[i].roles[m].actor.Equals(cmData[i].roles[m].actor))
+                        if( cmData[i].roles[m].actor.Equals(cmData[j].roles[n].actor))
                         {
                             numConnections++;
                         }

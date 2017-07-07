@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BezierBar : MonoBehaviour {
 
-    public int numMajorDivisions = 100;
+    public int numMajorDivisions = 10;
     public int numMinorDivisions = 30;
     public float radius = 0.02f;
 
@@ -16,14 +16,44 @@ public class BezierBar : MonoBehaviour {
 
 	}
 
-    public void populateMesh(Vector3[] controlPoints, Color c0, Color c1)
+    public void populateMesh(Vector3[] controlPoints, Color c0, Color c1, bool sphereCoords = false)
     {
 
     	color0 = c0;
     	color1 = c1;
 
-        Vector3[] basePoints = Utils.getBezierPoints(controlPoints, numMajorDivisions);
-        Vector3[] baseTangents = Utils.getBezierPointTangents(controlPoints, numMajorDivisions);
+    	Vector3[] basePoints;
+    	Vector3[] baseTangents;
+
+    	if( sphereCoords )
+    	{
+    		Vector3[] tmpPoints = Utils.getBezierPoints(controlPoints, numMajorDivisions);
+    		basePoints =  new Vector3[tmpPoints.Length];
+    		baseTangents =  new Vector3[tmpPoints.Length];
+    		Vector3 tmpVec;
+    		Quaternion rotation;
+    		for( int i = 0; i < basePoints.Length; i++ )
+    		{
+				tmpVec = new Vector3(tmpPoints[i].z, 0.0f, 0.0f);
+        		rotation = Quaternion.Euler(0.0f, tmpPoints[i].x, tmpPoints[i].y);
+        		basePoints[i] = rotation * tmpVec;
+    		}
+
+    		for( int i = 1; i < basePoints.Length; i++ )
+    		{
+    			tmpVec = basePoints[i] - basePoints[i-1];
+    			tmpVec.Normalize();
+    			baseTangents[i] = tmpVec;
+    		}
+
+    		baseTangents[0] = baseTangents[1];
+    	}
+    	else
+    	{
+    		basePoints = Utils.getBezierPoints(controlPoints, numMajorDivisions);
+    		baseTangents = Utils.getBezierPointTangents(controlPoints, numMajorDivisions);
+    	}
+       
 
         Vector3 currVertex;
         Vector3 tgtDirVector;
