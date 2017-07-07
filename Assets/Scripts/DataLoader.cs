@@ -209,10 +209,113 @@ public class DataLoader : MonoBehaviour {
         return result;
     }
 
-	private void doForceDirLayout()
+    float W = 2.0f;
+    float L = 2.0f;
+
+    float C1 = 0.1f;
+    float C2 = 0.05f;
+    float C3 = 0.05f;
+    float C4 = 0.005f;
+
+    float gravityAmt = 0.04f;
+
+    Vector2 forceDirCenter = Vector2.zero;
+
+    private float repelForce(float dist)
+    {
+        if (dist == 0.0f) return 10000.0f;
+        return C3 / (dist * dist);
+    }
+
+    private float attractForce(float dist)
+    {
+        return C1 * Mathf.Log(dist / C2);
+    }
+
+    void recalcPositions()
+    {
+
+        NodeInfo outerInfo, innerInfo;
+        Vector2 tVec;
+        float dist;
+
+        // calculate the repel forces for each node
+        foreach (KeyValuePair<string, NodeInfo> outerEntry in nodeMap)
+        {
+            outerInfo = outerEntry.Value;
+            outerInfo.dir = Vector3.zero;
+
+            foreach (KeyValuePair<string, NodeInfo> innerEntry in nodeMap)
+            {
+                if (outerEntry.Key.Equals(innerEntry.Key)) continue;
+
+                innerInfo = innerEntry.Value;
+
+                tVec = outerInfo.position2 - innerInfo.position2;
+                if (tVec.sqrMagnitude == 0.0f) tVec = new Vector2(1.0f, 1.0f);
+
+                dist = tVec.magnitude;
+                outerInfo.dir += tVec / dist * repelForce(dist);
+            }
+        }
+
+
+        // calculate the attract forces for each node
+        foreach (EdgeInfo link in edgeList)
+        {
+            outerInfo = link.startNode;
+            innerInfo = link.endNode;
+
+            // dir from inner to outer
+            tVec = outerInfo.position2 - innerInfo.position2;
+
+            if (tVec.sqrMagnitude == 0.0f) tVec = new Vector3(0.01f, 0.01f, 1.01f);
+
+            dist = tVec.magnitude;
+
+            tVec = tVec / dist * attractForce(dist) * link.forceValue;
+
+            outerInfo.dir -= tVec;
+            innerInfo.dir += tVec;
+        }
+
+        Vector2 tPos;
+        Vector2 gravDir;
+        foreach (KeyValuePair<string, NodeInfo> entry in nodeMap)
+        {
+            //gravDir = sphereCenter - entry.Value.pos3d;
+            gravDir = forceDirCenter - entry.Value.position2;
+            gravDir.Normalize();
+            //tPos = entry.Value.pos3d + entry.Value.dir * C4 + gravDir * gravityAmt;
+            tPos = entry.Value.position2 + entry.Value.dir * C4 + gravDir * gravityAmt;
+
+            entry.Value.position2 = tPos;
+
+            //gravDir = sphereCenter - entry.Value.pos3d;
+            gravDir = forceDirCenter - tPos;
+            dist = gravDir.magnitude;
+        }
+    }
+
+
+    private void doForceDirLayout()
 	{
-		// TODO:
-	}
+        // TODO:
+        Random.InitState(45);
+        foreach( NodeInfo info in nodeMap.Values)
+        {
+            info.position2 = Random.insideUnitCircle;
+        }
+
+        int numIterations = 300;
+
+        Debug.Log("Starting the Force-Directed Layout calculation [" + numIterations + "]");
+
+        for (int i = 0; i < numIterations; i++) recalcPositions();
+
+        Debug.Log("Ending the Force-Directed Layout calculation");
+
+    }
 
 
 
@@ -325,7 +428,11 @@ public class DataLoader : MonoBehaviour {
         }
     }
 
-
+    protected string getEdgeName(NodeInfo info1, NodeInfo info2)
+    {
+        if (info1.name.CompareTo(info2.name) < 0) return info1.name + " - " + info2.name;
+        else return info2.name + " - " + info1.name;
+    }
 
 
 
@@ -339,6 +446,8 @@ public class NodeInfo
     public string groupName = "";
     public Vector2 position2 = Vector2.zero;
     public Vector3 position3 = Vector3.zero;
+
+    public Vector2 dir = Vector2.zero;
 }
 
 
@@ -354,6 +463,7 @@ public class EdgeInfo
 {
 	public NodeInfo startNode = null;
 	public NodeInfo endNode = null;
+    public float forceValue = 0.0f;
 
 	private bool __isSameGroup = false;
 	private bool __sameGrpSet = false;

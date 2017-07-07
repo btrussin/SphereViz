@@ -19,10 +19,12 @@ public class CMJSONLoader : DataLoader {
 	// Use this for initialization
 	void Start () {
 		loadData();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        //loadData_2();
+
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 
@@ -32,23 +34,52 @@ public class CMJSONLoader : DataLoader {
         var cmDataArray = JsonUtility.FromJson<TmpCMDataArray>(cmAsset.text);
         cmData = cmDataArray.data;
 
-        for(int i = 0; i < cmData.Length; i++)
+        NodeInfo[] tmpNodeArray = new NodeInfo[cmData.Length];
+
+        for (int i = 0; i < cmData.Length; i++)
         {
-        	
-        	
-        	
-        	
+            tmpNodeArray[i] = new NodeInfo();
+            tmpNodeArray[i].name = getMovieKey(cmData[i]);
+            tmpNodeArray[i].groupName = cmData[i].publisher;
+
+            nodeMap.Add(tmpNodeArray[i].name, tmpNodeArray[i]);
         }
 
+        for (int i = 0; i < cmData.Length; i++)
+        {
+            for (int j = i+1; j < cmData.Length; j++)
+            {
+                int numConnections = 0;
 
+                for (int m = 0; m < cmData[i].roles.Length; m++)
+                {
+                    for (int n = 0; n < cmData[j].roles.Length; n++)
+                    {
+                        if( cmData[i].roles[m].actor.Equals(cmData[i].roles[m].actor))
+                        {
+                            numConnections++;
+                        }
+                    }
+                }
 
-        /*
-        protected Dictionary<string, NodeInfo> nodeMap = new Dictionary<string, NodeInfo>();
-    	protected List<EdgeInfo> edgeList = new List<EdgeInfo>();
-     	*/
-	}
+                if( numConnections > 0 )
+                {
+                    EdgeInfo info = new EdgeInfo();
+                    info.startNode = tmpNodeArray[i];
+                    info.endNode = tmpNodeArray[j];
+                    info.forceValue = Mathf.Sqrt((float)numConnections) + 0.5f;
 
-	new public void loadData_2()
+                    edgeList.Add(info);
+                }
+            }
+        }
+
+        Debug.Log("Number of Edges: " + edgeList.Count);
+
+        base.loadData();
+    }
+
+    new public void loadData_2()
 	{
 		var nlAsset = Resources.Load<TextAsset>("movies");
         var nlDataArray = JsonUtility.FromJson<TmpDataArray>(nlAsset.text);
@@ -114,7 +145,7 @@ public class CMJSONLoader : DataLoader {
 
 	public static string getMovieKey(TmpCMData data)
     {
-        return data.movie + " " + data.year;
+        return data.movie + " (" + data.year + ")";
     }
 }
 
@@ -178,3 +209,4 @@ public class TmpCoord
     public double x;
     public double y;
 }
+
