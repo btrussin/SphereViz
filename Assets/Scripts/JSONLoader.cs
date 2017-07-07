@@ -27,6 +27,7 @@ public class JSONLoader : MonoBehaviour {
     Dictionary<string, Vector3> m_nodeCoords = new Dictionary<string, Vector3>();
     Dictionary<string, Color> m_catColorMap = new Dictionary<string, Color>();
 
+
     // Use this for initialization
     void Start () {
 		loadData();
@@ -83,7 +84,7 @@ public class JSONLoader : MonoBehaviour {
         Vector3 currVec;
         foreach( KeyValuePair<string, Vector2> kv in m_nodeCoordsNormalized)
         {
-            currVec = get3DPointProjection(kv.Value, radius);
+            currVec = get3DPointProjectionSphere(kv.Value, radius);
             m_nodeCoords.Add(kv.Key, currVec);
         }
 
@@ -255,7 +256,9 @@ public class JSONLoader : MonoBehaviour {
         }
     }
 
-    Vector3 get3DPointProjection(Vector2 v, float r)
+	// v: 2D graph coordinate where values are between -1 and 1
+	// r: radius of the sphere
+    Vector3 get3DPointProjectionSphere(Vector2 v, float r)
     {
         Vector3 result = new Vector3(r, 0.0f, 0.0f);
 
@@ -417,22 +420,6 @@ public class CMCoord
     public double y;
 }
 
-public class NodeInfo2D
-{
-    public string name;
-    public string groupName;
-    public Vector2 position2;
-    public Vector3 position3;
-}
-
-
-public class GroupInfo
-{
-    public string name;
-    public List<NodeInfo2D> nodeList;
-    public Vector2 center2;
-    public Vector3 center3;
-}
 
 
 
