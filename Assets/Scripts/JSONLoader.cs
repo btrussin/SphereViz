@@ -153,6 +153,8 @@ public class JSONLoader : MonoBehaviour {
         Color c0;
         Color c1;
 
+        float barRadius = radius / 125.0f;
+
         foreach (KeyValuePair<string, EdgeData> kv in m_edgeMap)
         {
 
@@ -208,26 +210,9 @@ public class JSONLoader : MonoBehaviour {
 
                 	basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
 
-
-                	/*
-                	basePts = new Vector3[9];
-
-            		basePts[0] = m_nodeCoords[fromKey];
-            		basePts[8] = m_nodeCoords[toKey];
-
-            		basePts[1] = basePts[0] * 1.1f;
-                	basePts[2] = tVec1 * 1.1f;
-                	basePts[3] = tVec1 * 1.4f;
-
-                	basePts[5] = tVec2 * 1.4f;
-                	basePts[6] = tVec2 * 1.1f;
-                	basePts[7] = basePts[8] * 1.1f;
-
-                	basePts[4] = (basePts[3] + basePts[5]) * 0.5f;
-					*/
-
-					GameObject edge = (GameObject)Instantiate(bSplinePrefab);
+                    GameObject edge = (GameObject)Instantiate(bSplinePrefab);
                 	BasisSpline bspline = edge.GetComponent<BasisSpline>();
+                    bspline.radius = barRadius;
                 	bspline.useSphericalInterpolation = useSLERP;
                 	bspline.init(basePts, c0, c1);
 
@@ -240,6 +225,7 @@ public class JSONLoader : MonoBehaviour {
             {
                 GameObject edge = (GameObject)Instantiate(bezierPrefab);
                 BezierBar bezBar = edge.GetComponent<BezierBar>();
+                bezBar.radius = barRadius;
                 bezBar.populateMesh(basePts, c0, c1);
             }
             else

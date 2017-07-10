@@ -13,6 +13,8 @@ public class DataLoader : MonoBehaviour {
     public GameObject bezierPrefab;
     public GameObject bSplinePrefab;
 
+    public GameObject projSphere;
+
     public bool useBezierBars = true;
     public bool useBSplineBars = true;
     public bool useSLERP = false;
@@ -26,7 +28,7 @@ public class DataLoader : MonoBehaviour {
 	protected Dictionary<string, GroupInfo> groupMap = new Dictionary<string, GroupInfo>();
 	protected Dictionary<string, Color> groupColorMap = new Dictionary<string, Color>();
 
-	public int randomColorSeed = 6;
+	public int randomColorSeed = 8;
 
     float C1 = 0.1f;
     float C2 = 0.05f;
@@ -105,7 +107,7 @@ public class DataLoader : MonoBehaviour {
 				currGroup = new GroupInfo();
 				currGroup.name = currNode.groupName;
 				currGroup.nodeList = new List<NodeInfo>();
-				groupMap.Add(currGroup.name, currGroup);
+                groupMap.Add(currGroup.name, currGroup);
 			}
 
 			currGroup.nodeList.Add(currNode);
@@ -322,11 +324,7 @@ public class DataLoader : MonoBehaviour {
 
         int numIterations = 300;
 
-        Debug.Log("Starting the Force-Directed Layout calculation [" + numIterations + "]");
-
         for (int i = 0; i < numIterations; i++) recalcPositions();
-
-        Debug.Log("Ending the Force-Directed Layout calculation");
 
     }
 
@@ -336,10 +334,16 @@ public class DataLoader : MonoBehaviour {
 
 	private void populatePts()
     {
+        Vector3 ptScale = Vector3.one * radius * 2f / 125f;
         foreach( KeyValuePair<string, NodeInfo> kv in nodeMap )
         {
             GameObject point = (GameObject)Instantiate(nodePrefab);
-            point.transform.position = kv.Value.position3;
+            point.transform.position = kv.Value.position3 + projSphere.transform.position;
+            point.transform.localScale = ptScale;
+
+            MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
+            meshRend.material.color = groupColorMap[kv.Value.groupName];
+
         }
     }
 
@@ -354,6 +358,8 @@ public class DataLoader : MonoBehaviour {
         Color c0;
         Color c1;
 
+        float barRadius = radius / 125.0f;
+
         GroupInfo fromGroup;
         GroupInfo toGroup;
 
@@ -365,7 +371,7 @@ public class DataLoader : MonoBehaviour {
             c0 = groupColorMap[edge.startNode.groupName];
             c1 = groupColorMap[edge.endNode.groupName];
 
-            if( !useBSplineBars )
+            if ( !useBSplineBars )
             {
             	basePts[0] = edge.startNode.position3;
             	basePts[basePts.Length-1] = edge.endNode.position3;
@@ -403,9 +409,10 @@ public class DataLoader : MonoBehaviour {
 
                     GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
                     BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
+                    bezBar.radius = barRadius;
                     bezBar.populateMesh(basePts, c0, c1, interpolateSpherical);
-                	
-            	}
+                    edgeObj.transform.position = projSphere.transform.position;
+                }
 				else
 				{
 					fromGroup = groupMap[edge.startNode.groupName];
@@ -456,16 +463,19 @@ public class DataLoader : MonoBehaviour {
 
 					GameObject edgeObj = (GameObject)Instantiate(bSplinePrefab);
                 	BasisSpline bspline = edgeObj.GetComponent<BasisSpline>();
-                	bspline.useSphericalInterpolation = interpolateSpherical;
+                    bspline.radius = barRadius;
+                    bspline.useSphericalInterpolation = interpolateSpherical;
                 	bspline.init(basePts, c0, c1);
-
-				}                
+                    edgeObj.transform.position = projSphere.transform.position;
+                }                
             }
             else if(useBezierBars)
             {
                 GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
                 BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
+                bezBar.radius = barRadius;
                 bezBar.populateMesh(basePts, c0, c1);
+                edgeObj.transform.position = projSphere.transform.position;
             }
             else
             {
@@ -474,11 +484,13 @@ public class DataLoader : MonoBehaviour {
 
                 pts = Utils.getBezierPoints(basePts, 100);
                 rend.SetPositions(pts);
-                rend.startColor = Color.white;
-                rend.endColor = Color.white;
+                rend.startColor = c0;
+                rend.endColor = c1;
+                edgeObj.transform.position = projSphere.transform.position;
             }
 
         }
+
     }
 
     protected string getEdgeName(NodeInfo info1, NodeInfo info2)

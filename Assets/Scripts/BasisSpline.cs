@@ -386,8 +386,6 @@ public class BasisSpline : MonoBehaviour
         mesh.normals = meshNormals;
         mesh.colors = meshColors;
         mesh.triangles = faceList;
-
-
     }
 
    
