@@ -353,8 +353,7 @@ public class DataLoader : MonoBehaviour {
         
         Vector3[] pts;
         Vector3 tVec1, tVec2;
-        
-        string fromKey, toKey;
+
         Color c0;
         Color c1;
 
@@ -365,8 +364,6 @@ public class DataLoader : MonoBehaviour {
 
         foreach (EdgeInfo edge in edgeList)
         {
-        	fromKey = edge.startNode.name;
-        	toKey = edge.endNode.name;
 
             c0 = groupColorMap[edge.startNode.groupName];
             c1 = groupColorMap[edge.endNode.groupName];

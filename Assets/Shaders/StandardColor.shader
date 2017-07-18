@@ -7,7 +7,7 @@
 	SubShader
 	{
 		//Tags { "RenderType"="Opaque" }
-		//Tags {"LightMode"="ForwardBase"}
+		Tags {"LightMode"="ForwardBase"}
 		LOD 100
 
 		Pass
@@ -33,7 +33,7 @@
 				fixed4 diff : COLOR0;
 			};
 			
-			v2f vert (appdata_full v)
+			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);

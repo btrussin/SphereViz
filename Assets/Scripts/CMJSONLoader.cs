@@ -10,19 +10,14 @@ public class CMJSONLoader : DataLoader {
 
     public TmpCMData[] cmData;
 
-    Dictionary<string, List<string> > m_publisherMap = new Dictionary<string, List<string>>();
-    Dictionary<string, Vector3> m_publisherPointMap = new Dictionary<string, Vector3>();
-    Dictionary<string, CMData> m_cmMap = new Dictionary<string, CMData>();
-    Dictionary<string, EdgeData> m_edgeMap = new Dictionary<string, EdgeData>();
-    Dictionary<string, Vector3> m_nodeCoords = new Dictionary<string, Vector3>();
-
     public bool purgeStanLee = true;
+
+    bool useOldMethod = false;
 
 	// Use this for initialization
 	void Start () {
-		loadData();
-        //loadData_2();
-
+        if (useOldMethod) loadData_2();
+		else loadData();
     }
 
     // Update is called once per frame
@@ -84,7 +79,7 @@ public class CMJSONLoader : DataLoader {
         base.loadData();
     }
 
-    new public void loadData_2()
+    public void loadData_2()
 	{
 		var nlAsset = Resources.Load<TextAsset>("movies");
         var nlDataArray = JsonUtility.FromJson<TmpDataArray>(nlAsset.text);
@@ -92,7 +87,6 @@ public class CMJSONLoader : DataLoader {
         nlLinks = nlDataArray.links;
         nlCoords = nlDataArray.coords;
 
-        string id;
         TmpNode currNode;
         NodeInfo [] tmpNodeInfoArr = new NodeInfo[nlNodes.Length];
 

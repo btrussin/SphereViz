@@ -104,18 +104,18 @@ public class BezierBar : MonoBehaviour {
             currUp = Vector3.Cross(currRight, currForward);
             currUp.Normalize();
 
-            currVertex = currUp * radius;
+            currVertex = currUp;
 
             Quaternion rotation = Quaternion.AngleAxis(360.0f / numMinorDivisions, currForward);
 
             for (int j = 0; j < numMinorDivisions; j++)
             {
-                meshPoints[currIdx] = currVertex + basePoints[i];
+                meshPoints[currIdx] = basePoints[i] + currVertex * radius;
                 meshNormals[currIdx] = currVertex;
-                meshNormals[currIdx].Normalize();
                 meshColors[currIdx] = currColor;
 
                 currVertex = rotation * currVertex;
+                currVertex.Normalize();
                 currIdx++;
             }
 
