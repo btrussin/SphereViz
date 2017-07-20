@@ -14,8 +14,10 @@ public class CMJSONLoader : DataLoader {
 
     bool useOldMethod = false;
 
-	// Use this for initialization
-	void Start () {
+
+
+    // Use this for initialization
+    void Start () {
         if (useOldMethod) loadData_2();
 		else loadData();
     }
@@ -51,15 +53,19 @@ public class CMJSONLoader : DataLoader {
 
                 for (int m = 0; m < cmData[i].roles.Length; m++)
                 {
-                	if( purgeStanLee && cmData[i].roles[m].actor.Equals("Stan Lee")) continue;
-
+                	if( purgeStanLee )
+                    {
+                        if (cmData[i].roles[m].actor.Contains("Stan") && cmData[i].roles[m].actor.Contains("Lee")) continue;
+                        
+                    }
                     for (int n = 0; n < cmData[j].roles.Length; n++)
                     {
-                        if( cmData[i].roles[m].actor.Equals(cmData[j].roles[n].actor))
+                        if (cmData[i].roles[m].actor.Equals(cmData[j].roles[n].actor))
                         {
                             numConnections++;
                         }
                     }
+
                 }
 
                 if( numConnections > 0 )
@@ -77,6 +83,8 @@ public class CMJSONLoader : DataLoader {
         Debug.Log("Number of Edges: " + edgeList.Count);
 
         base.loadData();
+
+        procData();
     }
 
 	private void procData()
@@ -89,10 +97,124 @@ public class CMJSONLoader : DataLoader {
 		5. How are Batman Begins (DC) and Avengers (Marvel) connected?
 		*/
 		Dictionary<string, CMData> keyMovieDataMap = new Dictionary<string, CMData> ();
-		Dictionary<string, HashSet<string> > publisherMovieMap = new Dictionary<string, HashSet<string> > ();   // 2
-		Dictionary<string, HashSet<CMData> > actorMovieMap = new Dictionary<string, HashSet<CMData> > (); // 
-		Dictionary<string, 
-	}
+		Dictionary<string, List<string> > publisherMovieMap = new Dictionary<string, List<string> > ();   // 1 (complete)
+        Dictionary<string, List<CMData> > movieConnectionMap = new Dictionary<string, List<CMData>>(); // 2 (complete), 3 (complete)
+        Dictionary<string, HashSet<string>> moviePublisherMap = new Dictionary<string, HashSet<string>>(); // 4 (complete)
+        
+
+        string iKey, jKey;
+        CMData iData, jData;
+
+
+        for ( int i = 0; i < cmData.Length; i++ )
+        {
+            iData = cmData[i];
+            iKey = getMovieKey(iData);
+
+            keyMovieDataMap.Add(iKey, iData);
+
+            List<string> pubList;
+
+            if(!publisherMovieMap.TryGetValue(iData.publisher, out pubList))
+            {
+                pubList = new List<string>();
+                publisherMovieMap.Add(iData.publisher, pubList);
+                pubList = publisherMovieMap[iData.publisher];
+            }
+
+            pubList.Add(iKey);
+
+            List<CMData> connList = new List<CMData>();
+            HashSet<string> pubSet = new HashSet<string>();
+
+            bool hasConnection = false;
+
+            for (int j = 0; j < cmData.Length; j++)
+            {
+                if (j == i) continue;
+                jData = cmData[j];
+                jKey = getMovieKey(jData);
+                hasConnection = false;
+
+                for ( int m = 0; m < iData.roles.Length; m++ )
+                {
+                    if (purgeStanLee && iData.roles[m].actor.Contains("Stan") && iData.roles[m].actor.Contains("Lee")) continue;
+
+                    for ( int n = 0; n < jData.roles.Length; n++ )
+                    {
+                        if( iData.roles[m].actor.Equals(jData.roles[n].actor))
+                        {
+                            m += iData.roles.Length;
+                            n += jData.roles.Length;
+                            hasConnection = true;
+                            break;
+                        }
+                    }
+                }
+
+                if( hasConnection )
+                {
+                    connList.Add(jData);
+
+                    if (iData.publisher.Equals(jData.publisher) || pubSet.Contains(jData.publisher)) continue;
+
+                    pubSet.Add(jData.publisher);
+                }
+            }
+
+
+
+            movieConnectionMap.Add(iKey, connList);
+            moviePublisherMap.Add(iKey, pubSet);
+
+        }
+
+
+        /*
+		1. Which publisher has produced the most movies?
+		2. Which movie has the most connections with other movies?
+		3. Which movie has no connections with other movies?
+		4. Which movie is connected to the most publishers?
+		5. How are Batman Begins (DC) and Avengers (Marvel) connected?
+		*/
+        /*
+        Dictionary<string, CMData> keyMovieDataMap;
+        Dictionary<string, List<string>> publisherMovieMap;
+        Dictionary<string, List<CMData>> movieConnectionMap;
+        Dictionary<string, HashSet<string>> moviePublisherMap;
+        */
+
+        foreach (KeyValuePair<string, HashSet<string>> kv in moviePublisherMap)
+        {
+            HashSet<string> set = kv.Value;
+
+            if (set.Count == 4)
+            {
+                Debug.Log(kv.Key + " has " + set.Count + " publisher connections");    
+            }
+        }
+
+        foreach (KeyValuePair<string, List<CMData>> kv in movieConnectionMap)
+        {
+            List<CMData> list = kv.Value;
+
+            if (list.Count > 10)
+            {
+                //Debug.Log(kv.Key + " has " + list.Count + " connections");    
+            }
+        }
+
+
+        foreach (KeyValuePair<string, List<string>> kv in publisherMovieMap)
+        {
+            List<string> list = kv.Value;
+            if( list.Count > 5 )
+            {
+                //Debug.Log(kv.Key + " has " + list.Count + " movies");     
+            }
+        }
+
+    }
 
     public void loadData_2()
 	{
