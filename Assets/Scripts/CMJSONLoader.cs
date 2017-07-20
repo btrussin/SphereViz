@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class CMJSONLoader : DataLoader {
 
-    public TmpNode[] nlNodes;
-    public TmpLink[] nlLinks;
-    public TmpCoord[] nlCoords;
+    public CMNode[] nlNodes;
+    public CMLink[] nlLinks;
+    public CMCoord[] nlCoords;
 
-    public TmpCMData[] cmData;
+    public CMData[] cmData;
 
     public bool purgeStanLee = true;
 
@@ -28,7 +28,7 @@ public class CMJSONLoader : DataLoader {
 	new public void loadData()
 	{
 		var cmAsset = Resources.Load<TextAsset>("ComicsMovies");
-        var cmDataArray = JsonUtility.FromJson<TmpCMDataArray>(cmAsset.text);
+        var cmDataArray = JsonUtility.FromJson<CMDataObject>(cmAsset.text);
         cmData = cmDataArray.data;
 
         NodeInfo[] tmpNodeArray = new NodeInfo[cmData.Length];
@@ -79,15 +79,30 @@ public class CMJSONLoader : DataLoader {
         base.loadData();
     }
 
+	private void procData()
+	{
+		/*
+		1. Which publisher has produced the most movies?
+		2. Which movie has the most connections with other movies?
+		3. Which movie has no connections with other movies?
+		4. Which movie is connected to the most publishers?
+		5. How are Batman Begins (DC) and Avengers (Marvel) connected?
+		*/
+		Dictionary<string, CMData> keyMovieDataMap = new Dictionary<string, CMData> ();
+		Dictionary<string, HashSet<string> > publisherMovieMap = new Dictionary<string, HashSet<string> > ();   // 2
+		Dictionary<string, HashSet<CMData> > actorMovieMap = new Dictionary<string, HashSet<CMData> > (); // 
+		Dictionary<string, 
+	}
+
     public void loadData_2()
 	{
 		var nlAsset = Resources.Load<TextAsset>("movies");
-        var nlDataArray = JsonUtility.FromJson<TmpDataArray>(nlAsset.text);
+        var nlDataArray = JsonUtility.FromJson<CMDataArray>(nlAsset.text);
         nlNodes = nlDataArray.nodes;
         nlLinks = nlDataArray.links;
         nlCoords = nlDataArray.coords;
 
-        TmpNode currNode;
+        CMNode currNode;
         NodeInfo [] tmpNodeInfoArr = new NodeInfo[nlNodes.Length];
 
         Dictionary<string, int> nodeIdxMap = new Dictionary<string, int>();
@@ -102,7 +117,7 @@ public class CMJSONLoader : DataLoader {
         	nodeIdxMap.Add(currNode.id, i);
         }
 
-        TmpCoord currCoord;
+        CMCoord currCoord;
         int currIdx;
         Vector2 v2;
         for(int i = 0; i < nlCoords.Length; i++ )
@@ -117,7 +132,7 @@ public class CMJSONLoader : DataLoader {
 
         int idx1;
         int idx2;
-		TmpLink currLink;
+		CMLink currLink;
         for(int i = 0; i < nlLinks.Length; i++ )
         {
         	currLink = nlLinks[i];
@@ -142,20 +157,20 @@ public class CMJSONLoader : DataLoader {
 		base.loadData();
 	}
 
-	public static string getMovieKey(TmpCMData data)
+	public static string getMovieKey(CMData data)
     {
         return data.movie + " (" + data.year + ")";
     }
 }
 
 
-public class TmpCMDataArray
+public class CMDataObject
 {
-    public TmpCMData[] data;
+    public CMData[] data;
 }
 
 [System.Serializable]
-public class TmpCMData
+public class CMData
 {
     public string comic;
     public string movie;
@@ -164,12 +179,12 @@ public class TmpCMData
     public string grouping;
     public string distributor;
     public string[] studios;
-    public TmpCMRole[] roles;
+    public CMRole[] roles;
 }
 
 
 [System.Serializable]
-public class TmpCMRole
+public class CMRole
 {
     public string role;
     public string actor;
@@ -178,23 +193,23 @@ public class TmpCMRole
 }
 
 
-public class TmpDataArray
+public class CMDataArray
 {
-    public TmpNode[] nodes;
-    public TmpLink[] links;
-    public TmpCoord[] coords;
+    public CMNode[] nodes;
+    public CMLink[] links;
+    public CMCoord[] coords;
 }
 
 
 [System.Serializable]
-public class TmpNode
+public class CMNode
 {
     public string id;
     public int group;
 }
 
 [System.Serializable]
-public class TmpLink
+public class CMLink
 {
     public string source;
     public string target;
@@ -202,7 +217,7 @@ public class TmpLink
 }
 
 [System.Serializable]
-public class TmpCoord
+public class CMCoord
 {
     public string id;
     public double x;
