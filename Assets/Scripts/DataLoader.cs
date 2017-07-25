@@ -6,7 +6,8 @@ public class DataLoader : MonoBehaviour {
 
 	public bool excludeIsolatedNodes = false;
 	public bool performForceDirectedLayout = false;
-	public float radius = 2.5f;
+    public int numForceIterations = 300;
+    public float radius = 2.5f;
 
 	public GameObject nodePrefab;
     public GameObject edgePrefab;
@@ -58,12 +59,21 @@ public class DataLoader : MonoBehaviour {
 		// cull isolated nodes (is applicable)
 		if( excludeIsolatedNodes ) cullIsolatedNodes();
 
-		// do the force-directed layout
-		if( performForceDirectedLayout ) doForceDirLayout();
+
+        // populate the groupMap
+        populateGroupMap();
 
 
-		// populate the groupMap
-		populateGroupMap();
+        clusterByGroups();
+        //randomizeNodePoints();
+
+
+        // do the force-directed layout
+        if ( performForceDirectedLayout ) doForceDirLayout();
+
+
+
+
 		
 		// populate the groupColorMap
 		populateColorMap();
@@ -78,6 +88,88 @@ public class DataLoader : MonoBehaviour {
 		populatePts();
 		populateEdges();
 	}
+
+    private void clusterByGroups()
+    {
+        //protected Dictionary<string, GroupInfo> groupMap = new Dictionary<string, GroupInfo>();
+        int N = nodeMap.Count; // number of nodes
+        int M = groupMap.Count; // number of groups
+
+        GroupInfo[] tmpGrpInfo = new GroupInfo[M];
+
+        int i = 0;
+        foreach(GroupInfo grp in groupMap.Values) tmpGrpInfo[i++] = grp;
+
+        SortBySize(tmpGrpInfo, 0, M - 1);
+
+        float R = 1.0f;
+
+        float[] portionVals = new float[M];
+        float[] radiusVals = new float[M];
+        float[] angleVals = new float[M];
+
+        Debug.Log("N: " + N);
+        Debug.Log("M: " + M);
+
+        i = 0;
+        GroupInfo currGrp;
+
+        for (i = 0; i < tmpGrpInfo.Length; i++)
+        {
+            currGrp = tmpGrpInfo[i];
+            
+            portionVals[i] = (float)currGrp.nodeList.Count / (float)N;
+            radiusVals[i] = Mathf.Sqrt(portionVals[i]) * R;
+        }
+
+        float A, B, C;
+        float sumAngles = 0.0f;
+        angleVals[0] = angleVals[1] = 0.0f;
+
+        for (i = 2; i < tmpGrpInfo.Length; i++)
+        {
+            A = radiusVals[0] + radiusVals[i - 1];
+            B = radiusVals[0] + radiusVals[i];
+            C = radiusVals[i - 1] + radiusVals[i];
+
+            angleVals[i] = Mathf.Acos((A * A + B * B - C * C) / (2.0f * A * B));
+            sumAngles += angleVals[i];
+        }
+
+        Debug.Log("Sum of all angles: " + sumAngles);
+
+
+        if( sumAngles >= 2.0f * Mathf.PI )
+        {
+            Debug.Log("Does not fit!!");
+        }
+
+        tmpGrpInfo[0].center2 = Vector2.zero;
+
+        float currAngle = 0.0f;
+        Vector2 currVec;
+        for (i = 0; i < tmpGrpInfo.Length; i++)
+        {
+            currGrp = tmpGrpInfo[i];
+
+            currAngle += angleVals[i];
+
+            if (i == 0) currGrp.center2 = Vector2.zero;
+            else currGrp.center2 = new Vector2(Mathf.Cos(currAngle), Mathf.Sin(currAngle)) * (radiusVals[0] + radiusVals[i]);
+
+            float partRadius = radiusVals[i] * 0.6f;
+            float angleInc = 2f * Mathf.PI / (float)currGrp.nodeList.Count;
+            float angle = 0f;
+            for( int j = 0; j < currGrp.nodeList.Count; j++ )
+            {
+                currVec = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius;
+                angle += angleInc;
+            }
+
+        }
+
+    }
 
 	private void cullIsolatedNodes()
 	{
@@ -214,7 +306,7 @@ public class DataLoader : MonoBehaviour {
     {
         Vector3 result = new Vector3(r, 0.0f, 0.0f);
 
-        float horizontalAngle = v.x * 170.0f;
+        float horizontalAngle = v.x * 90.0f;
         float verticalAngle = v.y * 60.0f;
 
         Quaternion rotation = Quaternion.Euler(0.0f, horizontalAngle, verticalAngle);
@@ -230,7 +322,7 @@ public class DataLoader : MonoBehaviour {
 
     private Vector3 get3DPointProjectionSphereCoords(Vector3 v, float r)
     {
-        Vector3 result = new Vector3(v.x * 170.0f, v.y * 60.0f, r);
+        Vector3 result = new Vector3(v.x * 90.0f, v.y * 60.0f, r);
         return result;
     }
 
@@ -312,19 +404,20 @@ public class DataLoader : MonoBehaviour {
         }
     }
 
-
-    private void doForceDirLayout()
-	{
-        // TODO:
+    private void randomizeNodePoints()
+    {
         Random.InitState(45);
-        foreach( NodeInfo info in nodeMap.Values)
+        foreach (NodeInfo info in nodeMap.Values)
         {
             info.position2 = Random.insideUnitCircle;
         }
+    }
 
-        int numIterations = 300;
 
-        for (int i = 0; i < numIterations; i++) recalcPositions();
+    private void doForceDirLayout()
+    { 
+       
+        for (int i = 0; i < numForceIterations; i++) recalcPositions();
 
     }
 
@@ -494,6 +587,61 @@ public class DataLoader : MonoBehaviour {
     {
         if (info1.name.CompareTo(info2.name) < 0) return info1.name + " - " + info2.name;
         else return info2.name + " - " + info1.name;
+    }
+
+    void swapElements(GroupInfo[] groups, int i, int j)
+    {
+        GroupInfo tGroup = groups[i];
+
+        groups[i] = groups[j];
+
+        groups[j] = tGroup;
+        return;
+    }
+
+    void SortBySize(GroupInfo[] groups, int beginIdx, int endIdx)
+    {
+        int idxDist = endIdx - beginIdx;
+        if (idxDist < 1) return;
+        else if (idxDist == 1)
+        {
+            if (groups[beginIdx].nodeList.Count < groups[endIdx].nodeList.Count) swapElements(groups, beginIdx, endIdx);
+            return;
+        }
+
+        int midIdx = (beginIdx + endIdx) / 2;
+        int countVal = groups[midIdx].nodeList.Count;
+
+        swapElements(groups, midIdx, endIdx);
+
+
+        int s = beginIdx;
+        int e = endIdx - 1;
+
+        while (s < e)
+        {
+            if (groups[s].nodeList.Count <= countVal)
+            {
+                swapElements(groups, s, e);
+                e--;
+            }
+            else s++;
+        }
+
+        int divider = midIdx;
+
+        for (int i = beginIdx; i < endIdx; i++)
+        {
+            if (groups[i].nodeList.Count <= countVal)
+            {
+                divider = i;
+                swapElements(groups, divider, endIdx);
+                break;
+            }
+        }
+
+        SortBySize(groups, beginIdx, divider - 1);
+        SortBySize(groups, divider + 1, endIdx);
     }
 
 

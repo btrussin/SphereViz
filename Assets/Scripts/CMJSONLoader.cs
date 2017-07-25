@@ -14,6 +14,8 @@ public class CMJSONLoader : DataLoader {
 
     bool useOldMethod = false;
 
+    Dictionary<string, List<CMData>> pubMovieMap = new Dictionary<string, List<CMData>>();
+
 
 
     // Use this for initialization
@@ -190,7 +192,7 @@ public class CMJSONLoader : DataLoader {
 
             if (set.Count == 4)
             {
-                Debug.Log(kv.Key + " has " + set.Count + " publisher connections");    
+                //Debug.Log(kv.Key + " has " + set.Count + " publisher connections");    
             }
         }
 
@@ -208,9 +210,9 @@ public class CMJSONLoader : DataLoader {
         foreach (KeyValuePair<string, List<string>> kv in publisherMovieMap)
         {
             List<string> list = kv.Value;
-            if( list.Count > 5 )
+            if( list.Count <= 5 || list.Count > 1 )
             {
-                //Debug.Log(kv.Key + " has " + list.Count + " movies");     
+                Debug.Log(kv.Key + " has " + list.Count + " movies");     
             }
         }
 
