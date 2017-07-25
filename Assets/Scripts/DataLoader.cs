@@ -157,13 +157,13 @@ public class DataLoader : MonoBehaviour {
             if (i == 0) currGrp.center2 = Vector2.zero;
             else currGrp.center2 = new Vector2(Mathf.Cos(currAngle), Mathf.Sin(currAngle)) * (radiusVals[0] + radiusVals[i]);
 
-            float partRadius = radiusVals[i] * 0.6f;
+            float partRadius = radiusVals[i] * 0.8f;
             float angleInc = 2f * Mathf.PI / (float)currGrp.nodeList.Count;
             float angle = 0f;
             for( int j = 0; j < currGrp.nodeList.Count; j++ )
             {
                 currVec = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius;
+				currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius * Random.value * 0.5f;
                 angle += angleInc;
             }
 
