@@ -86,7 +86,7 @@ public class CMJSONLoader : DataLoader {
 
         base.loadData();
 
-        procData();
+        //procData();
     }
 
 	private void procData()
