@@ -42,6 +42,10 @@ public class CMJSONLoader : DataLoader {
             tmpNodeArray[i] = new NodeInfo();
             tmpNodeArray[i].name = getMovieKey(cmData[i]);
             tmpNodeArray[i].groupName = cmData[i].publisher;
+			for (int j = 0; j < cmData[i].roles.Length; j++) 
+			{
+				tmpNodeArray [i].subElements.Add (cmData [i].roles [j].actor);
+			}
 
             nodeMap.Add(tmpNodeArray[i].name, tmpNodeArray[i]);
         }

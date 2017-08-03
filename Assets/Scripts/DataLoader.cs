@@ -659,6 +659,8 @@ public class NodeInfo
     public Vector3 sphereCoords = Vector3.zero;
 
     public Vector2 dir = Vector2.zero;
+
+	public List<string> subElements = new List<string>();
 }
 
 
