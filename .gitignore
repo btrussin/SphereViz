@@ -1,5 +1,7 @@
 Library/
 Temp/
+ProjectSettings/ProjectSettings.asset
+ProjectSettings/ProjectVersion.txt
 
 # following tutorial for git setup from http://blog.hfarazm.com/git-for-unity-create-projects/
 

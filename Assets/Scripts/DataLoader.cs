@@ -20,16 +20,20 @@ public class DataLoader : MonoBehaviour {
     public bool useBSplineBars = true;
     public bool useSLERP = false;
 
+    public float barRadiusScale = 1.0f;
+    public float pointScaleFactor = 1.0f;
 
     // populated by the derived class
-	protected Dictionary<string, NodeInfo> nodeMap = new Dictionary<string, NodeInfo>();
+    protected Dictionary<string, NodeInfo> nodeMap = new Dictionary<string, NodeInfo>();
     protected List<EdgeInfo> edgeList = new List<EdgeInfo>();
 
     // populated by this class
 	protected Dictionary<string, GroupInfo> groupMap = new Dictionary<string, GroupInfo>();
 	protected Dictionary<string, Color> groupColorMap = new Dictionary<string, Color>();
 
-	public int randomColorSeed = 8;
+    protected Dictionary<string, List<GameObject> > subElementObjectMap = new Dictionary<string, List<GameObject>>();
+
+    public int randomColorSeed = 8;
 
     float C1 = 0.1f;
     float C2 = 0.05f;
@@ -108,11 +112,16 @@ public class DataLoader : MonoBehaviour {
         float[] radiusVals = new float[M];
         float[] angleVals = new float[M];
 
-        Debug.Log("N: " + N);
-        Debug.Log("M: " + M);
-
         i = 0;
         GroupInfo currGrp;
+        float A, B, C;
+        float sumAngles = 0.0f;
+        angleVals[0] = angleVals[1] = 0.0f;
+
+        float hiVal = 20.0f;
+        float loVal = 0.01f;
+        float midVal = (hiVal + loVal) * 0.5f;
+
 
         for (i = 0; i < tmpGrpInfo.Length; i++)
         {
@@ -122,27 +131,44 @@ public class DataLoader : MonoBehaviour {
             radiusVals[i] = Mathf.Sqrt(portionVals[i]) * R;
         }
 
-        float A, B, C;
-        float sumAngles = 0.0f;
-        angleVals[0] = angleVals[1] = 0.0f;
-
-        for (i = 2; i < tmpGrpInfo.Length; i++)
+        for(int z = 0; z < 100; z++ )
         {
-            A = radiusVals[0] + radiusVals[i - 1];
-            B = radiusVals[0] + radiusVals[i];
-            C = radiusVals[i - 1] + radiusVals[i];
 
-            angleVals[i] = Mathf.Acos((A * A + B * B - C * C) / (2.0f * A * B));
-            sumAngles += angleVals[i];
+            for (i = 1; i < tmpGrpInfo.Length; i++)
+            {
+                currGrp = tmpGrpInfo[i];
+                radiusVals[i] = Mathf.Sqrt(portionVals[i]) * R * midVal;
+            }
+
+            sumAngles = 0.0f;
+            for (i = 2; i < tmpGrpInfo.Length; i++)
+            {
+                A = radiusVals[0] + radiusVals[i - 1];
+                B = radiusVals[0] + radiusVals[i];
+                C = radiusVals[i - 1] + radiusVals[i];
+
+                angleVals[i] = Mathf.Acos((A * A + B * B - C * C) / (2.0f * A * B));
+                sumAngles += angleVals[i];
+            }
+
+            if (sumAngles > 2.0f * Mathf.PI)
+            {
+                hiVal = midVal;
+            }
+            else if( sumAngles < 1.9f * Mathf.PI )
+            {
+                loVal = midVal;
+            }
+            else
+            {
+                break;
+            }
+
+            midVal = (hiVal + loVal) * 0.5f;
         }
 
-        Debug.Log("Sum of all angles: " + sumAngles);
-
-
-        if( sumAngles >= 2.0f * Mathf.PI )
-        {
-            Debug.Log("Does not fit!!");
-        }
+        Debug.Log("Final Mid Val: " + midVal);
+       
 
         tmpGrpInfo[0].center2 = Vector2.zero;
 
@@ -421,22 +447,121 @@ public class DataLoader : MonoBehaviour {
 
     }
 
-
-
-
-
-	private void populatePts()
+    private void populatePts()
     {
-        Vector3 ptScale = Vector3.one * radius * 2f / 125f;
-        foreach( KeyValuePair<string, NodeInfo> kv in nodeMap )
+        Vector3 ptScale = Vector3.one * radius * 2f / 125f * pointScaleFactor;
+        foreach (KeyValuePair<string, NodeInfo> kv in nodeMap)
         {
             GameObject point = (GameObject)Instantiate(nodePrefab);
+            point.name = "Node: " + kv.Value.name;
             point.transform.position = kv.Value.position3 + projSphere.transform.position;
             point.transform.localScale = ptScale;
 
             MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
             meshRend.material.color = groupColorMap[kv.Value.groupName];
 
+            NodeManager manager = point.GetComponent<NodeManager>();
+            manager.nodeName = kv.Value.name;
+            manager.setSubNodeNames(kv.Value.subElements);
+            manager.nodeInfo = kv.Value;
+        }
+    }
+
+
+    public void populateSubNodes(NodeManager nodeManager)
+    {
+        if (nodeManager == null) return;
+
+        NodeInfo nodeInfo = nodeManager.nodeInfo;
+
+        if (nodeInfo == null) return;
+
+        if (subElementObjectMap.ContainsKey(nodeInfo.name) ) return;
+
+        Vector3 ptScale = Vector3.one * radius * 2f / 125f;
+
+        Vector3 upDir = nodeManager.gameObject.transform.position - projSphere.transform.position;
+        upDir.Normalize();
+
+        Vector3 rightVec = new Vector3(1f, 0f, 0f);
+        if( Vector3.Dot(upDir, rightVec) > 0.99f ) rightVec = new Vector3(0f, 0f, 1f);
+        rightVec.Normalize();
+
+        Vector3 forVec = Vector3.Cross(upDir, rightVec);
+        forVec.Normalize();
+
+        rightVec = Vector3.Cross(forVec, upDir);
+        rightVec.Normalize();
+
+        List<GameObject> gObjList = new List<GameObject>();
+
+        float radAngle = 2f * Mathf.PI / (float)nodeInfo.subElements.Count;
+        float currAngle = 0f;
+
+        Vector3 center = nodeManager.gameObject.transform.position - upDir * radius * 0.15f;
+        float c, s;
+
+        float barRadius = radius / 125.0f * barRadiusScale;
+
+        Vector3[] basePoints = new Vector3[4];
+
+        basePoints[0] = nodeManager.gameObject.transform.position;
+        basePoints[1] = center * 0.75f + basePoints[0]*0.25f;
+
+        foreach (string currName in nodeInfo.subElements)
+            {
+            c = Mathf.Cos(currAngle);
+            s = Mathf.Sin(currAngle);
+
+            GameObject point = (GameObject)Instantiate(nodePrefab);
+            point.name = "Sub: " + currName;
+
+            basePoints[3] = center + (rightVec * c + forVec * s) * 0.05f;
+            basePoints[2] = center * 0.75f + basePoints[3] * 0.25f;
+
+            point.transform.position = basePoints[3];
+            point.transform.localScale = ptScale;
+
+            Color color = groupColorMap[nodeInfo.groupName];
+
+            MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
+            meshRend.material.color = color;
+
+            Destroy(point.GetComponent<NodeManager>());
+
+
+            GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
+            BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
+            bezBar.radius = barRadius;
+            bezBar.populateMesh(basePoints, color, color);
+            //edgeObj.transform.position = projSphere.transform.position;
+
+
+
+
+            gObjList.Add(point);
+            gObjList.Add(edgeObj);
+
+            currAngle += radAngle;
+        }
+
+        subElementObjectMap.Add(nodeInfo.name, gObjList);
+
+    }
+
+    public void removeSubNodes(NodeManager nodeManager)
+    {
+        if (nodeManager == null) return;
+        NodeInfo nodeInfo = nodeManager.nodeInfo;
+        List<GameObject> gObjList;
+
+        if( subElementObjectMap.TryGetValue(nodeInfo.name, out gObjList))
+        {
+            foreach (GameObject go in gObjList) GameObject.Destroy(go);
+
+            gObjList.Clear();
+
+            subElementObjectMap.Remove(nodeInfo.name);
         }
     }
 
@@ -450,7 +575,7 @@ public class DataLoader : MonoBehaviour {
         Color c0;
         Color c1;
 
-        float barRadius = radius / 125.0f;
+        float barRadius = radius / 125.0f * barRadiusScale;
 
         GroupInfo fromGroup;
         GroupInfo toGroup;

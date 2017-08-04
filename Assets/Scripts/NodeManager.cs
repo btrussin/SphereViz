@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class NodeManager : MonoBehaviour {
 
+    public string nodeName = "";
     Color origColor = Color.white;
     Material material = null;
     MeshRenderer meshRend = null;
+    public NodeInfo nodeInfo = null;
+
+    List<string> subNodeNames = new List<string>();
 
     int numCollisions = 0;
 
@@ -29,6 +33,17 @@ public class NodeManager : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void setSubNodeNames(List<string> list)
+    {
+        subNodeNames.Clear();
+        subNodeNames.AddRange(list);
+    }
+
+    public List<string> getSubNodeNames()
+    {
+        return subNodeNames;
+    }
 
     
     void OnCollisionEnter(Collision collision)
