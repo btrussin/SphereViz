@@ -593,9 +593,9 @@ public class DataLoader : MonoBehaviour {
                         ctrlPts[3] = subNodePositionMap[keyB];
 
                         tmpVec = sphereCenter - ctrlPts[0];
-                        ctrlPts[1] = ctrlPts[0] + tmpVec * radius * 0.15f;
+                        ctrlPts[1] = ctrlPts[0] + tmpVec * radius * 0.3f;
                         tmpVec = sphereCenter - ctrlPts[3];
-                        ctrlPts[2] = ctrlPts[3] + tmpVec * radius * 0.15f;
+                        ctrlPts[2] = ctrlPts[3] + tmpVec * radius * 0.3f;
 
 
                         

@@ -15,21 +15,36 @@ public class MainCameraController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        vrSystem = OpenVR.System;
         
-        if(forceUseScreenCamera || vrSystem == null )
+        if(forceUseScreenCamera )
         {
-            steamVRCameraRig.SetActive(false);
-            steamVRObject.SetActive(false);
+
+			Destroy (steamVRCameraRig);
+			Destroy (steamVRObject);
 
             mainCamera.SetActive(true);
         }
         else
         {
-            steamVRCameraRig.SetActive(true);
-            steamVRObject.SetActive(true);
+			vrSystem = OpenVR.System;
 
-            mainCamera.SetActive(false);
+			if( vrSystem == null )
+			{
+				steamVRCameraRig.SetActive(false);
+				steamVRObject.SetActive(false);
+
+				mainCamera.SetActive(true);
+			}
+			else
+			{
+				vrSystem = OpenVR.System;
+
+				steamVRCameraRig.SetActive(true);
+				steamVRObject.SetActive(true);
+
+				mainCamera.SetActive(false);
+			}
+
         }
     }
 	
