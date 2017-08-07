@@ -2,14 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasisSpline : MonoBehaviour 
+public class BasisSpline : BaseCurve
 {
-    public MeshFilter meshFilter;
-
-    public int numMajorDivisions = 100;
-    public int numMinorDivisions = 30;
-    public float radius = 0.02f;
-
+    
     public Vector3[] basisPoints;
     protected float[] basisWeights;
     protected int n = 0; // number of control points (zero-based)
@@ -20,25 +15,14 @@ public class BasisSpline : MonoBehaviour
     protected Vector3[] bsTangents;
 
     public bool useSphericalInterpolation = false;
-    Color color0;
-    Color color1;
-    
+
 
     // Use this for initialization
     void Start () {
 
-        init();
     }
 
-    public void init()
-    {
-        if (basisPoints == null || basisPoints.Length < 4) return;
-
-        setup();
-        populateMesh();
-    }
-
-    public void init(Vector3[] bPts, Color c0, Color c1)
+    public new void init(Vector3[] bPts, Color c0, Color c1)
     {
     	color0 = c0;
     	color1 = c1;
@@ -49,7 +33,8 @@ public class BasisSpline : MonoBehaviour
             basisPoints[i] = bPts[i];
         }
 
-        init();
+        setup();
+        populateCurveBarMesh(bsPoints, bsTangents);
     }
 
     protected void setup()
@@ -75,12 +60,6 @@ public class BasisSpline : MonoBehaviour
 
 
         p = m - n - 1;
-
-        /*
-        Debug.Log("M: " + m);
-        Debug.Log("N: " + n);
-        Debug.Log("P: " + p);
-		*/
 
         calcBSplinePoints();
 
@@ -252,141 +231,7 @@ public class BasisSpline : MonoBehaviour
     }
 
 
-    public void populateMesh()
-    {
-
-        Vector3[] basePoints = bsPoints;
-        Vector3[] baseTangents = bsTangents;
-
-        Vector3 currVertex;
-        Vector3 tgtDirVector;
-        Vector3 currRight = Vector3.one;
-        Vector3 currForward;
-        Vector3 currUp;
-
-        Vector3[] meshPoints = new Vector3[numMinorDivisions * numMajorDivisions];
-        Vector3[] meshNormals = new Vector3[numMinorDivisions * numMajorDivisions];
-        Color[] meshColors = new Color[numMinorDivisions * numMajorDivisions];
-
-        int currIdx = 0;
-        Vector3 prevUp = Vector3.zero;
-        Vector3 prevRight = Vector3.zero;
-
-        float rInc = ( color1.r - color0.r ) / (float)(numMajorDivisions-1);
-        float gInc = ( color1.g - color0.g ) / (float)(numMajorDivisions-1);
-        float bInc = ( color1.b - color0.b ) / (float)(numMajorDivisions-1);
-        Color currColor = color0;
-
-        for (int i = 0; i < basePoints.Length; i++)
-        {
-            baseTangents[i].Normalize();
-
-            currForward = baseTangents[i];
-            
-            if( i == 0 )
-            {
-                tgtDirVector = currForward;
-                for (int j = 1; j < basePoints.Length; j++)
-                {
-                    tgtDirVector = basePoints[j] - basePoints[i];
-                    tgtDirVector.Normalize();
-                    float dot = Vector3.Dot(currForward, tgtDirVector);
-
-                    if (dot <= 0.95f)
-                    {
-                        currRight = Vector3.Cross(tgtDirVector, currForward);
-                        break;
-                    }
-                }
-
-                if (Mathf.Abs(Vector3.Dot(currForward, tgtDirVector)) > 0.95f)
-                {
-                    currRight.x = -currForward.y;
-                    currRight.y = currForward.x;
-                    currRight.z = currForward.z;
-
-                    if (Mathf.Abs(Vector3.Dot(currForward, currRight)) > 0.99f)
-                    {
-                        currRight.x = -currForward.z;
-                        currRight.y = currForward.y;
-                        currRight.z = currForward.x;
-                    }
-                }
-                
-
-            }
-
-
-            
-            else currRight = Vector3.Cross(currForward, prevUp);
-
-            currRight.Normalize();
-
-            //if( i > 0 && Vector3.Dot(prevRight, currRight) < 0.0f ) currRight = -currRight;
-           
-          
-          	prevRight = currRight;
-
-            currUp = Vector3.Cross(currRight, currForward);
-            currUp.Normalize();
-
-            prevUp = currUp;
-
-            currVertex = currUp;
-
-            Quaternion rotation = Quaternion.AngleAxis(360.0f / numMinorDivisions, currForward);
-
-            for (int j = 0; j < numMinorDivisions; j++)
-            {
-                meshPoints[currIdx] = basePoints[i] + currVertex * radius;
-                meshNormals[currIdx] = currVertex;
-                meshColors[currIdx] = currColor;
-
-                currVertex = rotation * currVertex;
-                currVertex.Normalize();
-                currIdx++;
-            }
-
-            currColor.r += rInc;
-            currColor.g += gInc;
-            currColor.b += bInc;
-        }
-
-        int[] faceList = new int[(numMajorDivisions - 1)*(numMinorDivisions)*6];
-        int mainIdx = 0;
-        int k = 0;
-        for( int i = 0; i < numMajorDivisions-1; i++ )
-        {
-            for (int j = 0; j < (numMinorDivisions - 1); j++)
-            {
-                faceList[k++] = mainIdx + j;
-                faceList[k++] = mainIdx + j + 1;
-                faceList[k++] = mainIdx + j + numMinorDivisions + 1;
-
-                faceList[k++] = mainIdx + j;
-                faceList[k++] = mainIdx + j + numMinorDivisions + 1;
-                faceList[k++] = mainIdx + j + numMinorDivisions;
-            }
-
-            faceList[k++] = mainIdx + numMinorDivisions - 1;
-            faceList[k++] = mainIdx;
-            faceList[k++] = mainIdx + numMinorDivisions;
-
-            faceList[k++] = mainIdx + numMinorDivisions - 1;
-            faceList[k++] = mainIdx + numMinorDivisions;
-            faceList[k++] = mainIdx + numMinorDivisions + numMinorDivisions-1;
-
-            mainIdx += numMinorDivisions;
-        }
-
-       
-        Mesh mesh = new Mesh();
-        meshFilter.mesh = mesh;
-        mesh.vertices = meshPoints;
-        mesh.normals = meshNormals;
-        mesh.colors = meshColors;
-        mesh.triangles = faceList;
-    }
+    
 
    
    

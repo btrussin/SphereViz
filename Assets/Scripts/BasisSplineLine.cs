@@ -11,12 +11,18 @@ public class BasisSplineLine : BasisSpline
     void Start()
     {
 
-        init();
     }
 
-    public new void init()
+    public new void init(Vector3[] bPts, Color c0, Color c1)
     {
-        if (basisPoints == null || basisPoints.Length < 4) return;
+        color0 = c0;
+        color1 = c1;
+
+        basisPoints = new Vector3[bPts.Length];
+        for (int i = 0; i < bPts.Length; i++)
+        {
+            basisPoints[i] = bPts[i];
+        }
 
         setup();
         populateLine();

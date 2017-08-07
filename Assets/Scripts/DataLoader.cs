@@ -20,8 +20,8 @@ public class DataLoader : MonoBehaviour {
     public bool useBSplineBars = true;
     public bool useSLERP = false;
 
-    public float barRadiusScale = 1.0f;
-    public float pointScaleFactor = 1.0f;
+    public float barRadiusScale = 1.0f;     // aesthetically appealing: 0.3
+    public float pointScaleFactor = 1.0f;   // aesthetically appealing: 1.5
 
     // populated by the derived class
     protected Dictionary<string, NodeInfo> nodeMap = new Dictionary<string, NodeInfo>();
@@ -32,6 +32,9 @@ public class DataLoader : MonoBehaviour {
 	protected Dictionary<string, Color> groupColorMap = new Dictionary<string, Color>();
 
     protected Dictionary<string, List<GameObject> > subElementObjectMap = new Dictionary<string, List<GameObject>>();
+    protected List<GameObject> subElementConnectionList = new List<GameObject>();
+
+    protected Dictionary<string, Vector3> subNodePositionMap = new Dictionary<string, Vector3>();
 
     public int randomColorSeed = 8;
 
@@ -44,6 +47,8 @@ public class DataLoader : MonoBehaviour {
 
     // for best results, this value should be <= 0.04
     public float gravityAmt = 0.01f;
+
+    public float splineGroupWeight = 0.95f;
 
 	// Use this for initialization
 	void Start () {
@@ -189,7 +194,8 @@ public class DataLoader : MonoBehaviour {
             for( int j = 0; j < currGrp.nodeList.Count; j++ )
             {
                 currVec = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-				currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius * Random.value * 0.5f;
+                //currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius * Random.value * 0.5f;
+                currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius * (0.5f + Random.value * 0.5f);
                 angle += angleInc;
             }
 
@@ -506,7 +512,8 @@ public class DataLoader : MonoBehaviour {
         Vector3[] basePoints = new Vector3[4];
 
         basePoints[0] = nodeManager.gameObject.transform.position;
-        basePoints[1] = center * 0.75f + basePoints[0]*0.25f;
+        //basePoints[1] = center * 0.25f + basePoints[0] * 0.75f;
+        basePoints[1] = (center + basePoints[0]) * 0.5f;
 
         foreach (string currName in nodeInfo.subElements)
             {
@@ -517,7 +524,8 @@ public class DataLoader : MonoBehaviour {
             point.name = "Sub: " + currName;
 
             basePoints[3] = center + (rightVec * c + forVec * s) * 0.05f;
-            basePoints[2] = center * 0.75f + basePoints[3] * 0.25f;
+            //basePoints[2] = center * 0.75f + basePoints[3] * 0.25f;
+            basePoints[2] = basePoints[3] + upDir * radius * 0.075f;
 
             point.transform.position = basePoints[3];
             point.transform.localScale = ptScale;
@@ -533,11 +541,11 @@ public class DataLoader : MonoBehaviour {
             GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
             BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
             bezBar.radius = barRadius;
-            bezBar.populateMesh(basePoints, color, color);
+            bezBar.sphereCoords = false;
+            bezBar.init(basePoints, color, color);
             //edgeObj.transform.position = projSphere.transform.position;
 
-
-
+            subNodePositionMap.Add(getSubNodeKey(nodeInfo, currName), basePoints[3]);
 
             gObjList.Add(point);
             gObjList.Add(edgeObj);
@@ -549,13 +557,78 @@ public class DataLoader : MonoBehaviour {
 
     }
 
+    public void populateSubNodeConnections(NodeManager nodeManagerA, NodeManager nodeManagerB)
+    {
+        
+        if (nodeManagerA == null || nodeManagerB == null) return;
+        NodeInfo infoA = nodeManagerA.nodeInfo;
+        NodeInfo infoB = nodeManagerB.nodeInfo;
+        if (infoA == null || infoB == null) return;
+
+        foreach (GameObject obj in subElementConnectionList) GameObject.Destroy(obj);
+        subElementConnectionList.Clear();
+
+        Vector3[] ctrlPts = new Vector3[4];
+        Vector3 tmpVec;
+        string keyA, keyB;
+        Vector3 sphereCenter = projSphere.transform.position;
+
+        Color colorA = groupColorMap[infoA.groupName];
+        Color colorB = groupColorMap[infoB.groupName];
+
+        float barRadius = radius / 125.0f * barRadiusScale;
+
+        for ( int i = 0; i < infoA.subElements.Count; i++ )
+        {
+            for (int j = 0; j < infoB.subElements.Count; j++)
+            {
+                if( infoA.subElements[i].Equals(infoB.subElements[j]) )
+                {
+                    keyA = getSubNodeKey(infoA, i);
+                    keyB = getSubNodeKey(infoB, j);
+
+                    if( subNodePositionMap.ContainsKey(keyA) && subNodePositionMap.ContainsKey(keyB) )
+                    {
+                        ctrlPts[0] = subNodePositionMap[keyA];
+                        ctrlPts[3] = subNodePositionMap[keyB];
+
+                        tmpVec = sphereCenter - ctrlPts[0];
+                        ctrlPts[1] = ctrlPts[0] + tmpVec * radius * 0.15f;
+                        tmpVec = sphereCenter - ctrlPts[3];
+                        ctrlPts[2] = ctrlPts[3] + tmpVec * radius * 0.15f;
+
+
+                        
+                        GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
+                        BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
+                        bezBar.radius = barRadius;
+                        bezBar.sphereCoords = false;
+                        bezBar.init(ctrlPts, colorA, colorB);
+
+                        subElementConnectionList.Add(edgeObj);
+
+                    }
+                         
+                    j += infoB.subElements.Count;
+                }
+            }
+        }
+    }
+
     public void removeSubNodes(NodeManager nodeManager)
     {
         if (nodeManager == null) return;
         NodeInfo nodeInfo = nodeManager.nodeInfo;
         List<GameObject> gObjList;
 
-        if( subElementObjectMap.TryGetValue(nodeInfo.name, out gObjList))
+        string tmpKey;
+        foreach (string currName in nodeInfo.subElements)
+        {
+            tmpKey = getSubNodeKey(nodeInfo, currName);
+            if (subNodePositionMap.ContainsKey(tmpKey)) subNodePositionMap.Remove(tmpKey);
+        }
+
+        if ( subElementObjectMap.TryGetValue(nodeInfo.name, out gObjList))
         {
             foreach (GameObject go in gObjList) GameObject.Destroy(go);
 
@@ -563,6 +636,17 @@ public class DataLoader : MonoBehaviour {
 
             subElementObjectMap.Remove(nodeInfo.name);
         }
+    }
+
+    public string getSubNodeKey(NodeInfo nodeInfo, string subName)
+    {
+        return nodeInfo.name + "|" + subName;
+    }
+
+    public string getSubNodeKey(NodeInfo nodeInfo, int idx)
+    {
+        if (idx >= nodeInfo.subElements.Count) return "";
+        return getSubNodeKey(nodeInfo, nodeInfo.subElements[idx]);
     }
 
     private void populateEdges()
@@ -579,6 +663,9 @@ public class DataLoader : MonoBehaviour {
 
         GroupInfo fromGroup;
         GroupInfo toGroup;
+
+        float groupWeight = splineGroupWeight;
+        float nodeWeight = 1.0f - groupWeight;
 
         foreach (EdgeInfo edge in edgeList)
         {
@@ -625,7 +712,8 @@ public class DataLoader : MonoBehaviour {
                     GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
                     BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
                     bezBar.radius = barRadius;
-                    bezBar.populateMesh(basePts, c0, c1, interpolateSpherical);
+                    bezBar.sphereCoords = interpolateSpherical;
+                    bezBar.init(basePts, c0, c1);
                     edgeObj.transform.position = projSphere.transform.position;
                 }
 				else
@@ -640,16 +728,18 @@ public class DataLoader : MonoBehaviour {
 
                         basePts = new Vector3[7];
 
-                        basePts[0] = edge.startNode.sphereCoords;
-                        basePts[6] = edge.endNode.sphereCoords;
+                        basePts[0] = edge.startNode.sphereCoords;  // start point
+                        basePts[6] = edge.endNode.sphereCoords; // end point
 
-                        basePts[1] = basePts[2] = tVec1;
-                        basePts[1].z *= 1.1f;
-                        basePts[2].z *= 1.4f;
+                        //basePts[1] = basePts[2] = tVec1;
+                        basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;
+                        basePts[1].z *= 1.1f;  // group1 node radius 1.1*radius
+                        basePts[2].z *= 1.4f;  // group1 node radius 1.4*radius
 
-                        basePts[4] = basePts[5] = tVec2;
-                        basePts[4].z *= 1.4f;
-                        basePts[5].z *= 1.1f;
+                        //basePts[4] = basePts[5] = tVec2;
+                        basePts[4] = basePts[5] = tVec2 * groupWeight + basePts[6] * nodeWeight;
+                        basePts[4].z *= 1.4f;  // group2 node radius 1.4*radius
+                        basePts[5].z *= 1.1f;  // group2 node radius 1.1*radius
 
                         basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
                     }
@@ -689,7 +779,8 @@ public class DataLoader : MonoBehaviour {
                 GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
                 BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
                 bezBar.radius = barRadius;
-                bezBar.populateMesh(basePts, c0, c1);
+                bezBar.sphereCoords = false;
+                bezBar.init(basePts, c0, c1);
                 edgeObj.transform.position = projSphere.transform.position;
             }
             else

@@ -36,7 +36,15 @@ public class ViveController : SteamVR_TrackedObject
         if (stateIsValid && state.GetHashCode() != prevState.GetHashCode())
         {
             if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.ApplicationMenu) != 0) textMesh.text = "Pressed Menu Button";
-            if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Trigger) != 0) textMesh.text = "Pressed Trigger";
+            if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Trigger) != 0)
+            {
+                
+                if ( prevState.rAxis1.x < 1.0f && state.rAxis1.x == 1.0f )
+                {
+                    if(currCollisionNodeManager!=null) addNodeManager(currCollisionNodeManager);
+                }
+
+            }
             if ((state.ulButtonTouched & SteamVR_Controller.ButtonMask.Touchpad) != 0) textMesh.text = "Touched Touchpad";
             if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Touchpad) != 0) textMesh.text = "Pressed Touchpad";
             if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Grip) != 0) textMesh.text = "Pressed Grip";
@@ -57,6 +65,11 @@ public class ViveController : SteamVR_TrackedObject
             managerA = managerB;
             managerB = manager;
             dataLoader.populateSubNodes(managerB);
+        }
+
+        if( managerA != null && managerB != null && managerA != managerB )
+        {
+            dataLoader.populateSubNodeConnections(managerA, managerB);
         }
     }
 
@@ -80,18 +93,6 @@ public class ViveController : SteamVR_TrackedObject
         dataLoader.populateSubNodes(managerB);
     }
 
-    void replaceAWithB()
-    {
-       
-
-        //managerA = manager;
-    }
-
-    void clearNodeConnections()
-    {
-
-    }
-
     
     void OnCollisionEnter(Collision collision)
     {
@@ -99,8 +100,6 @@ public class ViveController : SteamVR_TrackedObject
         if( nodeMan != null )
         {
             currCollisionNodeManager = nodeMan;
-
-            addNodeManager(currCollisionNodeManager);
         }
         
 
