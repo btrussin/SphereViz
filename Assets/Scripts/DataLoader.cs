@@ -45,6 +45,8 @@ public class DataLoader : MonoBehaviour {
 
     public bool interpolateSpherical = true;
 
+    public bool innerNodeHornLayout = true;
+
     // for best results, this value should be <= 0.04
     public float gravityAmt = 0.01f;
 
@@ -512,8 +514,8 @@ public class DataLoader : MonoBehaviour {
         Vector3[] basePoints = new Vector3[4];
 
         basePoints[0] = nodeManager.gameObject.transform.position;
-        //basePoints[1] = center * 0.25f + basePoints[0] * 0.75f;
-        basePoints[1] = (center + basePoints[0]) * 0.5f;
+        if(innerNodeHornLayout) basePoints[1] = center * 0.25f + basePoints[0] * 0.75f;
+        else basePoints[1] = (center + basePoints[0]) * 0.5f;
 
         foreach (string currName in nodeInfo.subElements)
             {
@@ -524,8 +526,8 @@ public class DataLoader : MonoBehaviour {
             point.name = "Sub: " + currName;
 
             basePoints[3] = center + (rightVec * c + forVec * s) * 0.05f;
-            //basePoints[2] = center * 0.75f + basePoints[3] * 0.25f;
-            basePoints[2] = basePoints[3] + upDir * radius * 0.075f;
+            if( innerNodeHornLayout ) basePoints[2] = center * 0.75f + basePoints[3] * 0.25f;
+            else basePoints[2] = basePoints[3] + upDir * radius * 0.075f;
 
             point.transform.position = basePoints[3];
             point.transform.localScale = ptScale;
