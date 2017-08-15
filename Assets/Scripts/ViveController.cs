@@ -9,6 +9,11 @@ public class ViveController : SteamVR_TrackedObject
     static NodeManager managerA = null;
     static NodeManager managerB = null;
 
+    static Dictionary<string, NodeManager> selectedNodeMap = new Dictionary<string, NodeManager>();
+    static Dictionary<string, int> selectedNodeNumConnections = new Dictionary<string, int>();
+
+    Dictionary<string, NodeManager> currCollisionNodeManagers = new Dictionary<string, NodeManager>();
+
     NodeManager currCollisionNodeManager = null;
 
     protected CVRSystem vrSystem;
@@ -19,6 +24,10 @@ public class ViveController : SteamVR_TrackedObject
 
     public DataLoader dataLoader;
 
+    public Ray deviceRay;
+
+    public MoveScaleObject moveScaleObjScript;
+
     // Use this for initialization
     void Start () {
         vrSystem = OpenVR.System;
@@ -26,6 +35,13 @@ public class ViveController : SteamVR_TrackedObject
 	
 	// Update is called once per frame
 	void Update () {
+
+        deviceRay.origin = transform.position;
+
+        Quaternion rayRotation = Quaternion.AngleAxis(60.0f, transform.right);
+
+        deviceRay.direction = rayRotation * transform.forward;
+
         updateState();
     }
 
@@ -35,20 +51,36 @@ public class ViveController : SteamVR_TrackedObject
 
         if (stateIsValid && state.GetHashCode() != prevState.GetHashCode())
         {
-            if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.ApplicationMenu) != 0) textMesh.text = "Pressed Menu Button";
+            //if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.ApplicationMenu) != 0) textMesh.text = "Pressed Menu Button";
             if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Trigger) != 0)
             {
                 
                 if ( prevState.rAxis1.x < 1.0f && state.rAxis1.x == 1.0f )
                 {
                     if(currCollisionNodeManager!=null) addNodeManager(currCollisionNodeManager);
+
+                    foreach(KeyValuePair<string, NodeManager> kv in currCollisionNodeManagers)
+                    {
+
+                    }
+
+
                 }
 
             }
-            if ((state.ulButtonTouched & SteamVR_Controller.ButtonMask.Touchpad) != 0) textMesh.text = "Touched Touchpad";
-            if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Touchpad) != 0) textMesh.text = "Pressed Touchpad";
-            if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Grip) != 0) textMesh.text = "Pressed Grip";
+            //if ((state.ulButtonTouched & SteamVR_Controller.ButtonMask.Touchpad) != 0) textMesh.text = "Touched Touchpad";
+            //if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Touchpad) != 0) textMesh.text = "Pressed Touchpad";
 
+            if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Grip) != 0 &&
+                (prevState.ulButtonPressed & SteamVR_Controller.ButtonMask.Grip) == 0)
+            {
+                moveScaleObjScript.grabSphereWithObject(gameObject);
+            }
+            else if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Grip) == 0 &&
+                    (prevState.ulButtonPressed & SteamVR_Controller.ButtonMask.Grip) != 0)
+            {
+                moveScaleObjScript.releaseSphereWithObject(gameObject);
+            }
 
 
             prevState = state;
@@ -99,6 +131,8 @@ public class ViveController : SteamVR_TrackedObject
         NodeManager nodeMan = collision.gameObject.GetComponent<NodeManager>();
         if( nodeMan != null )
         {
+            if (!currCollisionNodeManagers.ContainsKey(nodeMan.name)) currCollisionNodeManagers.Add(nodeMan.name, nodeMan);
+            
             currCollisionNodeManager = nodeMan;
         }
         
@@ -108,8 +142,10 @@ public class ViveController : SteamVR_TrackedObject
     void OnCollisionExit(Collision collision)
     {
         NodeManager nodeMan = collision.gameObject.GetComponent<NodeManager>();
-        if (nodeMan != null && nodeMan == currCollisionNodeManager)
+        if (nodeMan != null)
         {
+            if (currCollisionNodeManagers.ContainsKey(nodeMan.name)) currCollisionNodeManagers.Remove(nodeMan.name);
+            
             currCollisionNodeManager = null;
         }
     }

@@ -26,7 +26,7 @@ public class CMJSONLoader : DataLoader {
 
     // Update is called once per frame
     void Update () {
-		
+        testMovement();
 	}
 
 	new public void loadData()

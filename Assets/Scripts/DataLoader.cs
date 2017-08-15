@@ -34,6 +34,10 @@ public class DataLoader : MonoBehaviour {
     protected Dictionary<string, List<GameObject> > subElementObjectMap = new Dictionary<string, List<GameObject>>();
     protected List<GameObject> subElementConnectionList = new List<GameObject>();
 
+
+    protected Dictionary<string, NodeManager> selectedNodeMap = new Dictionary<string, NodeManager>();
+    protected Dictionary<string, int> selectedNodeNumConnections = new Dictionary<string, int>();
+
     protected Dictionary<string, Vector3> subNodePositionMap = new Dictionary<string, Vector3>();
 
     public int randomColorSeed = 8;
@@ -52,15 +56,31 @@ public class DataLoader : MonoBehaviour {
 
     public float splineGroupWeight = 0.95f;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        
+    }
+
+    public void testMovement()
+    {
+        float rt = 0f, fo = 0f;
+        if (Input.GetKeyDown(KeyCode.A)) rt -= 0.1f;
+        if (Input.GetKeyDown(KeyCode.D)) rt += 0.1f;
+        if (Input.GetKeyDown(KeyCode.W)) fo += 0.1f;
+        if (Input.GetKeyDown(KeyCode.S)) fo -= 0.1f;
+
+        if (rt != 0f || fo != 0f)
+        {
+            Vector3 pos = projSphere.transform.position;
+            pos = pos + rt * projSphere.transform.right + fo * projSphere.transform.forward;
+            projSphere.transform.position = pos;
+        }
+    }
 
 	public void loadData()
 	{
@@ -472,6 +492,8 @@ public class DataLoader : MonoBehaviour {
             manager.nodeName = kv.Value.name;
             manager.setSubNodeNames(kv.Value.subElements);
             manager.nodeInfo = kv.Value;
+
+            point.transform.SetParent(projSphere.transform);
         }
     }
 
@@ -553,6 +575,9 @@ public class DataLoader : MonoBehaviour {
             gObjList.Add(edgeObj);
 
             currAngle += radAngle;
+
+            point.transform.SetParent(projSphere.transform);
+            edgeObj.transform.SetParent(projSphere.transform);
         }
 
         subElementObjectMap.Add(nodeInfo.name, gObjList);
@@ -608,6 +633,8 @@ public class DataLoader : MonoBehaviour {
                         bezBar.init(ctrlPts, colorA, colorB);
 
                         subElementConnectionList.Add(edgeObj);
+
+                        edgeObj.transform.SetParent(projSphere.transform);
 
                     }
                          
@@ -717,6 +744,8 @@ public class DataLoader : MonoBehaviour {
                     bezBar.sphereCoords = interpolateSpherical;
                     bezBar.init(basePts, c0, c1);
                     edgeObj.transform.position = projSphere.transform.position;
+
+                    edgeObj.transform.SetParent(projSphere.transform);
                 }
 				else
 				{
@@ -774,6 +803,8 @@ public class DataLoader : MonoBehaviour {
                     bspline.useSphericalInterpolation = interpolateSpherical;
                 	bspline.init(basePts, c0, c1);
                     edgeObj.transform.position = projSphere.transform.position;
+
+                    edgeObj.transform.SetParent(projSphere.transform);
                 }                
             }
             else if(useBezierBars)
@@ -784,6 +815,8 @@ public class DataLoader : MonoBehaviour {
                 bezBar.sphereCoords = false;
                 bezBar.init(basePts, c0, c1);
                 edgeObj.transform.position = projSphere.transform.position;
+
+                edgeObj.transform.SetParent(projSphere.transform);
             }
             else
             {
@@ -795,6 +828,8 @@ public class DataLoader : MonoBehaviour {
                 rend.startColor = c0;
                 rend.endColor = c1;
                 edgeObj.transform.position = projSphere.transform.position;
+
+                edgeObj.transform.SetParent(projSphere.transform);
             }
 
         }
