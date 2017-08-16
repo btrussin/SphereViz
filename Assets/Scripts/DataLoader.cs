@@ -14,6 +14,8 @@ public class DataLoader : MonoBehaviour {
     public GameObject bezierPrefab;
     public GameObject bSplinePrefab;
 
+    public GameObject popupTextPrefab;
+
     public GameObject projSphere;
 
     public bool useBezierBars = true;
@@ -32,13 +34,10 @@ public class DataLoader : MonoBehaviour {
 	protected Dictionary<string, Color> groupColorMap = new Dictionary<string, Color>();
 
     protected Dictionary<string, List<GameObject> > subElementObjectMap = new Dictionary<string, List<GameObject>>();
-    protected List<GameObject> subElementConnectionList = new List<GameObject>();
+    protected Dictionary<string, GameObject> subNodePositionMap = new Dictionary<string, GameObject>();
 
 
     protected Dictionary<string, NodeManager> selectedNodeMap = new Dictionary<string, NodeManager>();
-    protected Dictionary<string, int> selectedNodeNumConnections = new Dictionary<string, int>();
-
-    protected Dictionary<string, Vector3> subNodePositionMap = new Dictionary<string, Vector3>();
 
     public int randomColorSeed = 8;
 
@@ -50,6 +49,8 @@ public class DataLoader : MonoBehaviour {
     public bool interpolateSpherical = true;
 
     public bool innerNodeHornLayout = true;
+
+    public bool innerConnectionsStraightLines = false;
 
     // for best results, this value should be <= 0.04
     public float gravityAmt = 0.01f;
@@ -68,6 +69,7 @@ public class DataLoader : MonoBehaviour {
 
     public void testMovement()
     {
+        
         float rt = 0f, fo = 0f;
         if (Input.GetKeyDown(KeyCode.A)) rt -= 0.1f;
         if (Input.GetKeyDown(KeyCode.D)) rt += 0.1f;
@@ -80,6 +82,9 @@ public class DataLoader : MonoBehaviour {
             pos = pos + rt * projSphere.transform.right + fo * projSphere.transform.forward;
             projSphere.transform.position = pos;
         }
+        
+        
+
     }
 
 	public void loadData()
@@ -353,7 +358,7 @@ public class DataLoader : MonoBehaviour {
 
 	private Vector3 getProjectedPoint(Vector2 pt)
 	{
-		return get3DPointProjectionSphere(pt, radius);
+		return get3DPointProjectionSphere(pt, radius*projSphere.transform.localScale.x);
 	}
 
 	private Vector3 get3DPointProjectionSphere(Vector2 v, float r)
@@ -371,7 +376,7 @@ public class DataLoader : MonoBehaviour {
 
     private Vector3 get3DPointProjectionSphereCoords(Vector3 v)
     {
-        return get3DPointProjectionSphereCoords(v, radius);
+        return get3DPointProjectionSphereCoords(v, radius * projSphere.transform.localScale.x);
     }
 
     private Vector3 get3DPointProjectionSphereCoords(Vector3 v, float r)
@@ -477,7 +482,17 @@ public class DataLoader : MonoBehaviour {
 
     private void populatePts()
     {
-        Vector3 ptScale = Vector3.one * radius * 2f / 125f * pointScaleFactor;
+        float tmpRadius = radius * projSphere.transform.localScale.x;
+
+        Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
+
+        GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
+
+        if (gazeScript == null)
+        {
+            Debug.Log("No Gaze stuff");
+        }
+
         foreach (KeyValuePair<string, NodeInfo> kv in nodeMap)
         {
             GameObject point = (GameObject)Instantiate(nodePrefab);
@@ -494,11 +509,84 @@ public class DataLoader : MonoBehaviour {
             manager.nodeInfo = kv.Value;
 
             point.transform.SetParent(projSphere.transform);
+
+            GameObject popupText = (GameObject)Instantiate(popupTextPrefab);
+            popupText.transform.position = point.transform.position;
+            popupText.transform.SetParent(projSphere.transform);
+
+            PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
+            TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
+            tMesh.text = kv.Value.name;
+
+            if (popupTextObject != null) gazeScript.addTextObject(popupTextObject);
+            else Debug.Log("No Popup-text stuff");
+
+        }
+    }
+
+    public void deselectAllNodes()
+    {
+        NodeManager[] tmpNodeManagers = new NodeManager[selectedNodeMap.Count];
+        selectedNodeMap.Values.CopyTo(tmpNodeManagers,0);
+
+        toggleSubNodes(tmpNodeManagers);
+    }
+
+    public void toggleSubNodes(NodeManager[] nodeManagers)
+    {
+        List<NodeManager> newNodes = new List<NodeManager>();
+        HashSet<string> oldNodes = new HashSet<string>();
+
+        NodeInfo nodeInfo;
+        foreach (NodeManager nm in nodeManagers)
+        {
+            nodeInfo = nm.nodeInfo;
+            if (subElementObjectMap.ContainsKey(nodeInfo.name)) oldNodes.Add(nodeInfo.name);
+            else
+            {
+                newNodes.Add(nm);
+                //selectedNodeMap.Add(nodeInfo.name, nm);
+            }
+        }
+
+
+        foreach (string str in oldNodes)
+        {
+            List<GameObject> objList = subElementObjectMap[str];
+            foreach (GameObject obj in objList) Destroy(obj);
+            objList.Clear();
+            subElementObjectMap.Remove(str);
+
+            selectedNodeMap.Remove(str);
+        }
+
+
+        NodeManager[] newNodeManagers = new NodeManager[newNodes.Count];
+        newNodes.CopyTo(newNodeManagers, 0);
+
+        for( int i = 0; i < newNodeManagers.Length; i++ )
+        {
+            populateSubNodes(newNodeManagers[i]);
+
+            foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap)
+            {
+                populateSubNodeConnections(newNodeManagers[i], kv.Value);
+            }
+
+            for (int j = 0; j < i; j++)
+            {
+                populateSubNodeConnections(newNodeManagers[i], newNodeManagers[j]);
+            }
+        }
+
+        for (int i = 0; i < newNodeManagers.Length; i++)
+        {
+            selectedNodeMap.Add(newNodeManagers[i].nodeInfo.name, newNodeManagers[i]);
         }
     }
 
 
-    public void populateSubNodes(NodeManager nodeManager)
+    void populateSubNodes(NodeManager nodeManager)
     {
         if (nodeManager == null) return;
 
@@ -508,7 +596,11 @@ public class DataLoader : MonoBehaviour {
 
         if (subElementObjectMap.ContainsKey(nodeInfo.name) ) return;
 
-        Vector3 ptScale = Vector3.one * radius * 2f / 125f;
+        float tmpScale = projSphere.transform.localScale.x;
+
+        float tmpRadius = radius * tmpScale;
+
+        Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f;
 
         Vector3 upDir = nodeManager.gameObject.transform.position - projSphere.transform.position;
         upDir.Normalize();
@@ -528,16 +620,18 @@ public class DataLoader : MonoBehaviour {
         float radAngle = 2f * Mathf.PI / (float)nodeInfo.subElements.Count;
         float currAngle = 0f;
 
-        Vector3 center = nodeManager.gameObject.transform.position - upDir * radius * 0.15f;
+        Vector3 center = nodeManager.gameObject.transform.position - upDir * tmpRadius * 0.15f;
         float c, s;
 
-        float barRadius = radius / 125.0f * barRadiusScale;
+        float barRadius = tmpRadius / 125.0f * barRadiusScale;
 
         Vector3[] basePoints = new Vector3[4];
 
         basePoints[0] = nodeManager.gameObject.transform.position;
         if(innerNodeHornLayout) basePoints[1] = center * 0.25f + basePoints[0] * 0.75f;
         else basePoints[1] = (center + basePoints[0]) * 0.5f;
+
+        string subKey;
 
         foreach (string currName in nodeInfo.subElements)
             {
@@ -547,9 +641,9 @@ public class DataLoader : MonoBehaviour {
             GameObject point = (GameObject)Instantiate(nodePrefab);
             point.name = "Sub: " + currName;
 
-            basePoints[3] = center + (rightVec * c + forVec * s) * 0.05f;
+            basePoints[3] = center + (rightVec * c + forVec * s) * 0.05f * tmpScale;
             if( innerNodeHornLayout ) basePoints[2] = center * 0.75f + basePoints[3] * 0.25f;
-            else basePoints[2] = basePoints[3] + upDir * radius * 0.075f;
+            else basePoints[2] = basePoints[3] + upDir * tmpRadius * 0.075f;
 
             point.transform.position = basePoints[3];
             point.transform.localScale = ptScale;
@@ -569,7 +663,9 @@ public class DataLoader : MonoBehaviour {
             bezBar.init(basePoints, color, color);
             //edgeObj.transform.position = projSphere.transform.position;
 
-            subNodePositionMap.Add(getSubNodeKey(nodeInfo, currName), basePoints[3]);
+            subKey = getSubNodeKey(nodeInfo, currName);
+            if (subNodePositionMap.ContainsKey(subKey)) subNodePositionMap[subKey] = point;
+            else subNodePositionMap.Add(getSubNodeKey(nodeInfo, currName), point);
 
             gObjList.Add(point);
             gObjList.Add(edgeObj);
@@ -578,32 +674,41 @@ public class DataLoader : MonoBehaviour {
 
             point.transform.SetParent(projSphere.transform);
             edgeObj.transform.SetParent(projSphere.transform);
+
+
+
+            
         }
 
         subElementObjectMap.Add(nodeInfo.name, gObjList);
 
     }
 
-    public void populateSubNodeConnections(NodeManager nodeManagerA, NodeManager nodeManagerB)
+    void populateSubNodeConnections(NodeManager nodeManagerA, NodeManager nodeManagerB)
     {
-        
+        float tmpRadius = radius * projSphere.transform.localScale.x;
+
         if (nodeManagerA == null || nodeManagerB == null) return;
         NodeInfo infoA = nodeManagerA.nodeInfo;
         NodeInfo infoB = nodeManagerB.nodeInfo;
         if (infoA == null || infoB == null) return;
 
-        foreach (GameObject obj in subElementConnectionList) GameObject.Destroy(obj);
-        subElementConnectionList.Clear();
+        List<GameObject> objListA = subElementObjectMap[infoA.name];
+        List<GameObject> objListB = subElementObjectMap[infoB.name];
 
         Vector3[] ctrlPts = new Vector3[4];
-        Vector3 tmpVec;
         string keyA, keyB;
         Vector3 sphereCenter = projSphere.transform.position;
 
         Color colorA = groupColorMap[infoA.groupName];
         Color colorB = groupColorMap[infoB.groupName];
 
-        float barRadius = radius / 125.0f * barRadiusScale;
+        float barRadius = tmpRadius / 125.0f * barRadiusScale;
+
+        bool tmpVecASet = false;
+        bool tmpVecBSet = false;
+        Vector3 tmpVecA = Vector3.zero;
+        Vector3 tmpVecB = Vector3.zero;
 
         for ( int i = 0; i < infoA.subElements.Count; i++ )
         {
@@ -611,61 +716,63 @@ public class DataLoader : MonoBehaviour {
             {
                 if( infoA.subElements[i].Equals(infoB.subElements[j]) )
                 {
+
                     keyA = getSubNodeKey(infoA, i);
                     keyB = getSubNodeKey(infoB, j);
 
-                    if( subNodePositionMap.ContainsKey(keyA) && subNodePositionMap.ContainsKey(keyB) )
+                    ctrlPts[0] = subNodePositionMap[keyA].transform.position;
+                    ctrlPts[3] = subNodePositionMap[keyB].transform.position;
+
+                    if (!tmpVecASet)
                     {
-                        ctrlPts[0] = subNodePositionMap[keyA];
-                        ctrlPts[3] = subNodePositionMap[keyB];
-
-                        tmpVec = sphereCenter - ctrlPts[0];
-                        ctrlPts[1] = ctrlPts[0] + tmpVec * radius * 0.3f;
-                        tmpVec = sphereCenter - ctrlPts[3];
-                        ctrlPts[2] = ctrlPts[3] + tmpVec * radius * 0.3f;
-
-
-                        
-                        GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
-                        BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
-                        bezBar.radius = barRadius;
-                        bezBar.sphereCoords = false;
-                        bezBar.init(ctrlPts, colorA, colorB);
-
-                        subElementConnectionList.Add(edgeObj);
-
-                        edgeObj.transform.SetParent(projSphere.transform);
-
+                        tmpVecA = sphereCenter - nodeManagerA.gameObject.transform.position;
+                        tmpVecA.Normalize();
+                        tmpVecA *= Vector3.Dot(tmpVecA, ctrlPts[0] - nodeManagerA.gameObject.transform.position);
+                        tmpVecASet = true;
                     }
-                         
+
+                    if (!tmpVecBSet)
+                    {
+                        tmpVecB = sphereCenter - nodeManagerB.gameObject.transform.position;
+                        tmpVecB.Normalize();
+                        tmpVecB *= Vector3.Dot(tmpVecB, ctrlPts[3] - nodeManagerB.gameObject.transform.position);
+                        tmpVecBSet = true;
+                    }
+
+                    
+                    if (innerConnectionsStraightLines)
+                    {
+                        //ctrlPts[1] = ctrlPts[0] * 0.67f + ctrlPts[3] * 0.33f;
+                        //ctrlPts[2] = ctrlPts[3] * 0.67f + ctrlPts[0] * 0.33f;
+
+                        ctrlPts[1] = ctrlPts[0] + tmpVecA*0.001f;
+                        ctrlPts[2] = ctrlPts[3] + tmpVecB*0.001f;
+                    }
+                    else
+                    {
+                        ctrlPts[1] = ctrlPts[0] + tmpVecA;
+                        ctrlPts[2] = ctrlPts[3] + tmpVecB;
+                    }
+                    
+
+                    GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
+                    BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
+                    bezBar.radius = barRadius;
+                    bezBar.sphereCoords = false;
+                    bezBar.init(ctrlPts, colorA, colorB);
+
+                    objListA.Add(edgeObj);
+                    objListB.Add(edgeObj);
+
+                    edgeObj.transform.SetParent(projSphere.transform);
+
                     j += infoB.subElements.Count;
                 }
             }
         }
     }
 
-    public void removeSubNodes(NodeManager nodeManager)
-    {
-        if (nodeManager == null) return;
-        NodeInfo nodeInfo = nodeManager.nodeInfo;
-        List<GameObject> gObjList;
-
-        string tmpKey;
-        foreach (string currName in nodeInfo.subElements)
-        {
-            tmpKey = getSubNodeKey(nodeInfo, currName);
-            if (subNodePositionMap.ContainsKey(tmpKey)) subNodePositionMap.Remove(tmpKey);
-        }
-
-        if ( subElementObjectMap.TryGetValue(nodeInfo.name, out gObjList))
-        {
-            foreach (GameObject go in gObjList) GameObject.Destroy(go);
-
-            gObjList.Clear();
-
-            subElementObjectMap.Remove(nodeInfo.name);
-        }
-    }
+   
 
     public string getSubNodeKey(NodeInfo nodeInfo, string subName)
     {

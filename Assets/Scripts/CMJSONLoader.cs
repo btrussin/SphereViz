@@ -108,7 +108,7 @@ public class CMJSONLoader : DataLoader {
         Dictionary<string, HashSet<string>> moviePublisherMap = new Dictionary<string, HashSet<string>>(); // 4 (complete)
         
 
-        string iKey, jKey;
+        string iKey;
         CMData iData, jData;
 
 
@@ -139,7 +139,6 @@ public class CMJSONLoader : DataLoader {
             {
                 if (j == i) continue;
                 jData = cmData[j];
-                jKey = getMovieKey(jData);
                 hasConnection = false;
 
                 for ( int m = 0; m < iData.roles.Length; m++ )

@@ -32,6 +32,7 @@ public class BaseCurve : MonoBehaviour {
             if( i == 0 )
             {
                 targetForward = baseTangents[i];
+                bool foundSuitableRightVec = false;
                 for( j = 1; j < basePoints.Length; j++ )
                 {
                     targetForward = basePoints[j] - basePoints[0];
@@ -39,11 +40,12 @@ public class BaseCurve : MonoBehaviour {
                     if( Vector3.Dot(baseTangents[i], targetForward) <= 0.95f )
                     {
                         currRight = Vector3.Cross(targetForward, baseTangents[i]);
+                        foundSuitableRightVec = true;
                         break;
                     }
                 }
 
-                if( Mathf.Abs(Vector3.Dot(baseTangents[i], targetForward)) > 0.95f )
+                if(!foundSuitableRightVec)
                 {
                     currRight.x = -baseTangents[i].y;
                     currRight.y = baseTangents[i].x;
@@ -93,9 +95,6 @@ public class BaseCurve : MonoBehaviour {
         Vector3[] rightVecs, upVecs;
 
         getUpAndRightVectors(basePoints, baseTangents, out upVecs, out rightVecs);
-
-       
-
 
         for (int i = 0; i < basePoints.Length; i++)
         {
