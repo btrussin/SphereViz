@@ -18,10 +18,10 @@ public class MainCameraController : MonoBehaviour {
         
         if(forceUseScreenCamera )
         {
-
-			Destroy (steamVRCameraRig);
+            steamVRCameraRig.SetActive(false);
+            steamVRObject.SetActive(false);
+            Destroy (steamVRCameraRig);
 			Destroy (steamVRObject);
-
             mainCamera.SetActive(true);
         }
         else

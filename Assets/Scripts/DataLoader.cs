@@ -14,6 +14,8 @@ public class DataLoader : MonoBehaviour {
     public GameObject bezierPrefab;
     public GameObject bSplinePrefab;
 
+    public GameObject bezierCollPrefab;
+
     public GameObject popupTextPrefab;
 
     public GameObject projSphere;
@@ -535,13 +537,14 @@ public class DataLoader : MonoBehaviour {
     public void toggleSubNodes(NodeManager[] nodeManagers)
     {
         List<NodeManager> newNodes = new List<NodeManager>();
-        HashSet<string> oldNodes = new HashSet<string>();
+        //HashSet<string> oldNodes = new HashSet<string>();
+        List<NodeManager> oldNodes = new List<NodeManager>();
 
         NodeInfo nodeInfo;
         foreach (NodeManager nm in nodeManagers)
         {
             nodeInfo = nm.nodeInfo;
-            if (subElementObjectMap.ContainsKey(nodeInfo.name)) oldNodes.Add(nodeInfo.name);
+            if (subElementObjectMap.ContainsKey(nodeInfo.name)) oldNodes.Add(nm);
             else
             {
                 newNodes.Add(nm);
@@ -549,15 +552,24 @@ public class DataLoader : MonoBehaviour {
             }
         }
 
-
-        foreach (string str in oldNodes)
+        GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
+        string subKey;
+        foreach (NodeManager nm in oldNodes)
         {
+            nodeInfo = nm.nodeInfo;
+            string str = nodeInfo.name;
             List<GameObject> objList = subElementObjectMap[str];
             foreach (GameObject obj in objList) Destroy(obj);
             objList.Clear();
             subElementObjectMap.Remove(str);
 
             selectedNodeMap.Remove(str);
+            
+            foreach ( string currName in nodeInfo.subElements )
+            {
+                subKey = getSubNodeKey(nodeInfo, currName);
+                gazeScript.removeTextObject(subKey);
+            }
         }
 
 
@@ -595,6 +607,8 @@ public class DataLoader : MonoBehaviour {
         if (nodeInfo == null) return;
 
         if (subElementObjectMap.ContainsKey(nodeInfo.name) ) return;
+
+        GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
 
         float tmpScale = projSphere.transform.localScale.x;
 
@@ -669,6 +683,22 @@ public class DataLoader : MonoBehaviour {
 
             gObjList.Add(point);
             gObjList.Add(edgeObj);
+
+
+            GameObject popupText = (GameObject)Instantiate(popupTextPrefab);
+            popupText.name = subKey;
+            popupText.transform.position = point.transform.position;
+            popupText.transform.localScale = Vector3.one * 0.5f;
+            popupText.transform.SetParent(point.transform);
+
+            PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
+            TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
+            tMesh.text = currName;
+
+            if (popupTextObject != null) gazeScript.addTextObject(subKey, popupTextObject);
+            else Debug.Log("No Popup-text stuff");
+
+
 
             currAngle += radAngle;
 
@@ -755,11 +785,17 @@ public class DataLoader : MonoBehaviour {
                     }
                     
 
-                    GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
+                    GameObject edgeObj = (GameObject)Instantiate(bezierCollPrefab);
                     BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
                     bezBar.radius = barRadius;
                     bezBar.sphereCoords = false;
                     bezBar.init(ctrlPts, colorA, colorB);
+
+                    var collider = edgeObj.GetComponent<MeshCollider>();
+                    collider.sharedMesh = bezBar.mesh;
+
+                    ConnectionManager connMan = edgeObj.GetComponent<ConnectionManager>();
+                    connMan.setupText(infoA.subElements[i]);
 
                     objListA.Add(edgeObj);
                     objListB.Add(edgeObj);

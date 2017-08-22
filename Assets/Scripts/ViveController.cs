@@ -86,6 +86,16 @@ public class ViveController : SteamVR_TrackedObject
         if( nodeMan != null )
         {
             if (!currCollisionNodeManagers.ContainsKey(nodeMan.name)) currCollisionNodeManagers.Add(nodeMan.name, nodeMan);
+
+            return;
+        }
+
+        ConnectionManager connMan = collision.gameObject.GetComponent<ConnectionManager>();
+        if (connMan != null)
+        {
+            //connMan.displayText(gameObject.transform.position + gameObject.transform.forward * 0.08f);
+            connMan.displayText(collision.contacts[0].point);
+            return;
         }
     }
 
@@ -95,6 +105,15 @@ public class ViveController : SteamVR_TrackedObject
         if (nodeMan != null)
         {
             if (currCollisionNodeManagers.ContainsKey(nodeMan.name)) currCollisionNodeManagers.Remove(nodeMan.name);
+
+            return;
+        }
+
+        ConnectionManager connMan = collision.gameObject.GetComponent<ConnectionManager>();
+        if (connMan != null)
+        {
+            connMan.hideText();
+            return;
         }
     }
     

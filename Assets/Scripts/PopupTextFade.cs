@@ -10,12 +10,17 @@ public class PopupTextFade : MonoBehaviour {
 
     public Material textMaterial;
 
-    Color origColor;
+    Color origColor = Color.white;
 
 	// Use this for initialization
 	void Start () {
+        setup();
+    }
+
+    public void setup()
+    {
         textMaterial = gameObject.GetComponent<MeshRenderer>().material;
-        origColor = textMaterial.color;
+        if(textMaterial != null) origColor = textMaterial.color;
         secondsToFade_inv = 1f / secondsToFade;
     }
 	
