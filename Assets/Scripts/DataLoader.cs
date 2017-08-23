@@ -509,6 +509,7 @@ public class DataLoader : MonoBehaviour {
             manager.nodeName = kv.Value.name;
             manager.setSubNodeNames(kv.Value.subElements);
             manager.nodeInfo = kv.Value;
+            //manager
 
             point.transform.SetParent(projSphere.transform);
 

@@ -14,6 +14,12 @@ public class NodeManager : MonoBehaviour {
 
     int numCollisions = 0;
 
+    Vector3 basePosition = Vector3.zero;
+
+    GameObject stretchEdge = null;
+
+    public GameObject curvePrefab;
+
 	// Use this for initialization
 	void Start () {
         meshRend = gameObject.GetComponent<MeshRenderer>();
@@ -45,7 +51,6 @@ public class NodeManager : MonoBehaviour {
         return subNodeNames;
     }
 
-    
     void OnCollisionEnter(Collision collision)
     {
         numCollisions++;
@@ -63,5 +68,6 @@ public class NodeManager : MonoBehaviour {
         }
     }
     
+    //public 
 
 }

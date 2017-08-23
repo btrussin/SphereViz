@@ -6,7 +6,7 @@ public class BaseCurve : MonoBehaviour {
 
 
     public MeshFilter meshFilter;
-    public Mesh mesh;
+    public Mesh mesh = null;
 
     public int numMajorDivisions = 100;
     public int numMinorDivisions = 30;
@@ -151,8 +151,7 @@ public class BaseCurve : MonoBehaviour {
 
         }
 
-
-        mesh = new Mesh();
+        if( mesh == null ) mesh = new Mesh();
         meshFilter.mesh = mesh;
         mesh.vertices = meshPoints;
         mesh.normals = meshNormals;
