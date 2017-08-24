@@ -22,25 +22,15 @@ public class ViveController : MonoBehaviour
 
     public MoveScaleObject moveScaleObjScript;
 
-    public ViveController( int n)
-    {
-
-    }
-
     // Use this for initialization
     void Start () {
         vrSystem = OpenVR.System;
+
+        svrto = gameObject.GetComponent<SteamVR_TrackedObject>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-
-        gameObject.transform.position = svrto.transform.position;
-        gameObject.transform.forward = svrto.transform.forward;
-        gameObject.transform.right = svrto.transform.right;
-        gameObject.transform.up = svrto.transform.up;
-
-
 
         deviceRay.origin = transform.position;
 
@@ -53,7 +43,11 @@ public class ViveController : MonoBehaviour
     
     void updateState()
     {
-        bool stateIsValid = vrSystem.GetControllerState((uint)svrto.index, ref state, 0);
+        bool stateIsValid;
+        unsafe
+        {
+            stateIsValid = vrSystem.GetControllerState((uint)svrto.index, ref state, (uint)sizeof(VRControllerState_t));
+        }
 
 
         if (stateIsValid && state.GetHashCode() != prevState.GetHashCode())
@@ -70,22 +64,37 @@ public class ViveController : MonoBehaviour
                     
                     if (currCollisionNodeManagers.Count > 0)
                     {
+                        foreach(NodeManager nm in currCollisionNodeManagers.Values)
+                        {
+                            nm.gameObject.GetComponent<MoveScaleObject>().grabSphereWithObject(gameObject);
+                            nm.beginPullEffect(dataLoader.getCurrBarRadius());
+                        }
+
+                        /*
                         NodeManager[] nodes = new NodeManager[currCollisionNodeManagers.Count];
                         currCollisionNodeManagers.Values.CopyTo(nodes, 0);
                         dataLoader.toggleSubNodes(nodes);
+                        */
+
+                        //NodeManager nm = currCollisionNodeManagers.Values[0];
                     }
                     
                 }
                 else if (prevState.rAxis1.x == 1.0f && state.rAxis1.x < 1.0f)
                 {
-                    /*
+                    
                     if (currCollisionNodeManagers.Count > 0)
                     {
+                        foreach (NodeManager nm in currCollisionNodeManagers.Values)
+                        {
+                            nm.gameObject.GetComponent<MoveScaleObject>().releaseSphereWithObject(gameObject);
+                        }
+
                         NodeManager[] nodes = new NodeManager[currCollisionNodeManagers.Count];
                         currCollisionNodeManagers.Values.CopyTo(nodes, 0);
                         dataLoader.toggleSubNodes(nodes);
                     }
-                    */
+                    
                 }
             }
             //if ((state.ulButtonTouched & SteamVR_Controller.ButtonMask.Touchpad) != 0) textMesh.text = "Touched Touchpad";

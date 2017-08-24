@@ -16,6 +16,10 @@ public class MoveScaleObject : MonoBehaviour {
     Quaternion initialRotation;
     Vector3 inititalOffset = Vector3.zero;
 
+    public bool allowMove = true;
+    public bool allowScale = true;
+
+
     // Use this for initialization
     void Start () {
 		
@@ -51,7 +55,7 @@ public class MoveScaleObject : MonoBehaviour {
             initialScale = gameObject.transform.localScale;
             Vector3 tVec = grabObject1.transform.position - grabObject2.transform.position;
             initialDist = tVec.magnitude;
-            activeScale = true;
+            if( allowScale ) activeScale = true;
             activeMove = false;
         }
         else
@@ -67,7 +71,7 @@ public class MoveScaleObject : MonoBehaviour {
                 Vector3.Dot(t.right, tmpVec),
                 Vector3.Dot(t.forward, tmpVec)
                 );
-            activeMove = true;
+            if (allowMove) activeMove = true;
             activeScale = false;
         }
 

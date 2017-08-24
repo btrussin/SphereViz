@@ -9,7 +9,8 @@ public class DataLoader : MonoBehaviour {
     public int numForceIterations = 300;
     public float radius = 2.5f;
 
-	public GameObject nodePrefab;
+    public GameObject nodePrefab;
+    public GameObject innerNodePrefab;
     public GameObject edgePrefab;
     public GameObject bezierPrefab;
     public GameObject bSplinePrefab;
@@ -509,7 +510,8 @@ public class DataLoader : MonoBehaviour {
             manager.nodeName = kv.Value.name;
             manager.setSubNodeNames(kv.Value.subElements);
             manager.nodeInfo = kv.Value;
-            //manager
+            manager.positionOnSphere = kv.Value.position3;
+            manager.baseSphereTransform = projSphere.transform;
 
             point.transform.SetParent(projSphere.transform);
 
@@ -598,6 +600,11 @@ public class DataLoader : MonoBehaviour {
         }
     }
 
+    public float getCurrBarRadius()
+    {
+        return radius * projSphere.transform.localScale.x / 125.0f * barRadiusScale;
+    }
+
 
     void populateSubNodes(NodeManager nodeManager)
     {
@@ -653,7 +660,7 @@ public class DataLoader : MonoBehaviour {
             c = Mathf.Cos(currAngle);
             s = Mathf.Sin(currAngle);
 
-            GameObject point = (GameObject)Instantiate(nodePrefab);
+            GameObject point = (GameObject)Instantiate(innerNodePrefab);
             point.name = "Sub: " + currName;
 
             basePoints[3] = center + (rightVec * c + forVec * s) * 0.05f * tmpScale;
