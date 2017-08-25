@@ -9,6 +9,8 @@ public class DataLoader : MonoBehaviour {
     public int numForceIterations = 300;
     public float radius = 2.5f;
 
+    public float timeToSnapBack = 2.0f;
+
     public GameObject nodePrefab;
     public GameObject innerNodePrefab;
     public GameObject edgePrefab;
@@ -512,6 +514,7 @@ public class DataLoader : MonoBehaviour {
             manager.nodeInfo = kv.Value;
             manager.positionOnSphere = kv.Value.position3;
             manager.baseSphereTransform = projSphere.transform;
+            manager.timeToSnapBack = timeToSnapBack;
 
             point.transform.SetParent(projSphere.transform);
 
@@ -710,8 +713,10 @@ public class DataLoader : MonoBehaviour {
 
             currAngle += radAngle;
 
-            point.transform.SetParent(projSphere.transform);
-            edgeObj.transform.SetParent(projSphere.transform);
+            
+
+            point.transform.SetParent(nodeManager.gameObject.transform);
+            edgeObj.transform.SetParent(nodeManager.gameObject.transform);
 
 
 

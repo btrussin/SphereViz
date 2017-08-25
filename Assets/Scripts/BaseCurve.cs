@@ -158,6 +158,8 @@ public class BaseCurve : MonoBehaviour {
         mesh.colors = meshColors;
         mesh.triangles = faceList;
 
+        meshFilter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one* 10.0f);
+
     }
 
 

@@ -15,6 +15,9 @@ public class NodeManager : MonoBehaviour {
     int numCollisions = 0;
 
     public Vector3 positionOnSphere = Vector3.zero;
+    Quaternion origRotation;
+    Quaternion snapRotation;
+    Vector3 snapPosition;
     public Transform baseSphereTransform = null;
     GameObject stretchEdge = null;
     BezierBar bezBar;
@@ -22,11 +25,29 @@ public class NodeManager : MonoBehaviour {
     public GameObject curvePrefab;
 
     bool activePull = false;
+    bool snapBack = false;
 
     Vector3[] curveBasePoints = new Vector3[4];
 
-	// Use this for initialization
-	void Start () {
+    float _timeToSnapBack = 2.0f;
+    float timeToSnapBack_inv = 0.5f;
+    float snapTime;
+
+    public float timeToSnapBack
+    {
+        get { return _timeToSnapBack; }
+        set
+        {
+            if (value > 0.0f)
+            {
+                timeToSnapBack_inv = 1.0f / value;
+                _timeToSnapBack = value;
+            }
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
         meshRend = gameObject.GetComponent<MeshRenderer>();
         if( meshRend != null )
         {
@@ -42,28 +63,18 @@ public class NodeManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (activePull)
+        if (activePull) updatePullCurve();
+        else if (snapBack)
         {
-            curveBasePoints[0] = baseSphereTransform.TransformPoint(positionOnSphere);
-            curveBasePoints[3] = gameObject.transform.position;
-
-            Vector3 centerVec = baseSphereTransform.position - curveBasePoints[0];
-            centerVec.Normalize();
-            Vector3 nodeVec = curveBasePoints[3] - curveBasePoints[0];
-            float mag = nodeVec.magnitude;
-            nodeVec *= 1.0f / mag;
-
-            curveBasePoints[1] = curveBasePoints[0] + centerVec * mag * 0.5f;
-            curveBasePoints[2] = curveBasePoints[0] + nodeVec * mag * 0.5f;
-
-            bezBar.init(curveBasePoints, origColor, origColor);
-
+            doSnapBack();
+            updatePullCurve();
         }
+
 	}
 
     public void beginPullEffect(float barRadius)
     {
-        if(stretchEdge == null)
+        if (stretchEdge == null)
         {
             stretchEdge = (GameObject)Instantiate(curvePrefab);
             bezBar = stretchEdge.GetComponent<BezierBar>();
@@ -72,6 +83,53 @@ public class NodeManager : MonoBehaviour {
 
         bezBar.radius = barRadius;
         activePull = true;
+
+        stretchEdge.SetActive(true);
+        origRotation = gameObject.transform.localRotation;
+    }
+
+    public void endPullEffect()
+    {
+        activePull = false;
+
+        snapRotation = gameObject.transform.localRotation;
+        snapPosition = gameObject.transform.position;
+        snapBack = true;
+        snapTime = 0.0f;
+    }
+
+    void updatePullCurve()
+    {
+        curveBasePoints[0] = baseSphereTransform.TransformPoint(positionOnSphere);
+        curveBasePoints[3] = gameObject.transform.position;
+
+        Vector3 centerVec = baseSphereTransform.position - curveBasePoints[0];
+        centerVec.Normalize();
+        Vector3 nodeVec = curveBasePoints[3] - curveBasePoints[0];
+        float mag = nodeVec.magnitude;
+        nodeVec *= 1.0f / mag;
+
+        curveBasePoints[1] = curveBasePoints[0] + centerVec * mag * 0.5f;
+        curveBasePoints[2] = curveBasePoints[0] + nodeVec * mag * 0.5f;
+
+        bezBar.init(curveBasePoints, origColor, origColor);
+    }
+
+    void doSnapBack()
+    {
+        snapTime += Time.deltaTime;
+
+        gameObject.transform.localRotation = Quaternion.Slerp(snapRotation, origRotation, snapTime * timeToSnapBack_inv);
+
+        gameObject.transform.position = Vector3.Slerp(snapPosition, baseSphereTransform.TransformPoint(positionOnSphere), snapTime * timeToSnapBack_inv);
+
+
+        if (snapTime >= timeToSnapBack)
+        {
+            stretchEdge.SetActive(false);
+            snapBack = false;
+        }
+
     }
 
     public void setSubNodeNames(List<string> list)

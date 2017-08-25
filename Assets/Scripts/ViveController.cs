@@ -6,7 +6,7 @@ using Valve.VR;
 public class ViveController : MonoBehaviour
 {
 
-    public SteamVR_TrackedObject svrto;
+    SteamVR_TrackedObject svrto;
 
     Dictionary<string, NodeManager> currCollisionNodeManagers = new Dictionary<string, NodeManager>();
 
@@ -60,8 +60,7 @@ public class ViveController : MonoBehaviour
             {
 
                 if (prevState.rAxis1.x < 1.0f && state.rAxis1.x == 1.0f)
-                {
-                    
+                {                    
                     if (currCollisionNodeManagers.Count > 0)
                     {
                         foreach(NodeManager nm in currCollisionNodeManagers.Values)
@@ -70,13 +69,9 @@ public class ViveController : MonoBehaviour
                             nm.beginPullEffect(dataLoader.getCurrBarRadius());
                         }
 
-                        /*
                         NodeManager[] nodes = new NodeManager[currCollisionNodeManagers.Count];
                         currCollisionNodeManagers.Values.CopyTo(nodes, 0);
                         dataLoader.toggleSubNodes(nodes);
-                        */
-
-                        //NodeManager nm = currCollisionNodeManagers.Values[0];
                     }
                     
                 }
@@ -88,11 +83,8 @@ public class ViveController : MonoBehaviour
                         foreach (NodeManager nm in currCollisionNodeManagers.Values)
                         {
                             nm.gameObject.GetComponent<MoveScaleObject>().releaseSphereWithObject(gameObject);
+                            nm.endPullEffect();
                         }
-
-                        NodeManager[] nodes = new NodeManager[currCollisionNodeManagers.Count];
-                        currCollisionNodeManagers.Values.CopyTo(nodes, 0);
-                        dataLoader.toggleSubNodes(nodes);
                     }
                     
                 }
