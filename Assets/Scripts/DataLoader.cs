@@ -576,6 +576,8 @@ public class DataLoader : MonoBehaviour {
                 subKey = getSubNodeKey(nodeInfo, currName);
                 gazeScript.removeTextObject(subKey);
             }
+
+            nm.removeInnerConnections();
         }
 
 
@@ -810,8 +812,22 @@ public class DataLoader : MonoBehaviour {
                     ConnectionManager connMan = edgeObj.GetComponent<ConnectionManager>();
                     connMan.setupText(infoA.subElements[i]);
 
+                    connMan.colorA = colorA;
+                    connMan.colorB = colorB;
+                    connMan.innerConnStraightLine = innerConnectionsStraightLines;
+                    connMan.projSphereTransform = projSphere.transform;
+                    connMan.subPointA = subNodePositionMap[keyA];
+                    connMan.subPointB = subNodePositionMap[keyB];
+                    connMan.nodePointA = nodeManagerA.gameObject;
+                    connMan.nodePointB = nodeManagerB.gameObject;
+                    connMan.bezBar = bezBar;
+
+
                     objListA.Add(edgeObj);
                     objListB.Add(edgeObj);
+
+                    nodeManagerA.addInnerConnection(connMan);
+                    nodeManagerB.addInnerConnection(connMan);
 
                     edgeObj.transform.SetParent(projSphere.transform);
 

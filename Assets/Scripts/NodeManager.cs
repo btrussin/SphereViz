@@ -12,6 +12,8 @@ public class NodeManager : MonoBehaviour {
 
     List<string> subNodeNames = new List<string>();
 
+    List<ConnectionManager> innerConnections = new List<ConnectionManager>();
+
     int numCollisions = 0;
 
     public Vector3 positionOnSphere = Vector3.zero;
@@ -32,6 +34,16 @@ public class NodeManager : MonoBehaviour {
     float _timeToSnapBack = 2.0f;
     float timeToSnapBack_inv = 0.5f;
     float snapTime;
+
+    public void addInnerConnection(ConnectionManager conn)
+    {
+        innerConnections.Add(conn);
+    }
+
+    public void removeInnerConnections()
+    {
+        innerConnections.Clear();
+    }
 
     public float timeToSnapBack
     {
@@ -113,6 +125,9 @@ public class NodeManager : MonoBehaviour {
         curveBasePoints[2] = curveBasePoints[0] + nodeVec * mag * 0.5f;
 
         bezBar.init(curveBasePoints, origColor, origColor);
+
+        foreach(ConnectionManager conn in innerConnections) conn.recalculateEdge();
+
     }
 
     void doSnapBack()
