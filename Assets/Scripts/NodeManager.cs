@@ -112,6 +112,7 @@ public class NodeManager : MonoBehaviour {
 
     void updatePullCurve()
     {
+        
         curveBasePoints[0] = baseSphereTransform.TransformPoint(positionOnSphere);
         curveBasePoints[3] = gameObject.transform.position;
 
@@ -127,7 +128,7 @@ public class NodeManager : MonoBehaviour {
         bezBar.init(curveBasePoints, origColor, origColor);
 
         foreach(ConnectionManager conn in innerConnections) conn.recalculateEdge();
-
+        
     }
 
     void doSnapBack()

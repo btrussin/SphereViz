@@ -14,10 +14,6 @@ public class CMJSONLoader : DataLoader {
 
     bool useOldMethod = false;
 
-    Dictionary<string, List<CMData>> pubMovieMap = new Dictionary<string, List<CMData>>();
-
-
-
     // Use this for initialization
     void Start () {
         if (useOldMethod) loadData_2();
