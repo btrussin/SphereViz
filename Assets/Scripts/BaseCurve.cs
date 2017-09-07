@@ -14,9 +14,6 @@ public class BaseCurve : MonoBehaviour {
 
     protected Color color0;
     protected Color color1;
-
-    Vector3[] basePoints;
-    Vector3[] baseTangents;
     
 
     protected void getUpAndRightVectors(Vector3[] basePoints, Vector3[] baseTangents, out Vector3[] upVecs, out Vector3[] rtVecs)

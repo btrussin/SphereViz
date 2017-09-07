@@ -21,7 +21,7 @@ public class GazeActivate : MonoBehaviour {
         Vector3 tmp;
         foreach (PopupTextFade text in textList)
         {
-            tmp = text.gameObject.transform.position - gameObject.transform.position;
+            tmp = text.parentObject.transform.position - gameObject.transform.position;
             tmp.Normalize();
             if( Vector3.Dot(forward, tmp) > gazeFactor) text.inCameraView();
 
@@ -29,7 +29,7 @@ public class GazeActivate : MonoBehaviour {
 
         foreach (PopupTextFade text in textMap.Values)
         {
-            tmp = text.gameObject.transform.position - gameObject.transform.position;
+            tmp = text.parentObject.transform.position - gameObject.transform.position;
             tmp.Normalize();
             if (Vector3.Dot(forward, tmp) > gazeFactor) text.inCameraView();
         }
@@ -49,5 +49,11 @@ public class GazeActivate : MonoBehaviour {
     public void removeTextObject(string key)
     {
         if (textMap.ContainsKey(key)) textMap.Remove(key);
+    }
+
+    public void removeAllTextObjects()
+    {
+        textList.Clear();
+        textMap.Clear();
     }
 }

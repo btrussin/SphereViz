@@ -12,6 +12,8 @@ public class PopupTextFade : MonoBehaviour {
 
     Color origColor = Color.white;
 
+    public GameObject parentObject;
+
 	// Use this for initialization
 	void Start () {
         setup();

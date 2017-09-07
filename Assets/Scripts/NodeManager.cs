@@ -15,7 +15,7 @@ public class NodeManager : MonoBehaviour {
     List<ConnectionManager> innerConnections = new List<ConnectionManager>();
 
     int numCollisions = 0;
-
+    bool origRotationSet = false;
     public Vector3 positionOnSphere = Vector3.zero;
     Quaternion origRotation;
     Quaternion snapRotation;
@@ -71,6 +71,12 @@ public class NodeManager : MonoBehaviour {
             }
         }
 
+        if (!origRotationSet)
+        {
+            origRotation = gameObject.transform.localRotation;
+            origRotationSet = true;
+        }
+
     }
 	
 	// Update is called once per frame
@@ -97,11 +103,19 @@ public class NodeManager : MonoBehaviour {
         activePull = true;
 
         stretchEdge.SetActive(true);
-        origRotation = gameObject.transform.localRotation;
+
+           /*
+        if (!origRotationSet) {
+            origRotation = gameObject.transform.localRotation;
+            origRotationSet = true;
+        }
+        */
     }
 
     public void endPullEffect()
     {
+        if (stretchEdge == null) return;
+
         activePull = false;
 
         snapRotation = gameObject.transform.localRotation;

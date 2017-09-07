@@ -30,6 +30,15 @@ public class DataLoader : MonoBehaviour {
     public float barRadiusScale = 1.0f;     // aesthetically appealing: 0.3
     public float pointScaleFactor = 1.0f;   // aesthetically appealing: 1.5
 
+    public SliderManager slider_barRadius;
+    public SliderManager slider_nodeScale;
+    public SliderManager slider_innerConnDist;
+    public SliderManager slider_outerConnDist;
+
+    public float edgeDist = 0.4f; // original: 0.4f
+    public float innerGroupEdgeDist = 0.1f; // original: 0.1f
+
+
     // populated by the derived class
     protected Dictionary<string, NodeInfo> nodeMap = new Dictionary<string, NodeInfo>();
     protected List<EdgeInfo> edgeList = new List<EdgeInfo>();
@@ -43,6 +52,9 @@ public class DataLoader : MonoBehaviour {
 
 
     protected Dictionary<string, NodeManager> selectedNodeMap = new Dictionary<string, NodeManager>();
+
+    protected List<GameObject> outerEdgeList = new List<GameObject>();
+    protected List<GameObject> nodeList = new List<GameObject>();
 
     public int randomColorSeed = 8;
 
@@ -62,10 +74,28 @@ public class DataLoader : MonoBehaviour {
 
     public float splineGroupWeight = 0.95f;
 
+    protected void setDefaultParameterValues()
+    {
+        slider_innerConnDist.suggestValue(innerGroupEdgeDist);
+        slider_outerConnDist.suggestValue(edgeDist);
+
+        slider_nodeScale.suggestValue(pointScaleFactor);
+        slider_barRadius.suggestValue(barRadiusScale);
+    }
+
+    protected void updateParameterValues()
+    {
+        innerGroupEdgeDist = slider_innerConnDist.getValue();
+        edgeDist = slider_outerConnDist.getValue();
+        pointScaleFactor = slider_nodeScale.getValue();
+        barRadiusScale = slider_barRadius.getValue();
+    }
+
     // Use this for initialization
     void Start () {
-		
-	}
+
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -74,7 +104,6 @@ public class DataLoader : MonoBehaviour {
 
     public void testMovement()
     {
-        
         float rt = 0f, fo = 0f;
         if (Input.GetKeyDown(KeyCode.A)) rt -= 0.1f;
         if (Input.GetKeyDown(KeyCode.D)) rt += 0.1f;
@@ -87,18 +116,18 @@ public class DataLoader : MonoBehaviour {
             pos = pos + rt * projSphere.transform.right + fo * projSphere.transform.forward;
             projSphere.transform.position = pos;
         }
-        
-        
-
     }
 
-	public void loadData()
-	{
-		// populate the nodes (derived class should do this and populate the 2D points)
-		// populate the edges (derived class should do this and populate the 2D points)
+    public void loadData()
+    {
+        setDefaultParameterValues();
 
-		// cull isolated nodes (is applicable)
-		if( excludeIsolatedNodes ) cullIsolatedNodes();
+
+        // populate the nodes (derived class should do this and populate the 2D points)
+        // populate the edges (derived class should do this and populate the 2D points)
+
+        // cull isolated nodes (is applicable)
+        if ( excludeIsolatedNodes ) cullIsolatedNodes();
 
 
         // populate the groupMap
@@ -113,8 +142,6 @@ public class DataLoader : MonoBehaviour {
         if ( performForceDirectedLayout ) doForceDirLayout();
 
 
-
-
 		
 		// populate the groupColorMap
 		populateColorMap();
@@ -124,11 +151,9 @@ public class DataLoader : MonoBehaviour {
 		projectPointsForNodesAndGroups();
 
 
-
-
 		populatePts();
 		populateEdges();
-	}
+    }
 
     private void clusterByGroups()
     {
@@ -520,14 +545,19 @@ public class DataLoader : MonoBehaviour {
 
             GameObject popupText = (GameObject)Instantiate(popupTextPrefab);
             popupText.transform.position = point.transform.position;
-            popupText.transform.SetParent(projSphere.transform);
+            popupText.transform.SetParent(point.transform);
 
             PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
             TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
             tMesh.text = kv.Value.name;
 
+            popupTextObject.parentObject = point;
+
             if (popupTextObject != null) gazeScript.addTextObject(popupTextObject);
             else Debug.Log("No Popup-text stuff");
+
+            nodeList.Add(point);
+            nodeList.Add(popupText);
 
         }
     }
@@ -627,10 +657,14 @@ public class DataLoader : MonoBehaviour {
 
         float tmpRadius = radius * tmpScale;
 
-        Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f;
+        Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
 
-        Vector3 upDir = nodeManager.gameObject.transform.position - projSphere.transform.position;
+
+
+        Vector3 upDir = projSphere.transform.TransformPoint(nodeManager.nodeInfo.position3) - projSphere.transform.position;
         upDir.Normalize();
+
+        upDir = nodeManager.transform.rotation * upDir;
 
         Vector3 rightVec = new Vector3(1f, 0f, 0f);
         if( Vector3.Dot(upDir, rightVec) > 0.99f ) rightVec = new Vector3(0f, 0f, 1f);
@@ -707,6 +741,7 @@ public class DataLoader : MonoBehaviour {
             PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
             TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
             tMesh.text = currName;
+            popupTextObject.parentObject = point;
 
             if (popupTextObject != null) gazeScript.addTextObject(subKey, popupTextObject);
             else Debug.Log("No Popup-text stuff");
@@ -850,7 +885,36 @@ public class DataLoader : MonoBehaviour {
         return getSubNodeKey(nodeInfo, nodeInfo.subElements[idx]);
     }
 
+    public void repopulateEdges()
+    {
+        repopulateEdges(edgeDist, innerGroupEdgeDist);
+    }
+
+    public void repopulateEdges(float d1, float d2)
+    {
+        deselectAllNodes();
+
+        updateParameterValues();
+
+        foreach (GameObject obj in nodeList) GameObject.Destroy(obj);
+        nodeList.Clear();
+
+        foreach (GameObject obj in outerEdgeList) GameObject.Destroy(obj);
+        outerEdgeList.Clear();
+
+        GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
+        if( gazeScript != null ) gazeScript.removeAllTextObjects();
+
+        populatePts();
+        populateEdges(d1, d2);
+    }
+
     private void populateEdges()
+    {
+        populateEdges(edgeDist, innerGroupEdgeDist);
+    }
+
+    private void populateEdges(float d1, float d2 )
     {
         Vector3[] basePts = new Vector3[4];
         
@@ -867,6 +931,13 @@ public class DataLoader : MonoBehaviour {
 
         float groupWeight = splineGroupWeight;
         float nodeWeight = 1.0f - groupWeight;
+
+        float splineEdgeDistOuter = 1.0f + d1;
+        float splineEdgeDistInner = 1.0f + d1 * 0.25f;
+
+        float bezEdgeDist = 1.0f + d2;
+
+        GameObject edgeObj;
 
         foreach (EdgeInfo edge in edgeList)
         {
@@ -894,23 +965,21 @@ public class DataLoader : MonoBehaviour {
                     {
                         basePts[0] = edge.startNode.sphereCoords;
                         basePts[1] = basePts[0];
-                        basePts[1].z *= 1.1f;
+                        basePts[1].z *= bezEdgeDist; // the radius from the sphere center
                         
                         basePts[3] = basePts[2] = edge.endNode.sphereCoords;
-                        basePts[2].z *= 1.1f;
+                        basePts[2].z *= bezEdgeDist;
                     }
                     else
                     {
                         basePts[0] = edge.startNode.position3;
-                        basePts[1] = basePts[0] * 1.1f;
+                        basePts[1] = basePts[0] * bezEdgeDist;
                         
                         basePts[3] = edge.endNode.position3;
-                        basePts[2] = basePts[3] * 1.1f;
-
-                        
+                        basePts[2] = basePts[3] * bezEdgeDist;
                     }
 
-                    GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
+                    edgeObj = (GameObject)Instantiate(bezierPrefab);
                     BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
                     bezBar.radius = barRadius;
                     bezBar.sphereCoords = interpolateSpherical;
@@ -936,13 +1005,13 @@ public class DataLoader : MonoBehaviour {
 
                         //basePts[1] = basePts[2] = tVec1;
                         basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;
-                        basePts[1].z *= 1.1f;  // group1 node radius 1.1*radius
-                        basePts[2].z *= 1.4f;  // group1 node radius 1.4*radius
+                        basePts[1].z *= splineEdgeDistInner;  // group1 node radius 1.1*radius
+                        basePts[2].z *= splineEdgeDistOuter;  // group1 node radius 1.4*radius
 
                         //basePts[4] = basePts[5] = tVec2;
                         basePts[4] = basePts[5] = tVec2 * groupWeight + basePts[6] * nodeWeight;
-                        basePts[4].z *= 1.4f;  // group2 node radius 1.4*radius
-                        basePts[5].z *= 1.1f;  // group2 node radius 1.1*radius
+                        basePts[4].z *= splineEdgeDistOuter;  // group2 node radius 1.4*radius
+                        basePts[5].z *= splineEdgeDistInner;  // group2 node radius 1.1*radius
 
                         basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
                     }
@@ -956,11 +1025,11 @@ public class DataLoader : MonoBehaviour {
                         basePts[0] = edge.startNode.position3;
                         basePts[6] = edge.endNode.position3;
 
-                        basePts[1] = tVec1 * 1.1f;
-                        basePts[2] = tVec1 * 1.4f;
+                        basePts[1] = tVec1 * splineEdgeDistInner;
+                        basePts[2] = tVec1 * splineEdgeDistOuter;
 
-                        basePts[4] = tVec2 * 1.4f;
-                        basePts[5] = tVec2 * 1.1f;
+                        basePts[4] = tVec2 * splineEdgeDistOuter;
+                        basePts[5] = tVec2 * splineEdgeDistInner;
 
                         basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
 
@@ -969,7 +1038,7 @@ public class DataLoader : MonoBehaviour {
 					
 
 
-					GameObject edgeObj = (GameObject)Instantiate(bSplinePrefab);
+					edgeObj = (GameObject)Instantiate(bSplinePrefab);
                 	BasisSpline bspline = edgeObj.GetComponent<BasisSpline>();
                     bspline.radius = barRadius;
                     bspline.useSphericalInterpolation = interpolateSpherical;
@@ -981,7 +1050,7 @@ public class DataLoader : MonoBehaviour {
             }
             else if(useBezierBars)
             {
-                GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
+                edgeObj = (GameObject)Instantiate(bezierPrefab);
                 BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
                 bezBar.radius = barRadius;
                 bezBar.sphereCoords = false;
@@ -992,7 +1061,7 @@ public class DataLoader : MonoBehaviour {
             }
             else
             {
-                GameObject edgeObj = (GameObject)Instantiate(edgePrefab);
+                edgeObj = (GameObject)Instantiate(edgePrefab);
                 LineRenderer rend = edgeObj.GetComponent<LineRenderer>();
 
                 pts = Utils.getBezierPoints(basePts, 100);
@@ -1004,6 +1073,8 @@ public class DataLoader : MonoBehaviour {
                 edgeObj.transform.SetParent(projSphere.transform);
             }
 
+
+            outerEdgeList.Add(edgeObj);
         }
 
     }
