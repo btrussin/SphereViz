@@ -22,7 +22,7 @@ public class BasisSpline : BaseCurve
 
     }
 
-    public new void init(Vector3[] bPts, Color c0, Color c1)
+    public new void init(Vector3[] bPts, Color c0, Color c1, Transform transform = null)
     {
     	color0 = c0;
     	color1 = c1;
@@ -33,11 +33,11 @@ public class BasisSpline : BaseCurve
             basisPoints[i] = bPts[i];
         }
 
-        setup();
+        setup(transform);
         populateCurveBarMesh(bsPoints, bsTangents);
     }
 
-    protected void setup()
+    protected void setup(Transform transform = null)
     {
         n = basisPoints.Length - 1;
 
@@ -74,7 +74,15 @@ public class BasisSpline : BaseCurve
         		bsPoints[i] = rotation * tmpVec;
     		}
 
-    		bsTangents = new Vector3[bsPoints.Length];
+            if (transform != null)
+            {
+                for (i = 0; i < bsPoints.Length; i++)
+                {
+                    bsPoints[i] = transform.TransformPoint(bsPoints[i]);
+                }
+            }
+
+            bsTangents = new Vector3[bsPoints.Length];
 
     		for( i = 1; i < bsPoints.Length; i++ )
     		{
@@ -87,7 +95,15 @@ public class BasisSpline : BaseCurve
         }
         else
         {
-			calcBSplineTangents();
+            if (transform != null)
+            {
+                for (i = 0; i < bsPoints.Length; i++)
+                {
+                    bsPoints[i] = transform.TransformPoint(bsPoints[i]);
+                }
+            }
+
+            calcBSplineTangents();
         }
         
     }

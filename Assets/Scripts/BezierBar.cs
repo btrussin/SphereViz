@@ -12,7 +12,7 @@ public class BezierBar : BaseCurve
 
 	}
 
-    public new void init(Vector3[] bPts, Color c0, Color c1)
+    public new void init(Vector3[] bPts, Color c0, Color c1, Transform transform = null)
     {
         color0 = c0;
         color1 = c1;
@@ -34,6 +34,14 @@ public class BezierBar : BaseCurve
                 basePoints[i] = rotation * tmpVec;
             }
 
+            if( transform != null )
+            {
+                for (int i = 0; i < basePoints.Length; i++)
+                {
+                    basePoints[i] = transform.TransformPoint(basePoints[i]);
+                }
+            }
+
             for (int i = 1; i < basePoints.Length; i++)
             {
                 tmpVec = basePoints[i] - basePoints[i - 1];
@@ -46,6 +54,15 @@ public class BezierBar : BaseCurve
         else
         {
             basePoints = Utils.getBezierPoints(bPts, numMajorDivisions);
+
+            if (transform != null)
+            {
+                for (int i = 0; i < basePoints.Length; i++)
+                {
+                    basePoints[i] = transform.TransformPoint(basePoints[i]);
+                }
+            }
+
             baseTangents = Utils.getBezierPointTangents(bPts, numMajorDivisions);
         }
 

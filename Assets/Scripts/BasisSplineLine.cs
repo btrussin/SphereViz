@@ -13,7 +13,7 @@ public class BasisSplineLine : BasisSpline
 
     }
 
-    public new void init(Vector3[] bPts, Color c0, Color c1)
+    public new void init(Vector3[] bPts, Color c0, Color c1, Transform transform = null)
     {
         color0 = c0;
         color1 = c1;
@@ -24,7 +24,7 @@ public class BasisSplineLine : BasisSpline
             basisPoints[i] = bPts[i];
         }
 
-        setup();
+        setup(transform);
         populateLine();
     }
 

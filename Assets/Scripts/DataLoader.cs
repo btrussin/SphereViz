@@ -81,6 +81,8 @@ public class DataLoader : MonoBehaviour {
 
         slider_nodeScale.suggestValue(pointScaleFactor);
         slider_barRadius.suggestValue(barRadiusScale);
+
+        updateParameterValues();
     }
 
     protected void updateParameterValues()
@@ -510,11 +512,12 @@ public class DataLoader : MonoBehaviour {
 
     }
 
+
     private void populatePts()
     {
-        float tmpRadius = radius * projSphere.transform.localScale.x;
-
-        Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
+       
+        //Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
+        Vector3 ptScale = getCurrentPointSize();
 
         GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
 
@@ -527,7 +530,7 @@ public class DataLoader : MonoBehaviour {
         {
             GameObject point = (GameObject)Instantiate(nodePrefab);
             point.name = "Node: " + kv.Value.name;
-            point.transform.position = kv.Value.position3 + projSphere.transform.position;
+            point.transform.position = projSphere.transform.TransformPoint(kv.Value.position3);
             point.transform.localScale = ptScale;
 
             MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
@@ -640,6 +643,12 @@ public class DataLoader : MonoBehaviour {
         return radius * projSphere.transform.localScale.x / 125.0f * barRadiusScale;
     }
 
+    private Vector3 getCurrentPointSize()
+    {
+        Vector3 ptScale = Vector3.one * radius * projSphere.transform.localScale.x * 2f / 125f * pointScaleFactor;
+        return ptScale;
+    }
+
 
     void populateSubNodes(NodeManager nodeManager)
     {
@@ -654,17 +663,17 @@ public class DataLoader : MonoBehaviour {
         GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
 
         float tmpScale = projSphere.transform.localScale.x;
-
         float tmpRadius = radius * tmpScale;
+        Vector3 ptScale = getCurrentPointSize();
+        //Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
+        //Vector3 ptScale = Vector3.one * radius * 2f / 125f * pointScaleFactor;
 
-        Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
+        //Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
 
-
-
-        Vector3 upDir = projSphere.transform.TransformPoint(nodeManager.nodeInfo.position3) - projSphere.transform.position;
+        Vector3 upDir = nodeManager.gameObject.transform.position - projSphere.transform.position;
         upDir.Normalize();
 
-        upDir = nodeManager.transform.rotation * upDir;
+        //upDir = nodeManager.transform.localRotation * upDir;
 
         Vector3 rightVec = new Vector3(1f, 0f, 0f);
         if( Vector3.Dot(upDir, rightVec) > 0.99f ) rightVec = new Vector3(0f, 0f, 1f);
@@ -684,7 +693,9 @@ public class DataLoader : MonoBehaviour {
         Vector3 center = nodeManager.gameObject.transform.position - upDir * tmpRadius * 0.15f;
         float c, s;
 
-        float barRadius = tmpRadius / 125.0f * barRadiusScale;
+        //float barRadius = tmpRadius / 125.0f * barRadiusScale;
+
+        float barRadius = getCurrBarRadius();
 
         Vector3[] basePoints = new Vector3[4];
 
@@ -695,7 +706,7 @@ public class DataLoader : MonoBehaviour {
         string subKey;
 
         foreach (string currName in nodeInfo.subElements)
-            {
+        {
             c = Mathf.Cos(currAngle);
             s = Mathf.Sin(currAngle);
 
@@ -766,7 +777,7 @@ public class DataLoader : MonoBehaviour {
 
     void populateSubNodeConnections(NodeManager nodeManagerA, NodeManager nodeManagerB)
     {
-        float tmpRadius = radius * projSphere.transform.localScale.x;
+        //float tmpRadius = radius * projSphere.transform.localScale.x;
 
         if (nodeManagerA == null || nodeManagerB == null) return;
         NodeInfo infoA = nodeManagerA.nodeInfo;
@@ -783,7 +794,9 @@ public class DataLoader : MonoBehaviour {
         Color colorA = groupColorMap[infoA.groupName];
         Color colorB = groupColorMap[infoB.groupName];
 
-        float barRadius = tmpRadius / 125.0f * barRadiusScale;
+        //float barRadius = tmpRadius / 125.0f * barRadiusScale;
+
+        float barRadius = getCurrBarRadius();
 
         bool tmpVecASet = false;
         bool tmpVecBSet = false;
@@ -856,6 +869,7 @@ public class DataLoader : MonoBehaviour {
                     connMan.nodePointA = nodeManagerA.gameObject;
                     connMan.nodePointB = nodeManagerB.gameObject;
                     connMan.bezBar = bezBar;
+                    connMan.dataLoader = this;
 
 
                     objListA.Add(edgeObj);
@@ -905,6 +919,8 @@ public class DataLoader : MonoBehaviour {
         GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
         if( gazeScript != null ) gazeScript.removeAllTextObjects();
 
+        //subNodePositionMap.Clear();
+
         populatePts();
         populateEdges(d1, d2);
     }
@@ -924,7 +940,10 @@ public class DataLoader : MonoBehaviour {
         Color c0;
         Color c1;
 
-        float barRadius = radius / 125.0f * barRadiusScale;
+        //float sphereScale = projSphere.transform.localScale.x;
+
+        //float barRadius = radius / 125.0f * barRadiusScale * sphereScale;
+        float barRadius = getCurrBarRadius();
 
         GroupInfo fromGroup;
         GroupInfo toGroup;
@@ -932,8 +951,8 @@ public class DataLoader : MonoBehaviour {
         float groupWeight = splineGroupWeight;
         float nodeWeight = 1.0f - groupWeight;
 
-        float splineEdgeDistOuter = 1.0f + d1;
-        float splineEdgeDistInner = 1.0f + d1 * 0.25f;
+        float splineEdgeDistOuter = (1.0f + d1);
+        float splineEdgeDistInner = (1.0f + d1*0.25f);
 
         float bezEdgeDist = 1.0f + d2;
 
@@ -967,7 +986,8 @@ public class DataLoader : MonoBehaviour {
                         basePts[1] = basePts[0];
                         basePts[1].z *= bezEdgeDist; // the radius from the sphere center
                         
-                        basePts[3] = basePts[2] = edge.endNode.sphereCoords;
+                        basePts[3] = edge.endNode.sphereCoords;
+                        basePts[2] = basePts[3];
                         basePts[2].z *= bezEdgeDist;
                     }
                     else
@@ -983,8 +1003,8 @@ public class DataLoader : MonoBehaviour {
                     BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
                     bezBar.radius = barRadius;
                     bezBar.sphereCoords = interpolateSpherical;
-                    bezBar.init(basePts, c0, c1);
-                    edgeObj.transform.position = projSphere.transform.position;
+                    bezBar.init(basePts, c0, c1, projSphere.transform);
+                    //edgeObj.transform.position = projSphere.transform.position;
 
                     edgeObj.transform.SetParent(projSphere.transform);
                 }
@@ -1042,8 +1062,8 @@ public class DataLoader : MonoBehaviour {
                 	BasisSpline bspline = edgeObj.GetComponent<BasisSpline>();
                     bspline.radius = barRadius;
                     bspline.useSphericalInterpolation = interpolateSpherical;
-                	bspline.init(basePts, c0, c1);
-                    edgeObj.transform.position = projSphere.transform.position;
+                	bspline.init(basePts, c0, c1, projSphere.transform);
+                    //edgeObj.transform.position = projSphere.transform.position;
 
                     edgeObj.transform.SetParent(projSphere.transform);
                 }                
@@ -1054,8 +1074,8 @@ public class DataLoader : MonoBehaviour {
                 BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
                 bezBar.radius = barRadius;
                 bezBar.sphereCoords = false;
-                bezBar.init(basePts, c0, c1);
-                edgeObj.transform.position = projSphere.transform.position;
+                bezBar.init(basePts, c0, c1, projSphere.transform);
+                //edgeObj.transform.position = projSphere.transform.position;
 
                 edgeObj.transform.SetParent(projSphere.transform);
             }

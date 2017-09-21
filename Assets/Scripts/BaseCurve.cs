@@ -148,7 +148,8 @@ public class BaseCurve : MonoBehaviour {
 
         }
 
-        if( mesh == null ) mesh = new Mesh();
+        if (mesh == null) mesh = new Mesh();
+        //mesh = new Mesh();
         meshFilter.mesh = mesh;
         mesh.vertices = meshPoints;
         mesh.normals = meshNormals;
@@ -170,7 +171,7 @@ public class BaseCurve : MonoBehaviour {
 		
 	}
 
-    public void init(Vector3[] bPts, Color c0, Color c1)
+    public void init(Vector3[] bPts, Color c0, Color c1, Transform transform = null)
     {
 
     }

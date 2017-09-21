@@ -9,6 +9,8 @@ public class GazeActivate : MonoBehaviour {
 
     public float gazeFactor = 0.99f;
 
+    public int maxLabelsToShow = 30;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -19,19 +21,28 @@ public class GazeActivate : MonoBehaviour {
 
         Vector3 forward = gameObject.transform.forward;
         Vector3 tmp;
+
+        int count = 0;
         foreach (PopupTextFade text in textList)
         {
             tmp = text.parentObject.transform.position - gameObject.transform.position;
             tmp.Normalize();
-            if( Vector3.Dot(forward, tmp) > gazeFactor) text.inCameraView();
-
+            if (Vector3.Dot(forward, tmp) > gazeFactor)
+            {
+                text.inCameraView();
+                if (count++ > maxLabelsToShow) break;
+            }
         }
 
         foreach (PopupTextFade text in textMap.Values)
         {
             tmp = text.parentObject.transform.position - gameObject.transform.position;
             tmp.Normalize();
-            if (Vector3.Dot(forward, tmp) > gazeFactor) text.inCameraView();
+            if (Vector3.Dot(forward, tmp) > gazeFactor)
+            {
+                text.inCameraView();
+                if (count++ > maxLabelsToShow) break;
+            }
         }
 
     }

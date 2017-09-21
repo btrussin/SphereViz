@@ -104,12 +104,6 @@ public class NodeManager : MonoBehaviour {
 
         stretchEdge.SetActive(true);
 
-           /*
-        if (!origRotationSet) {
-            origRotation = gameObject.transform.localRotation;
-            origRotationSet = true;
-        }
-        */
     }
 
     public void endPullEffect()
@@ -126,7 +120,7 @@ public class NodeManager : MonoBehaviour {
 
     void updatePullCurve()
     {
-        
+
         curveBasePoints[0] = baseSphereTransform.TransformPoint(positionOnSphere);
         curveBasePoints[3] = gameObject.transform.position;
 
@@ -152,7 +146,6 @@ public class NodeManager : MonoBehaviour {
         gameObject.transform.localRotation = Quaternion.Slerp(snapRotation, origRotation, snapTime * timeToSnapBack_inv);
 
         gameObject.transform.position = Vector3.Slerp(snapPosition, baseSphereTransform.TransformPoint(positionOnSphere), snapTime * timeToSnapBack_inv);
-
 
         if (snapTime >= timeToSnapBack)
         {

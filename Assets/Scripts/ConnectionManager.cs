@@ -21,6 +21,10 @@ public class ConnectionManager : MonoBehaviour {
     public GameObject subPointB;
     public BezierBar bezBar;
 
+    static Quaternion noRotation = Quaternion.Euler(0f, 0f, 0f);
+
+    public DataLoader dataLoader;
+
     Vector3[] ctrlPts = new Vector3[4];
 
     public void displayText(Vector3 pt)
@@ -71,7 +75,7 @@ public class ConnectionManager : MonoBehaviour {
     {
         ctrlPts[0] = subPointA.transform.position;
         ctrlPts[3] = subPointB.transform.position;
-
+        
         Vector3 tmpVecA = projSphereTransform.position - ctrlPts[0];
         tmpVecA.Normalize();
         tmpVecA *= Vector3.Dot(tmpVecA, ctrlPts[0] - nodePointA.transform.position);
@@ -83,9 +87,6 @@ public class ConnectionManager : MonoBehaviour {
 
         if (innerConnStraightLine)
         {
-            //ctrlPts[1] = ctrlPts[0] * 0.67f + ctrlPts[3] * 0.33f;
-            //ctrlPts[2] = ctrlPts[3] * 0.67f + ctrlPts[0] * 0.33f;
-
             ctrlPts[1] = ctrlPts[0] + tmpVecA * 0.001f;
             ctrlPts[2] = ctrlPts[3] + tmpVecB * 0.001f;
         }
@@ -95,6 +96,25 @@ public class ConnectionManager : MonoBehaviour {
             ctrlPts[2] = ctrlPts[3] + tmpVecB;
         }
 
-        bezBar.init(ctrlPts, colorA, colorB);
+        Vector3 pos = gameObject.transform.position;
+        for( int i = 0; i < 4; i++ )
+        {
+           ctrlPts[i] = ctrlPts[i] - pos;
+        }
+
+
+        bezBar.gameObject.transform.rotation = noRotation;
+        bezBar.gameObject.transform.localScale = Vector3.one;
+
+        // get node scale
+        float nScale = projSphereTransform.localScale.x;
+        for( int i = 0; i < 4; i++ )
+        {
+            ctrlPts[i] /= nScale;
+        }
+
+        bezBar.radius = dataLoader.getCurrBarRadius() / nScale;
+        bezBar.init(ctrlPts, colorA, colorB, null);
+
     }
 }

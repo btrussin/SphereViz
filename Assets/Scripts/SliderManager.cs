@@ -30,7 +30,7 @@ public class SliderManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        currentSliderValue = (rightValue + leftValue) * 0.5f;
+        //currentSliderValue = (rightValue + leftValue) * 0.5f;
 
         mainLabel.text = mainLabelText;
         leftLabel.text = leftLabelText;
