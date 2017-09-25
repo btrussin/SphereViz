@@ -670,7 +670,10 @@ public class DataLoader : MonoBehaviour {
 
         //Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
 
-        Vector3 upDir = nodeManager.gameObject.transform.position - projSphere.transform.position;
+        
+
+        //Vector3 upDir = nodeManager.gameObject.transform.position - projSphere.transform.position;
+        Vector3 upDir = projSphere.transform.TransformPoint(nodeManager.nodeInfo.position3) - projSphere.transform.position;
         upDir.Normalize();
 
         //upDir = nodeManager.transform.localRotation * upDir;
@@ -705,6 +708,8 @@ public class DataLoader : MonoBehaviour {
 
         string subKey;
 
+        nodeManager.gameObject.transform.localRotation = Quaternion.identity;
+
         foreach (string currName in nodeInfo.subElements)
         {
             c = Mathf.Cos(currAngle);
@@ -716,6 +721,7 @@ public class DataLoader : MonoBehaviour {
             basePoints[3] = center + (rightVec * c + forVec * s) * 0.05f * tmpScale;
             if( innerNodeHornLayout ) basePoints[2] = center * 0.75f + basePoints[3] * 0.25f;
             else basePoints[2] = basePoints[3] + upDir * tmpRadius * 0.075f;
+
 
             point.transform.position = basePoints[3];
             point.transform.localScale = ptScale;
@@ -765,8 +771,6 @@ public class DataLoader : MonoBehaviour {
 
             point.transform.SetParent(nodeManager.gameObject.transform);
             edgeObj.transform.SetParent(nodeManager.gameObject.transform);
-
-
 
             
         }
