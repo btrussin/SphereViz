@@ -16,18 +16,19 @@ public class CMJSONLoader : DataLoader {
 
     // Use this for initialization
     void Start () {
-        if (useOldMethod) loadData_2();
-		else loadData();
+        
     }
 
     // Update is called once per frame
     void Update () {
-        testMovement();
+        
 	}
 
-	new public void loadData()
-	{
-		var cmAsset = Resources.Load<TextAsset>("ComicsMovies");
+    public override void loadData()
+    {
+        Debug.Log("loadData CMJSONLoader ");
+
+        var cmAsset = Resources.Load<TextAsset>("ComicsMovies");
         var cmDataArray = JsonUtility.FromJson<CMDataObject>(cmAsset.text);
         cmData = cmDataArray.data;
 
@@ -84,8 +85,7 @@ public class CMJSONLoader : DataLoader {
 
         Debug.Log("Number of Edges: " + edgeList.Count);
 
-        base.loadData();
-
+        
         //procData();
     }
 
@@ -276,8 +276,6 @@ public class CMJSONLoader : DataLoader {
         	nodeMap.Add(info.name, info);
         }
 
-
-		base.loadData();
 	}
 
 	public static string getMovieKey(CMData data)

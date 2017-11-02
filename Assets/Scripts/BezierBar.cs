@@ -5,6 +5,9 @@ using UnityEngine;
 public class BezierBar : BaseCurve
 {
 
+    protected Vector3[] basePoints;
+    protected Vector3[] baseTangents;
+
     public bool sphereCoords = false;
 
     // Use this for initialization
@@ -16,9 +19,6 @@ public class BezierBar : BaseCurve
     {
         color0 = c0;
         color1 = c1;
-
-        Vector3[] basePoints;
-        Vector3[] baseTangents;
 
         if (sphereCoords)
         {

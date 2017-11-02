@@ -16,7 +16,7 @@ public class ViveController : MonoBehaviour
 
     public TextMesh textMesh;
 
-    public DataLoader dataLoader;
+    public DataObjectManager dataManager;
 
     public Ray deviceRay;
 
@@ -33,6 +33,10 @@ public class ViveController : MonoBehaviour
     Vector3[] beamPts = new Vector3[2];
 
     public GameObject mainMenu;
+
+    public ViveController otherController;
+
+    public int maxNumberCurvesToRedraw = 20;
 
     // Use this for initialization
     void Start () {
@@ -145,22 +149,25 @@ public class ViveController : MonoBehaviour
                         }
                         else if (hitInfo.collider.gameObject.name.Equals("RefreshButton"))
                         {
-                            dataLoader.repopulateEdges();
+                            dataManager.repopulateEdges();
                         }
                         else if (hitInfo.collider.gameObject.name.Equals("DeselectButton"))
                         {
-                            dataLoader.deselectAllNodes();
+                            dataManager.deselectAllNodes();
                         }
                     }
 
+                    int count = getNumCurvesAffectedByPulling() + otherController.getNumCurvesAffectedByPulling();
+                    bool restrictCurveRedraw = count >= maxNumberCurvesToRedraw;
 
                     // this is to pull nodes
                     foreach (NodeManager nm in currCollisionNodeManagers.Values)
                     {
                         nm.gameObject.GetComponent<MoveScaleObject>().grabSphereWithObject(gameObject);
-                        nm.beginPullEffect(dataLoader.getCurrBarRadius());
+                        nm.beginPullEffect(dataManager.getCurrBarRadius(), restrictCurveRedraw);
                     }
 
+                    if (restrictCurveRedraw) Debug.Log("Restricting the Curves: " + count);
 
 
 
@@ -199,7 +206,7 @@ public class ViveController : MonoBehaviour
                 {
                     NodeManager[] nodes = new NodeManager[currCollisionNodeManagers.Count];
                     currCollisionNodeManagers.Values.CopyTo(nodes, 0);
-                    dataLoader.toggleSubNodes(nodes);
+                    dataManager.toggleSubNodes(nodes);
                 }
             }
 
@@ -229,7 +236,8 @@ public class ViveController : MonoBehaviour
             return;
         }
 
-        ConnectionManager connMan = collision.gameObject.GetComponent<ConnectionManager>();
+        //ConnectionManager connMan = collision.gameObject.GetComponent<ConnectionManager>();
+        ConnectionManager connMan = collision.gameObject.transform.parent.gameObject.GetComponent<ConnectionManager>();
         if (connMan != null)
         {
             //connMan.displayText(gameObject.transform.position + gameObject.transform.forward * 0.08f);
@@ -248,12 +256,27 @@ public class ViveController : MonoBehaviour
             return;
         }
 
-        ConnectionManager connMan = collision.gameObject.GetComponent<ConnectionManager>();
+        //ConnectionManager connMan = collision.gameObject.GetComponent<ConnectionManager>();
+        ConnectionManager connMan = collision.gameObject.transform.parent.gameObject.GetComponent<ConnectionManager>();
         if (connMan != null)
         {
             connMan.hideText();
             return;
         }
     }
-    
+
+    public int getNumCurvesAffectedByPulling()
+    {
+        int count = 0;
+        if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Trigger) != 0)
+        {
+            foreach (NodeManager nm in currCollisionNodeManagers.Values)
+            {
+                count += nm.getNumCurvesAffectedByPulling();
+            }
+        }
+
+        return count;
+    }
+
 }

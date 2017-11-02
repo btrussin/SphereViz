@@ -7,7 +7,7 @@ public class MyCamera : MonoBehaviour
 
     public Vector3 currPosition = Vector3.zero;
 
-    public DataLoader dataLoader;
+    public DataObjectManager dataManager;
 
     Transform mainTrans;
     Camera mainCamera;
@@ -62,7 +62,7 @@ public class MyCamera : MonoBehaviour
                 NodeManager[] nodes = new NodeManager[1];
                 nodes[0] = nodeMan;
 
-                dataLoader.toggleSubNodes(nodes);
+                dataManager.toggleSubNodes(nodes);
             }
         }
     }

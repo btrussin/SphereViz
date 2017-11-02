@@ -20,10 +20,16 @@ public class ConnectionManager : MonoBehaviour {
     public GameObject subPointA;
     public GameObject subPointB;
     public BezierBar bezBar;
+    public BezierLine bezLine;
 
     static Quaternion noRotation = Quaternion.Euler(0f, 0f, 0f);
 
-    public DataLoader dataLoader;
+    public DataObjectManager dataManager;
+
+    public GameObject mainCurve;
+    public GameObject altLineCurve;
+
+    bool restrictDrawingOfEdge = false;
 
     Vector3[] ctrlPts = new Vector3[4];
 
@@ -66,9 +72,25 @@ public class ConnectionManager : MonoBehaviour {
         }
 	}
 
-    public void recalculateEdge()
+    public void recalculateEdge(bool restrictCurveRedraw)
     {
         recalcEdge = true;
+
+        if( restrictDrawingOfEdge != restrictCurveRedraw )
+        {
+            restrictDrawingOfEdge = restrictCurveRedraw;
+
+            if (restrictDrawingOfEdge)
+            {
+                mainCurve.SetActive(false);
+                altLineCurve.SetActive(true);
+            }
+            else
+            {
+                mainCurve.SetActive(true);
+                altLineCurve.SetActive(false);
+            }
+        }
     }
 
     void updateEdge()
@@ -102,19 +124,29 @@ public class ConnectionManager : MonoBehaviour {
            ctrlPts[i] = ctrlPts[i] - pos;
         }
 
-
-        bezBar.gameObject.transform.rotation = noRotation;
-        bezBar.gameObject.transform.localScale = Vector3.one;
-
         // get node scale
         float nScale = projSphereTransform.localScale.x;
-        for( int i = 0; i < 4; i++ )
+        for (int i = 0; i < 4; i++)
         {
             ctrlPts[i] /= nScale;
         }
 
-        bezBar.radius = dataLoader.getCurrBarRadius() / nScale;
-        bezBar.init(ctrlPts, colorA, colorB, null);
+        if (restrictDrawingOfEdge)
+        {
+            bezLine.gameObject.transform.rotation = noRotation;
+            bezLine.gameObject.transform.localScale = Vector3.one;
+
+            bezLine.radius = 2f * dataManager.getCurrBarRadius() / nScale;
+            bezLine.init(ctrlPts, colorA, colorB, null);
+        }
+        else
+        {
+            bezBar.gameObject.transform.rotation = noRotation;
+            bezBar.gameObject.transform.localScale = Vector3.one;
+
+            bezBar.radius = dataManager.getCurrBarRadius() / nScale;
+            bezBar.init(ctrlPts, colorA, colorB, null);
+        }
 
     }
 }

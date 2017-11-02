@@ -12,7 +12,8 @@ public class NodeManager : MonoBehaviour {
 
     List<string> subNodeNames = new List<string>();
 
-    List<ConnectionManager> innerConnections = new List<ConnectionManager>();
+    ///List<ConnectionManager> innerConnections = new List<ConnectionManager>();
+    Dictionary<string, ConnectionManager> innerConnections = new Dictionary<string, ConnectionManager>();
 
     int numCollisions = 0;
     bool origRotationSet = false;
@@ -21,10 +22,14 @@ public class NodeManager : MonoBehaviour {
     Quaternion snapRotation;
     Vector3 snapPosition;
     public Transform baseSphereTransform = null;
-    GameObject stretchEdge = null;
+    GameObject stretchCurve = null;
     BezierBar bezBar;
 
+    GameObject stretchLine = null;
+    BezierLine bezLine;
+
     public GameObject curvePrefab;
+    public GameObject linePrefab;
 
     bool activePull = false;
     bool snapBack = false;
@@ -35,9 +40,12 @@ public class NodeManager : MonoBehaviour {
     float timeToSnapBack_inv = 0.5f;
     float snapTime;
 
+    bool restrictDrawingOfEdges = false;
+
     public void addInnerConnection(ConnectionManager conn)
     {
-        innerConnections.Add(conn);
+        if (innerConnections.ContainsKey(conn.name)) return;
+        innerConnections.Add(conn.name, conn);
     }
 
     public void removeInnerConnections()
@@ -90,25 +98,44 @@ public class NodeManager : MonoBehaviour {
 
 	}
 
-    public void beginPullEffect(float barRadius)
+    public void beginPullEffect(float barRadius, bool restrictCurveRedraw)
     {
-        if (stretchEdge == null)
+        restrictDrawingOfEdges = restrictCurveRedraw;
+
+        if (stretchCurve == null)
         {
-            stretchEdge = (GameObject)Instantiate(curvePrefab);
-            bezBar = stretchEdge.GetComponent<BezierBar>();
+            stretchCurve = (GameObject)Instantiate(curvePrefab);
+            bezBar = stretchCurve.GetComponent<BezierBar>();
             bezBar.sphereCoords = false;
         }
 
+        if( stretchLine == null )
+        {
+            stretchLine = (GameObject)Instantiate(linePrefab);
+            bezLine = stretchLine.GetComponent<BezierLine>();
+            bezLine.sphereCoords = false;
+        }
+
         bezBar.radius = barRadius;
+        bezLine.radius = barRadius*2f;
         activePull = true;
 
-        stretchEdge.SetActive(true);
-
+        if( restrictDrawingOfEdges )
+        {
+            stretchLine.SetActive(true);
+            stretchCurve.SetActive(false);
+        }
+        else
+        {
+            stretchLine.SetActive(false);
+            stretchCurve.SetActive(true);
+        }
+            
     }
 
     public void endPullEffect()
     {
-        if (stretchEdge == null) return;
+        if (stretchCurve == null) return;
 
         activePull = false;
 
@@ -116,6 +143,7 @@ public class NodeManager : MonoBehaviour {
         snapPosition = gameObject.transform.position;
         snapBack = true;
         snapTime = 0.0f;
+        
     }
 
     void updatePullCurve()
@@ -133,9 +161,10 @@ public class NodeManager : MonoBehaviour {
         curveBasePoints[1] = curveBasePoints[0] + centerVec * mag * 0.5f;
         curveBasePoints[2] = curveBasePoints[0] + nodeVec * mag * 0.5f;
 
-        bezBar.init(curveBasePoints, origColor, origColor);
+        if( restrictDrawingOfEdges ) bezLine.init(curveBasePoints, origColor, origColor);
+        else bezBar.init(curveBasePoints, origColor, origColor);
 
-        foreach(ConnectionManager conn in innerConnections) conn.recalculateEdge();
+        foreach (KeyValuePair<string, ConnectionManager> kv in innerConnections) kv.Value.recalculateEdge(restrictDrawingOfEdges);
         
     }
 
@@ -149,8 +178,11 @@ public class NodeManager : MonoBehaviour {
 
         if (snapTime >= timeToSnapBack)
         {
-            stretchEdge.SetActive(false);
+            stretchCurve.SetActive(false);
             snapBack = false;
+
+            restrictDrawingOfEdges = false;
+            foreach (KeyValuePair<string, ConnectionManager> kv in innerConnections) kv.Value.recalculateEdge(restrictDrawingOfEdges);
         }
 
     }
@@ -181,6 +213,11 @@ public class NodeManager : MonoBehaviour {
             numCollisions = 0;
             if (material != null) material.color = origColor;
         }
+    }
+
+    public int getNumCurvesAffectedByPulling()
+    {
+        return innerConnections.Count + 1;
     }
     
     //public 
