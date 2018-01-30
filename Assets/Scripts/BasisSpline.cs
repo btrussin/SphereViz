@@ -5,7 +5,6 @@ using UnityEngine;
 public class BasisSpline : BaseCurve
 {
     
-    public Vector3[] basisPoints;
     protected float[] basisWeights;
     protected int n = 0; // number of control points (zero-based)
     protected int m = 0; // number of weights
@@ -13,8 +12,6 @@ public class BasisSpline : BaseCurve
 
     protected Vector3[] bsPoints;
     protected Vector3[] bsTangents;
-
-    public bool useSphericalInterpolation = false;
 
 
     // Use this for initialization
@@ -27,10 +24,15 @@ public class BasisSpline : BaseCurve
     	color0 = c0;
     	color1 = c1;
 
-        basisPoints = new Vector3[bPts.Length];
-        for( int i = 0; i < bPts.Length; i++ )
+        init(bPts, transform);
+    }
+
+    public new void init(Vector3[] bPts, Transform transform = null)
+    {
+        controlPoints = new Vector3[bPts.Length];
+        for (int i = 0; i < bPts.Length; i++)
         {
-            basisPoints[i] = bPts[i];
+            controlPoints[i] = bPts[i];
         }
 
         setup(transform);
@@ -39,7 +41,7 @@ public class BasisSpline : BaseCurve
 
     protected void setup(Transform transform = null)
     {
-        n = basisPoints.Length - 1;
+        n = controlPoints.Length - 1;
 
         int numOutWts = 4;
         int numInnerWts = n - 3;
@@ -164,7 +166,7 @@ public class BasisSpline : BaseCurve
 
     Vector3 getPN(float u)
     {
-        if( u == 1f ) return basisPoints[n];
+        if( u == 1f ) return controlPoints[n];
 
         Vector3 result = Vector3.zero;
 
@@ -172,7 +174,7 @@ public class BasisSpline : BaseCurve
         for (int i = 0; i <= n; i++)
         {
             val = getN(i, p, u);
-            result += basisPoints[i] * val;
+            result += controlPoints[i] * val;
         }
 
         
@@ -192,8 +194,8 @@ public class BasisSpline : BaseCurve
         }
 
         float v1, v2, t, sn;
-        Vector3 tv1 = basisPoints[i]; tv1.Normalize();
-        Vector3 tv2 = basisPoints[i+1]; tv2.Normalize();
+        Vector3 tv1 = controlPoints[i]; tv1.Normalize();
+        Vector3 tv2 = controlPoints[i+1]; tv2.Normalize();
         float angle = Mathf.Acos(Vector3.Dot(tv1, tv2));
 
         if (basisWeights[i + j] == basisWeights[i])

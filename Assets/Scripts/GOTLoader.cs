@@ -5,9 +5,44 @@ using UnityEngine;
 public class GOTLoader : DataLoader
 {
 
+
+    [Header("Data Set (0-4)")]
+    [Tooltip("Valid values (0-4)")]
+
+    public int dataSetIndex = 0;
+
+    public string groupName;
+
+    public List<string> egdeNameList;
+
+
+    [Header("Attributes To Link By")]
+    public bool uuidHeader;
+    public bool popularityHeader;
+    public bool nameHeader;
+    public bool titleHeader;
+    public bool roleHeader;
+    public bool languageHeader;
+    public bool genderHeader;
+    public bool cultureHeader;
+    public bool kingdomHeader;
+    public bool dateOfBirthHeader;
+    public bool DateofdeathHeader;
+    public bool ageHeader;
+    public bool motherHeader;
+    public bool fatherHeader;
+    public bool heirHeader;
+    public bool houseHeader;
+    public bool secondHouseHeader;
+    public bool spouseHeader;
+    public bool killerHeader;
+
+
     // Use this for initialization
     void Start () {
         
+
+
     }
 	
 	// Update is called once per frame
@@ -15,9 +50,41 @@ public class GOTLoader : DataLoader
 		
 	}
 
+    void populateEdgeList()
+    {
+        if (uuidHeader) egdeNameList.Add("uuid");
+        if (popularityHeader) egdeNameList.Add("popularity");
+        if (nameHeader) egdeNameList.Add("name");
+        if (titleHeader) egdeNameList.Add("title");
+        if (roleHeader) egdeNameList.Add("role");
+        if (languageHeader) egdeNameList.Add("language");
+        if (genderHeader) egdeNameList.Add("gender");
+        if (cultureHeader) egdeNameList.Add("culture");
+        if (kingdomHeader) egdeNameList.Add("kingdom");
+        if (dateOfBirthHeader) egdeNameList.Add("dateOfBirth");
+        if (DateofdeathHeader) egdeNameList.Add("DateoFdeath");
+        if (ageHeader) egdeNameList.Add("age");
+        if (motherHeader) egdeNameList.Add("mother");
+        if (fatherHeader) egdeNameList.Add("father");
+        if (heirHeader) egdeNameList.Add("heir");
+        if (houseHeader) egdeNameList.Add("house");
+        if (secondHouseHeader) egdeNameList.Add("second house");
+        if (spouseHeader) egdeNameList.Add("spouse");
+        if (killerHeader) egdeNameList.Add("killer");
+    }
+
+    int getDataSetIndex()
+    {
+        if (dataSetIndex < 0) return 0;
+        else if (dataSetIndex > 4) return 4;
+        else return dataSetIndex;
+    }
+
     public override void loadData()
     {
-        TextAsset fileData = Resources.Load<TextAsset>("got_popular_chars-Baseline-0");
+        populateEdgeList();
+
+        TextAsset fileData = Resources.Load<TextAsset>("got_popular_chars-" + getDataSetIndex());
         string fileDataStr = fileData.text;
         string[] lines = fileData.text.Split("\n"[0]);
         string[] header = lines[0].Split(","[0]);
@@ -28,6 +95,18 @@ public class GOTLoader : DataLoader
 
         NodeInfo tmpNode;
         string data;
+
+        int groupIdx = 0;
+
+        List<int> grpIdxList = new List<int>();
+
+        for (int i = 0; i < header.Length; i++)
+        {
+            if (header[i].Equals(groupName)) groupIdx = i;
+
+            else if(egdeNameList.Contains(header[i])) grpIdxList.Add(i);
+           
+        }
 
         for ( int lineNum = 1; lineNum < lines.Length; lineNum++ )       
         {
@@ -64,11 +143,13 @@ public class GOTLoader : DataLoader
 
             tmpNode = new NodeInfo();
             tmpNode.name = line[2];
-            if (line[14].Length < 1) tmpNode.groupName = "[none]";
-            else tmpNode.groupName = line[14];
+            if (line[groupIdx].Length < 1) tmpNode.groupName = "[none]";
+            else tmpNode.groupName = line[groupIdx];
 
             string[] items;
             int itemIdx;
+
+            
 
             for (int dataIdx = 3; dataIdx < line.Length; dataIdx++)
             {
@@ -76,24 +157,13 @@ public class GOTLoader : DataLoader
 
                 if (data.Length == 0) continue;
 
-                switch(dataIdx)
+                if(grpIdxList.Contains(dataIdx))
                 {
-                    case 3: // title
-                    case 4: // role
-                    //case 5: // language
-                    //case 7: // culture
-                        items = data.Split(","[0]);
-                        for( itemIdx = 0; itemIdx < items.Length; itemIdx++)
-                        {
-                            tmpNode.subElements.Add(header[dataIdx] + ": " + items[itemIdx]);
-                        }
-                        break;
-
-                    case 14:
-                        break;
-                    default:
-                        //tmpNode.subElements.Add(header[dataIdx] + ": " + data);
-                        break;
+                    items = data.Split(","[0]);
+                    for (itemIdx = 0; itemIdx < items.Length; itemIdx++)
+                    {
+                        tmpNode.subElements.Add(header[dataIdx] + ": " + items[itemIdx]);
+                    }
                 }
             }
 

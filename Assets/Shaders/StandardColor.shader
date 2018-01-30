@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-
+		_Highlight("Highlight Scale", Float) = 1.0
 	}
 	SubShader
 	{
@@ -45,10 +45,12 @@
 				//o.diff = v.color;
 				return o;
 			}
+
+			float _Highlight;
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				return i.diff;
+				return i.diff * _Highlight;
 			}
 			ENDCG
 		}
@@ -87,9 +89,11 @@
 					return o;
 				}
 
+				float _Highlight;
+
 				fixed4 frag(v2f i) : SV_Target
 				{
-					return i.diff;
+					return i.diff * _Highlight;
 				}
 				ENDCG
 

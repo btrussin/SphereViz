@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum highlightState
+{
+    NONE,
+    ONE_HOP,
+    NEAR,
+    FAR
+}
+
 public class DataObjectManager : MonoBehaviour
 {
 
@@ -28,8 +36,8 @@ public class DataObjectManager : MonoBehaviour
 
     public GameObject projSphere;
 
-    public bool useBezierBars = true;
-    public bool useBSplineBars = true;
+    //public bool useBezierBars = true;
+    //public bool useBSplineBars = true;
     public bool useSLERP = false;
 
     public float barRadiusScale = 1.0f;     // aesthetically appealing: 0.3
@@ -43,6 +51,7 @@ public class DataObjectManager : MonoBehaviour
     public float edgeDist = 0.4f; // original: 0.4f
     public float innerGroupEdgeDist = 0.1f; // original: 0.1f
 
+    public highlightState currHighlightState = highlightState.ONE_HOP;
 
     // populated by the derived class
     protected Dictionary<string, NodeInfo> nodeMap = new Dictionary<string, NodeInfo>();
@@ -57,6 +66,7 @@ public class DataObjectManager : MonoBehaviour
 
 
     protected Dictionary<string, NodeManager> selectedNodeMap = new Dictionary<string, NodeManager>();
+    protected Dictionary<string, NodeManager> nodeManagerMap = new Dictionary<string, NodeManager>();
 
     protected List<GameObject> outerEdgeList = new List<GameObject>();
     protected List<GameObject> nodeList = new List<GameObject>();
@@ -78,6 +88,9 @@ public class DataObjectManager : MonoBehaviour
     public float gravityAmt = 0.01f;
 
     public float splineGroupWeight = 0.95f;
+
+    public int maxCurvesUpdatedPerFrame = 10;
+    bool activesUpdateEdges = false;
 
     protected void setDefaultParameterValues()
     {
@@ -104,26 +117,72 @@ public class DataObjectManager : MonoBehaviour
         loadData();
     }
 
+    bool doFirstPosition = true;
+
     // Update is called once per frame
     void Update()
     {
+        if( doFirstPosition )
+        {
+            projSphere.transform.position = Camera.main.transform.position;
+            doFirstPosition = false;
+        }
 
+        if(activesUpdateEdges)
+        {
+            recalcAllEdges();
+        }
     }
 
-    public void testMovement()
+    public void updateHighlightState(highlightState type)
     {
-        float rt = 0f, fo = 0f;
-        if (Input.GetKeyDown(KeyCode.A)) rt -= 0.1f;
-        if (Input.GetKeyDown(KeyCode.D)) rt += 0.1f;
-        if (Input.GetKeyDown(KeyCode.W)) fo += 0.1f;
-        if (Input.GetKeyDown(KeyCode.S)) fo -= 0.1f;
+        Material mat;
+        BezierBar bezBar;
+        BasisSpline spline;
 
-        if (rt != 0f || fo != 0f)
+        currHighlightState = type;
+
+        foreach ( KeyValuePair<string, NodeManager> kv in nodeManagerMap)
         {
-            Vector3 pos = projSphere.transform.position;
-            pos = pos + rt * projSphere.transform.right + fo * projSphere.transform.forward;
-            projSphere.transform.position = pos;
+            kv.Value.currHighlightState = currHighlightState;
         }
+
+        switch (currHighlightState)
+        {
+            case highlightState.ONE_HOP:
+                toggleSubNodes(null);
+                break;
+            case highlightState.NEAR:
+                foreach(GameObject obj in outerEdgeList)
+                {
+                    mat = obj.GetComponent<Renderer>().material;
+                    bezBar = obj.GetComponent<BezierBar>();
+                    if ( bezBar != null ) mat.SetFloat("_Highlight", 1f);
+                    else mat.SetFloat("_Highlight", 0.1f);
+                }
+
+                break;
+            case highlightState.FAR:
+                foreach (GameObject obj in outerEdgeList)
+                {
+                    mat = obj.GetComponent<Renderer>().material;
+                    spline = obj.GetComponent<BasisSpline>();
+                    if (spline != null) mat.SetFloat("_Highlight", 1f);
+                    else mat.SetFloat("_Highlight", 0.1f);
+                }
+
+                break;
+            case highlightState.NONE:
+                foreach (GameObject obj in outerEdgeList)
+                {
+                    mat = obj.GetComponent<Renderer>().material;
+                    mat.SetFloat("_Highlight", 1f);
+                }
+
+                toggleSubNodes(null);
+                break;
+        }
+
     }
 
     public void loadData()
@@ -571,7 +630,8 @@ public class DataObjectManager : MonoBehaviour
 
             nodeList.Add(point);
             nodeList.Add(popupText);
-
+            if (!nodeManagerMap.ContainsKey(kv.Value.name)) nodeManagerMap.Add(kv.Value.name, manager);
+            else nodeManagerMap[kv.Value.name] = manager;
         }
     }
 
@@ -590,26 +650,35 @@ public class DataObjectManager : MonoBehaviour
         List<NodeManager> oldNodes = new List<NodeManager>();
 
         NodeInfo nodeInfo;
-        foreach (NodeManager nm in nodeManagers)
+
+        if( nodeManagers != null )
         {
-            nodeInfo = nm.nodeInfo;
-            if (subElementObjectMap.ContainsKey(nodeInfo.name)) oldNodes.Add(nm);
-            else
+            foreach (NodeManager nm in nodeManagers)
             {
-                newNodes.Add(nm);
-                //selectedNodeMap.Add(nodeInfo.name, nm);
+                nodeInfo = nm.nodeInfo;
+                if (subElementObjectMap.ContainsKey(nodeInfo.name))
+                {
+                    oldNodes.Add(nm);
+                }
+                else
+                {
+                    newNodes.Add(nm);
+                }
             }
         }
 
+ 
         GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
         string subKey;
         foreach (NodeManager nm in oldNodes)
         {
+            nm.isSelected = false;
             nodeInfo = nm.nodeInfo;
             string str = nodeInfo.name;
             List<GameObject> objList = subElementObjectMap[str];
             foreach (GameObject obj in objList) Destroy(obj);
             objList.Clear();
+
             subElementObjectMap.Remove(str);
 
             selectedNodeMap.Remove(str);
@@ -644,13 +713,31 @@ public class DataObjectManager : MonoBehaviour
 
         for (int i = 0; i < newNodeManagers.Length; i++)
         {
+            newNodeManagers[i].isSelected = true;
             selectedNodeMap.Add(newNodeManagers[i].nodeInfo.name, newNodeManagers[i]);
         }
+
+
+
+        if( selectedNodeMap.Count == 0 || currHighlightState == highlightState.NONE )
+        {
+            // if no new nodes, then everything is deselected and hightlight nothing
+            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap) kv.Value.activateSelection(currHighlightState);
+        }
+        else if( currHighlightState == highlightState.ONE_HOP )
+        {
+            // deactivate everything up front, then highlight just the nodes that need it
+            foreach (KeyValuePair < string, NodeManager > kv in nodeManagerMap) kv.Value.deactivateSelection(currHighlightState);
+
+            foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap) kv.Value.activateSelection(currHighlightState);
+        }
+
     }
 
     public float getCurrBarRadius()
     {
-        return radius * projSphere.transform.localScale.x / 125.0f * barRadiusScale;
+        //return radius * projSphere.transform.localScale.x / 125.0f * barRadiusScale;
+        return radius / 125.0f * barRadiusScale;
     }
 
     private Vector3 getCurrentPointSize()
@@ -747,7 +834,7 @@ public class DataObjectManager : MonoBehaviour
             GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
             BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
             bezBar.radius = barRadius;
-            bezBar.sphereCoords = false;
+            bezBar.useSphericalInterpolation = false;
             bezBar.init(basePoints, color, color);
             //edgeObj.transform.position = projSphere.transform.position;
 
@@ -788,6 +875,8 @@ public class DataObjectManager : MonoBehaviour
         subElementObjectMap.Add(nodeInfo.name, gObjList);
 
     }
+
+
 
     void populateSubNodeConnections(NodeManager nodeManagerA, NodeManager nodeManagerB)
     {
@@ -869,7 +958,7 @@ public class DataObjectManager : MonoBehaviour
 
                     BezierBar bezBar = mainCurve.GetComponent<BezierBar>();
                     bezBar.radius = barRadius;
-                    bezBar.sphereCoords = false;
+                    bezBar.useSphericalInterpolation = false;
                     bezBar.init(ctrlPts, colorA, colorB);
 
                     var collider = mainCurve.GetComponent<MeshCollider>();
@@ -926,28 +1015,243 @@ public class DataObjectManager : MonoBehaviour
 
     public void repopulateEdges()
     {
-        repopulateEdges(edgeDist, innerGroupEdgeDist);
-    }
-
-    public void repopulateEdges(float d1, float d2)
-    {
-        deselectAllNodes();
-
         updateParameterValues();
 
-        foreach (GameObject obj in nodeList) GameObject.Destroy(obj);
-        nodeList.Clear();
+        foreach (EdgeInfo edge in edgeList) edge.updateNextFrame = true;
 
-        foreach (GameObject obj in outerEdgeList) GameObject.Destroy(obj);
-        outerEdgeList.Clear();
+        activesUpdateEdges = true;
+    }
 
-        GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
-        if (gazeScript != null) gazeScript.removeAllTextObjects();
 
-        //subNodePositionMap.Clear();
+    private void recalcAllEdges()
+    {
+        Vector3[] basePts;
 
-        populatePts();
-        populateEdges(d1, d2);
+        Vector3 tVec1, tVec2;
+
+        float barRadius = getCurrBarRadius();
+
+        GroupInfo fromGroup;
+        GroupInfo toGroup;
+
+        float groupWeight = splineGroupWeight;
+        float nodeWeight = 1.0f - groupWeight;
+
+        float splineEdgeDistOuter = (1.0f + edgeDist);
+        float splineEdgeDistInner = (1.0f + edgeDist * 0.25f);
+
+        float bezEdgeDist = 1.0f + innerGroupEdgeDist;
+
+        BezierBar bezBarScript;
+        BasisSpline splineScript;
+        GameObject edgeObj;
+
+        int numUpdatedThisFrame = 0;
+
+        foreach (EdgeInfo edge in edgeList)
+        {
+            if (!edge.updateNextFrame) continue;
+          
+
+            if (numUpdatedThisFrame >= maxCurvesUpdatedPerFrame) break;
+
+
+            numUpdatedThisFrame++;
+
+            edgeObj = edge.edgeGameObject;
+            edge.updateNextFrame = false;
+
+            if (true) {
+
+                bezBarScript = edgeObj.GetComponent<BezierBar>();
+                splineScript = edgeObj.GetComponent<BasisSpline>();
+
+                if (edge.isSameGroup())
+                {
+                    basePts = bezBarScript.controlPoints;
+
+                    if (interpolateSpherical)
+                    {
+                        basePts[0] = edge.startNode.sphereCoords;
+                        basePts[1] = basePts[0];
+                        basePts[1].z *= bezEdgeDist; // the radius from the sphere center
+
+                        basePts[3] = edge.endNode.sphereCoords;
+                        basePts[2] = basePts[3];
+                        basePts[2].z *= bezEdgeDist;
+                    }
+                    else
+                    {
+                        basePts[0] = edge.startNode.position3;
+                        basePts[1] = basePts[0] * bezEdgeDist;
+
+                        basePts[3] = edge.endNode.position3;
+                        basePts[2] = basePts[3] * bezEdgeDist;
+                    }
+
+                    edgeObj.transform.SetParent(null);
+
+                    bezBarScript.radius = barRadius;
+                    bezBarScript.useSphericalInterpolation = interpolateSpherical;
+                    bezBarScript.init(basePts);
+
+                    edgeObj.transform.SetParent(projSphere.transform);
+                }
+                else
+                {
+                    fromGroup = groupMap[edge.startNode.groupName];
+                    toGroup = groupMap[edge.endNode.groupName];
+
+                    if (interpolateSpherical)
+                    {
+                        tVec1 = fromGroup.sphereCoords;
+                        tVec2 = toGroup.sphereCoords;
+
+                        basePts = splineScript.controlPoints;
+
+                        basePts[0] = edge.startNode.sphereCoords;  // start point
+                        basePts[6] = edge.endNode.sphereCoords; // end point
+
+                        basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;
+                        basePts[1].z *= splineEdgeDistInner;  // group1 node radius 1.1*radius
+                        basePts[2].z *= splineEdgeDistOuter;  // group1 node radius 1.4*radius
+
+                        basePts[4] = basePts[5] = tVec2 * groupWeight + basePts[6] * nodeWeight;
+                        basePts[4].z *= splineEdgeDistOuter;  // group2 node radius 1.4*radius
+                        basePts[5].z *= splineEdgeDistInner;  // group2 node radius 1.1*radius
+
+                        basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+                    }
+                    else
+                    {
+                        tVec1 = fromGroup.center3;
+                        tVec2 = toGroup.center3;
+
+                        basePts = new Vector3[7];
+
+
+                        basePts[0] = edge.startNode.position3;
+                        basePts[6] = edge.endNode.position3;
+
+                        basePts[1] = tVec1 * splineEdgeDistInner;
+                        basePts[2] = tVec1 * splineEdgeDistOuter;
+
+                        basePts[4] = tVec2 * splineEdgeDistOuter;
+                        basePts[5] = tVec2 * splineEdgeDistInner;
+
+                        basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+
+                    }
+
+                    edgeObj.transform.SetParent(null);
+
+                    splineScript.radius = barRadius;
+                    splineScript.useSphericalInterpolation = interpolateSpherical;
+                    splineScript.init(basePts);
+
+                    edgeObj.transform.SetParent(projSphere.transform);
+                }
+            }
+
+            
+        }
+
+        if (numUpdatedThisFrame == 0) activesUpdateEdges = false;
+
+    }
+
+    public void recalculateNodeSizes()
+    {
+        updateParameterValues();
+
+        Vector3 ptLocalScale = getCurrentPointSize();
+        ptLocalScale /= projSphere.transform.localScale.x;
+
+        foreach (GameObject obj in nodeList)
+        {
+            if(obj.transform.childCount > 0)
+            {
+                List<Transform> tList = new List<Transform>();
+                for(int i = 0; i < obj.transform.childCount; i++ ) tList.Add(obj.transform.GetChild(i));
+                obj.transform.DetachChildren();
+
+                obj.transform.localScale = ptLocalScale;
+
+                foreach (Transform t in tList) t.SetParent(obj.transform);
+            }
+
+            else obj.transform.localScale = ptLocalScale;
+        }
+
+        // sub nodes
+        ptLocalScale = getCurrentPointSize();
+
+        BezierBar bezScript;
+
+        foreach (KeyValuePair<string, List<GameObject>> kv in subElementObjectMap)
+        {
+            foreach (GameObject obj in kv.Value)
+            {
+                bezScript = obj.GetComponent<BezierBar>();
+                if (bezScript == null)
+                {
+                    Transform parentTransform = obj.transform.parent;
+                    obj.transform.SetParent(null);
+                    obj.transform.localScale = ptLocalScale;
+                    obj.transform.SetParent(parentTransform);
+                }
+            }
+        }
+
+
+    }
+
+    public void recalculateEdgeRadii()
+    {
+        updateParameterValues();
+
+        BasisSpline splineScript;
+        BezierBar bezierScript;
+
+        float barRadius = getCurrBarRadius();
+
+        foreach (GameObject obj in outerEdgeList)
+        {
+            splineScript = obj.GetComponent<BasisSpline>();
+            bezierScript = obj.GetComponent<BezierBar>();
+
+            obj.transform.SetParent(null);
+
+            if (splineScript != null)
+            {
+                splineScript.radius = barRadius;
+                splineScript.refreshVertices();
+            }
+            else if (bezierScript != null)
+            {
+                bezierScript.radius = barRadius;
+                bezierScript.refreshVertices();
+            }
+
+            obj.transform.SetParent(projSphere.transform);
+        }
+
+        // subnode edges
+        foreach (KeyValuePair<string, List<GameObject>> kv in subElementObjectMap)
+        {
+            foreach (GameObject obj in kv.Value)
+            {
+                bezierScript = obj.GetComponent<BezierBar>();
+                if (bezierScript != null)
+                {
+                    Transform parentTransform = obj.transform.parent;
+                    obj.transform.SetParent(null);
+                    bezierScript.radius = barRadius;
+                    bezierScript.refreshVertices();
+                    obj.transform.SetParent(parentTransform);
+                }
+            }
+        }
     }
 
     private void populateEdges()
@@ -989,7 +1293,8 @@ public class DataObjectManager : MonoBehaviour
             c0 = groupColorMap[edge.startNode.groupName];
             c1 = groupColorMap[edge.endNode.groupName];
 
-            if (!useBSplineBars)
+            //if (!useBSplineBars)
+            if( false )
             {
                 basePts[0] = edge.startNode.position3;
                 basePts[basePts.Length - 1] = edge.endNode.position3;
@@ -998,7 +1303,8 @@ public class DataObjectManager : MonoBehaviour
                 basePts[basePts.Length - 2] = basePts[basePts.Length - 1] * 2.0f;
             }
 
-            if (useBSplineBars)
+            //if (useBSplineBars)
+            if( true )
             {
 
                 if (edge.isSameGroup())
@@ -1027,11 +1333,13 @@ public class DataObjectManager : MonoBehaviour
                     edgeObj = (GameObject)Instantiate(bezierPrefab);
                     BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
                     bezBar.radius = barRadius;
-                    bezBar.sphereCoords = interpolateSpherical;
+                    bezBar.useSphericalInterpolation = interpolateSpherical;
                     bezBar.init(basePts, c0, c1, projSphere.transform);
                     //edgeObj.transform.position = projSphere.transform.position;
 
                     edgeObj.transform.SetParent(projSphere.transform);
+
+                    edge.edgeGameObject = edgeObj;
                 }
                 else
                 {
@@ -1067,6 +1375,7 @@ public class DataObjectManager : MonoBehaviour
 
                         basePts = new Vector3[7];
 
+
                         basePts[0] = edge.startNode.position3;
                         basePts[6] = edge.endNode.position3;
 
@@ -1091,8 +1400,11 @@ public class DataObjectManager : MonoBehaviour
                     //edgeObj.transform.position = projSphere.transform.position;
 
                     edgeObj.transform.SetParent(projSphere.transform);
+
+                    edge.edgeGameObject = edgeObj;
                 }
             }
+            /*
             else if (useBezierBars)
             {
                 edgeObj = (GameObject)Instantiate(bezierPrefab);
@@ -1117,9 +1429,13 @@ public class DataObjectManager : MonoBehaviour
 
                 edgeObj.transform.SetParent(projSphere.transform);
             }
-
+            */
 
             outerEdgeList.Add(edgeObj);
+
+            nodeManagerMap[edge.startNode.name].addOuterConnection(edgeObj, edge.isSameGroup());
+            nodeManagerMap[edge.endNode.name].addOuterConnection(edgeObj, edge.isSameGroup());
+
         }
 
     }
@@ -1222,6 +1538,9 @@ public class EdgeInfo
     public NodeInfo startNode = null;
     public NodeInfo endNode = null;
     public float forceValue = 0.0f;
+
+    public GameObject edgeGameObject;
+    public bool updateNextFrame = false;
 
     private bool __isSameGroup = false;
     private bool __sameGrpSet = false;

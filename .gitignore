@@ -32,3 +32,9 @@ Thumbs.db
 
 # Brian thinks this should also be ignored #
 .vs/
+
+# Do not include the SteamVR directory #
+Assets/SteamVR/
+
+# Do not include the Screenshots directory #
+Screenshots/

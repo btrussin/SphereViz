@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BaseCurve : MonoBehaviour {
 
+    public Vector3[] controlPoints;
 
     public MeshFilter meshFilter;
     public Mesh mesh = null;
@@ -12,9 +13,16 @@ public class BaseCurve : MonoBehaviour {
     public int numMinorDivisions = 30;
     public float radius = 0.02f;
 
+    public bool useSphericalInterpolation = false;
+
     protected Color color0;
     protected Color color1;
-    
+
+    protected Vector3[] m_basePoints;
+    protected Vector3[] m_baseTangents;
+    protected Vector3[] m_upVectors;
+    protected Vector3[] m_rightVectors;
+
 
     protected void getUpAndRightVectors(Vector3[] basePoints, Vector3[] baseTangents, out Vector3[] upVecs, out Vector3[] rtVecs)
     {
@@ -75,7 +83,18 @@ public class BaseCurve : MonoBehaviour {
     }
 
     protected void populateCurveBarMesh(Vector3[] basePoints, Vector3[] baseTangents)
-    { 
+    {
+        m_basePoints = new Vector3[basePoints.Length];
+        m_baseTangents = new Vector3[baseTangents.Length];
+
+        for (int i = 0; i < m_basePoints.Length; i++) m_basePoints[i] = basePoints[i];
+        for (int i = 0; i < m_baseTangents.Length; i++) m_baseTangents[i] = baseTangents[i];
+
+        populateCurveBarMesh();
+    }
+
+    protected void populateCurveBarMesh()
+    {
         Vector3 currVertex;
         Vector3 currForward;
 
@@ -90,20 +109,20 @@ public class BaseCurve : MonoBehaviour {
         float bInc = (color1.b - color0.b) / (float)(numMajorDivisions - 1);
         Color currColor = color0;
 
-        Vector3[] rightVecs, upVecs;
+       // Vector3[] rightVecs, upVecs;
 
-        getUpAndRightVectors(basePoints, baseTangents, out upVecs, out rightVecs);
+        getUpAndRightVectors(m_basePoints, m_baseTangents, out m_upVectors, out m_rightVectors);
 
-        for (int i = 0; i < basePoints.Length; i++)
+        for (int i = 0; i < m_basePoints.Length; i++)
         {
-            currVertex = upVecs[i];
-            currForward = baseTangents[i];
+            currVertex = m_upVectors[i];
+            currForward = m_baseTangents[i];
 
             Quaternion rotation = Quaternion.AngleAxis(360.0f / numMinorDivisions, currForward);
 
             for (int j = 0; j < numMinorDivisions; j++)
             {
-                meshPoints[currIdx] = basePoints[i] + currVertex * radius;
+                meshPoints[currIdx] = m_basePoints[i] + currVertex * radius;
                 meshNormals[currIdx] = currVertex;
                 meshColors[currIdx] = currColor;
 
@@ -155,8 +174,46 @@ public class BaseCurve : MonoBehaviour {
         mesh.normals = meshNormals;
         mesh.colors = meshColors;
         mesh.triangles = faceList;
+        
 
         meshFilter.sharedMesh.bounds = new Bounds(Vector3.zero, Vector3.one* 10.0f);
+
+        //Material mat = gameObject.GetComponent<Renderer>().material;
+        //mat.SetFloat("_Highlight", 10.0f);
+
+    }
+
+    public void refreshVertices()
+    {
+        Vector3 currVertex;
+        Vector3 currForward;
+
+        Vector3[] meshPoints = new Vector3[numMinorDivisions * numMajorDivisions];
+
+        int currIdx = 0;
+
+
+        for (int i = 0; i < m_basePoints.Length; i++)
+        {
+            currVertex = m_upVectors[i];
+            currForward = m_baseTangents[i];
+
+            Quaternion rotation = Quaternion.AngleAxis(360.0f / numMinorDivisions, currForward);
+
+            for (int j = 0; j < numMinorDivisions; j++)
+            {
+                meshPoints[currIdx] = m_basePoints[i] + currVertex * radius;
+
+                currVertex = rotation * currVertex;
+                currVertex.Normalize();
+                currIdx++;
+            }
+
+           
+        }
+
+        meshFilter.mesh = mesh;
+        mesh.vertices = meshPoints;
 
     }
 
@@ -170,6 +227,11 @@ public class BaseCurve : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void init(Vector3[] bPts, Transform transform = null)
+    {
+
+    }
 
     public void init(Vector3[] bPts, Color c0, Color c1, Transform transform = null)
     {

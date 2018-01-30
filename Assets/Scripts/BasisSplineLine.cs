@@ -18,10 +18,10 @@ public class BasisSplineLine : BasisSpline
         color0 = c0;
         color1 = c1;
 
-        basisPoints = new Vector3[bPts.Length];
+        controlPoints = new Vector3[bPts.Length];
         for (int i = 0; i < bPts.Length; i++)
         {
-            basisPoints[i] = bPts[i];
+            controlPoints[i] = bPts[i];
         }
 
         setup(transform);

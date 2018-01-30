@@ -19,7 +19,6 @@ public class MoveScaleObject : MonoBehaviour {
     public bool allowMove = true;
     public bool allowScale = true;
 
-
     // Use this for initialization
     void Start () {
 		

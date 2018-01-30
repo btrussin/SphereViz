@@ -42,6 +42,21 @@ public class NodeManager : MonoBehaviour {
 
     bool restrictDrawingOfEdges = false;
 
+    public List<GameObject> outerEdgesNear = new List<GameObject>();
+    public List<GameObject> outerEdgesFar = new List<GameObject>();
+
+    public bool isSelected = false;
+
+    public highlightState currHighlightState = highlightState.NONE;
+
+    public void addOuterConnection(GameObject obj, bool near)
+    {
+        if (near) outerEdgesNear.Add(obj);
+        else outerEdgesFar.Add(obj);
+    }
+
+
+
     public void addInnerConnection(ConnectionManager conn)
     {
         if (innerConnections.ContainsKey(conn.name)) return;
@@ -106,14 +121,14 @@ public class NodeManager : MonoBehaviour {
         {
             stretchCurve = (GameObject)Instantiate(curvePrefab);
             bezBar = stretchCurve.GetComponent<BezierBar>();
-            bezBar.sphereCoords = false;
+            bezBar.useSphericalInterpolation = false;
         }
 
         if( stretchLine == null )
         {
             stretchLine = (GameObject)Instantiate(linePrefab);
             bezLine = stretchLine.GetComponent<BezierLine>();
-            bezLine.sphereCoords = false;
+            bezLine.useSphericalInterpolation = false;
         }
 
         bezBar.radius = barRadius;
@@ -163,6 +178,23 @@ public class NodeManager : MonoBehaviour {
 
         if( restrictDrawingOfEdges ) bezLine.init(curveBasePoints, origColor, origColor);
         else bezBar.init(curveBasePoints, origColor, origColor);
+
+        Material mat = stretchCurve.GetComponent<Renderer>().material;
+        switch(currHighlightState)
+        {
+            case highlightState.ONE_HOP:
+                if (isSelected) mat.SetFloat("_Highlight", 1f);
+                else mat.SetFloat("_Highlight", 0.1f);
+                break;
+            case highlightState.NONE:
+                mat.SetFloat("_Highlight", 1f);
+                break;
+            case highlightState.FAR:
+            case highlightState.NEAR:
+                mat.SetFloat("_Highlight", 0.1f);
+                break;
+
+        }
 
         foreach (KeyValuePair<string, ConnectionManager> kv in innerConnections) kv.Value.recalculateEdge(restrictDrawingOfEdges);
         
@@ -219,7 +251,50 @@ public class NodeManager : MonoBehaviour {
     {
         return innerConnections.Count + 1;
     }
-    
-    //public 
+
+    public void deactivateSelection(highlightState state)
+    {
+        currHighlightState = state;
+        Material mat;
+
+        if (state == highlightState.NONE) return;
+        else if (state == highlightState.ONE_HOP)
+        {
+            foreach (GameObject obj in outerEdgesNear)
+            {
+                mat = obj.GetComponent<Renderer>().material;
+                mat.SetFloat("_Highlight", 0.1f);
+            }
+
+            foreach (GameObject obj in outerEdgesFar)
+            {
+                mat = obj.GetComponent<Renderer>().material;
+                mat.SetFloat("_Highlight", 0.1f);
+            }
+        }
+
+    }
+
+    public void activateSelection(highlightState state)
+    {
+        currHighlightState = state;
+        Material mat;
+
+        if (state == highlightState.NONE) return;
+        else if (state == highlightState.ONE_HOP)
+        {
+            foreach (GameObject obj in outerEdgesNear)
+            {
+                mat = obj.GetComponent<Renderer>().material;
+                mat.SetFloat("_Highlight", 1.0f);
+            }
+
+            foreach (GameObject obj in outerEdgesFar)
+            {
+                mat = obj.GetComponent<Renderer>().material;
+                mat.SetFloat("_Highlight", 1.0f);
+            }
+        }
+    }
 
 }

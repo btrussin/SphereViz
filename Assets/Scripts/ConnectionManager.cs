@@ -93,10 +93,19 @@ public class ConnectionManager : MonoBehaviour {
         }
     }
 
+    bool tmpDel = true;
+
     void updateEdge()
     {
-        ctrlPts[0] = subPointA.transform.position;
-        ctrlPts[3] = subPointB.transform.position;
+        //if (tmpDel) return;
+
+        Vector3 zero = Vector3.zero;
+
+        ctrlPts[0] = subPointA.transform.TransformPoint(zero);
+        ctrlPts[3] = subPointB.transform.TransformPoint(zero);
+
+        //ctrlPts[0] = subPointA.transform.position;
+        //ctrlPts[3] = subPointB.transform.position;
         
         Vector3 tmpVecA = projSphereTransform.position - ctrlPts[0];
         tmpVecA.Normalize();
@@ -118,35 +127,46 @@ public class ConnectionManager : MonoBehaviour {
             ctrlPts[2] = ctrlPts[3] + tmpVecB;
         }
 
-        Vector3 pos = gameObject.transform.position;
-        for( int i = 0; i < 4; i++ )
-        {
-           ctrlPts[i] = ctrlPts[i] - pos;
-        }
-
         // get node scale
         float nScale = projSphereTransform.localScale.x;
-        for (int i = 0; i < 4; i++)
-        {
-            ctrlPts[i] /= nScale;
-        }
 
+        /*
+        Vector3 pos = gameObject.transform.position;
+        for( int i = 0; i < 4; i++ ) ctrlPts[i] = ctrlPts[i] - pos;
+
+        for (int i = 0; i < 4; i++) ctrlPts[i] /= nScale;
+        */
+
+        
         if (restrictDrawingOfEdge)
         {
+            Transform tParent = bezLine.gameObject.transform.parent;
+            bezLine.gameObject.transform.SetParent(null);
+
             bezLine.gameObject.transform.rotation = noRotation;
             bezLine.gameObject.transform.localScale = Vector3.one;
+            bezLine.gameObject.transform.position = Vector3.zero;
 
             bezLine.radius = 2f * dataManager.getCurrBarRadius() / nScale;
             bezLine.init(ctrlPts, colorA, colorB, null);
+
+            bezLine.gameObject.transform.SetParent(tParent);
         }
         else
         {
+            Transform tParent = bezBar.gameObject.transform.parent;
+            bezBar.gameObject.transform.SetParent(null);
+
             bezBar.gameObject.transform.rotation = noRotation;
             bezBar.gameObject.transform.localScale = Vector3.one;
+            bezBar.gameObject.transform.position = Vector3.zero;
 
             bezBar.radius = dataManager.getCurrBarRadius() / nScale;
             bezBar.init(ctrlPts, colorA, colorB, null);
-        }
 
+
+            bezBar.gameObject.transform.SetParent(tParent);
+        }
+        
     }
 }

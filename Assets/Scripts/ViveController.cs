@@ -33,8 +33,9 @@ public class ViveController : MonoBehaviour
     Vector3[] beamPts = new Vector3[2];
 
     public GameObject mainMenu;
-
     public ViveController otherController;
+    public bool menuIsAttached = false;
+    public Vector3 foreRtUp;
 
     public int maxNumberCurvesToRedraw = 20;
 
@@ -91,6 +92,8 @@ public class ViveController : MonoBehaviour
         }
 
         updateState();
+
+
     }
     
     void updateState()
@@ -106,20 +109,28 @@ public class ViveController : MonoBehaviour
         {
             if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.ApplicationMenu) != 0)
             {
-                if(mainMenu.activeInHierarchy)
+                if (menuIsAttached)
                 {
-                    mainMenu.SetActive(false);
+                    menuIsAttached = false;
+                    mainMenu.transform.SetParent(null);
                 }
                 else
                 {
+                    menuIsAttached = true;
+                    otherController.menuIsAttached = false;
                     mainMenu.SetActive(true);
-                    
 
-                    mainMenu.transform.up = new Vector3(0f, 1f, 0f);
-                    mainMenu.transform.forward = deviceRay.direction;
-                    mainMenu.transform.position = transform.position;
+                    mainMenu.transform.rotation = transform.rotation;
+                    mainMenu.transform.Rotate(45.0f, 0f, 0f);
 
+                    mainMenu.transform.position = transform.position +
+                        transform.forward * foreRtUp.x +
+                        transform.right * foreRtUp.y +
+                        transform.up * foreRtUp.z;
+
+                    mainMenu.transform.SetParent(transform);
                 }
+
             }
 
             if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Trigger) != 0)
@@ -141,17 +152,23 @@ public class ViveController : MonoBehaviour
                     if (Physics.Raycast(deviceRay.origin, deviceRay.direction, out hitInfo, 10f, menuLayerMask))
                     {
                         currSliderManager = hitInfo.transform.parent.GetComponent<SliderManager>();
-                  
-                        if( currSliderManager != null )
+                        HLButtonManger buttonManager = hitInfo.collider.gameObject.GetComponent<HLButtonManger>();
+                        CloseButtonManager closeManager = hitInfo.collider.gameObject.GetComponent<CloseButtonManager>();
+
+                        if (currSliderManager != null)
                         {
                             beamLength = hitInfo.distance;
                             sliderActive = true;
                         }
-                        else if (hitInfo.collider.gameObject.name.Equals("RefreshButton"))
+                        else if (buttonManager != null)
                         {
-                            dataManager.repopulateEdges();
+                            buttonManager.takeAction();
                         }
-                        else if (hitInfo.collider.gameObject.name.Equals("DeselectButton"))
+                        else if (closeManager != null)
+                        {
+                            closeManager.takeAction();
+                        }
+                        else if (hitInfo.collider.gameObject.name.Equals("Deselect"))
                         {
                             dataManager.deselectAllNodes();
                         }
@@ -175,7 +192,6 @@ public class ViveController : MonoBehaviour
                 else if (prevState.rAxis1.x == 1.0f && state.rAxis1.x < 1.0f)
                 {
                     // trigger just now released from the max
-                    currSliderManager = null;
                     sliderActive = false;
 
                     if (currCollisionNodeManagers.Count > 0)
@@ -186,6 +202,28 @@ public class ViveController : MonoBehaviour
                             if( moveObj != null ) moveObj.releaseSphereWithObject(gameObject);
                             nm.endPullEffect();
                         }
+                    }
+
+                    if( currSliderManager != null )
+                    {
+                        if (currSliderManager.gameObject.name.Equals("slider_nodeSize"))
+                        {
+                            dataManager.recalculateNodeSizes();
+                        }
+                        else if (currSliderManager.gameObject.name.Equals("slider_barRadius"))
+                        {
+                            dataManager.recalculateEdgeRadii();
+                        }
+                        else if (currSliderManager.gameObject.name.Equals("slider_innerConnDist"))
+                        {
+                            dataManager.repopulateEdges();
+                        }
+                        else if (currSliderManager.gameObject.name.Equals("slider_outerConnDist"))
+                        {
+                            dataManager.repopulateEdges();
+                        }
+
+                        currSliderManager = null;
                     }
                     
                 }

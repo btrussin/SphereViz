@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class BezierBar : BaseCurve
 {
-
     protected Vector3[] basePoints;
     protected Vector3[] baseTangents;
-
-    public bool sphereCoords = false;
 
     // Use this for initialization
     void Start () {
@@ -20,7 +17,19 @@ public class BezierBar : BaseCurve
         color0 = c0;
         color1 = c1;
 
-        if (sphereCoords)
+        init(bPts, transform);
+    }
+
+    public new void init(Vector3[] bPts, Transform transform = null)
+    {
+        
+        controlPoints = new Vector3[bPts.Length];
+        for (int i = 0; i < bPts.Length; i++)
+        {
+            controlPoints[i] = bPts[i];
+        }
+
+        if (useSphericalInterpolation)
         {
             Vector3[] tmpPoints = Utils.getBezierPoints(bPts, numMajorDivisions);
             basePoints = new Vector3[tmpPoints.Length];

@@ -22,7 +22,7 @@ public class BezierLine : BezierBar
         color0 = c0;
         color1 = c1;
 
-        if (sphereCoords)
+        if (useSphericalInterpolation)
         {
             Vector3[] tmpPoints = Utils.getBezierPoints(bPts, numMajorDivisions);
             basePoints = new Vector3[tmpPoints.Length];
