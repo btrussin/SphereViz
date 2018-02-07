@@ -650,8 +650,10 @@ public class DataObjectManager : MonoBehaviour
         List<NodeManager> oldNodes = new List<NodeManager>();
 
         NodeInfo nodeInfo;
+        SubNodeManager subNodeManager;
+        ConnectionManager connManager;
 
-        if( nodeManagers != null )
+        if ( nodeManagers != null )
         {
             foreach (NodeManager nm in nodeManagers)
             {
@@ -676,7 +678,37 @@ public class DataObjectManager : MonoBehaviour
             nodeInfo = nm.nodeInfo;
             string str = nodeInfo.name;
             List<GameObject> objList = subElementObjectMap[str];
-            foreach (GameObject obj in objList) Destroy(obj);
+            foreach (GameObject obj in objList)
+            {
+                
+                subNodeManager = obj.GetComponent<SubNodeManager>();
+                if(subNodeManager != null )
+                {
+
+                    Dictionary<string, GameObject> subNodeConnections = subNodeManager.getInnerConnectionMap();
+
+                    foreach(KeyValuePair<string, GameObject> kv in subNodeConnections)
+                    {
+                        connManager = kv.Value.GetComponent<ConnectionManager>();
+                        if (connManager == null) continue;
+
+                        connManager.showEndSubNodes();
+
+                        SubNodeManager otherSubNodeManager = connManager.subPointA.GetComponent<SubNodeManager>();
+
+                        if (otherSubNodeManager == subNodeManager) otherSubNodeManager = connManager.subPointB.GetComponent<SubNodeManager>();
+
+                        otherSubNodeManager.removeInnerConnection(connManager);
+
+                        connManager.removeFromNodeManagers();
+                    }
+
+                    subNodeManager.destroyAndRemoveAllInnerConnections();
+                    
+                }
+
+                Destroy(obj);
+            }
             objList.Clear();
 
             subElementObjectMap.Remove(str);
@@ -722,7 +754,7 @@ public class DataObjectManager : MonoBehaviour
         if( selectedNodeMap.Count == 0 || currHighlightState == highlightState.NONE )
         {
             // if no new nodes, then everything is deselected and hightlight nothing
-            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap) kv.Value.activateSelection(currHighlightState);
+            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap) kv.Value.activateSelection(highlightState.NONE);
         }
         else if( currHighlightState == highlightState.ONE_HOP )
         {
@@ -732,12 +764,14 @@ public class DataObjectManager : MonoBehaviour
             foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap) kv.Value.activateSelection(currHighlightState);
         }
 
+        foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap) kv.Value.hideAllInnerConnectionEdgeNodes();
+
     }
 
     public float getCurrBarRadius()
     {
-        //return radius * projSphere.transform.localScale.x / 125.0f * barRadiusScale;
-        return radius / 125.0f * barRadiusScale;
+        return radius * projSphere.transform.localScale.x / 125.0f * barRadiusScale;
+        //return radius / 125.0f * barRadiusScale;
     }
 
     private Vector3 getCurrentPointSize()
@@ -828,8 +862,6 @@ public class DataObjectManager : MonoBehaviour
             MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
             meshRend.material.color = color;
 
-            Destroy(point.GetComponent<NodeManager>());
-
 
             GameObject edgeObj = (GameObject)Instantiate(bezierPrefab);
             BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
@@ -840,7 +872,7 @@ public class DataObjectManager : MonoBehaviour
 
             subKey = getSubNodeKey(nodeInfo, currName);
             if (subNodePositionMap.ContainsKey(subKey)) subNodePositionMap[subKey] = point;
-            else subNodePositionMap.Add(getSubNodeKey(nodeInfo, currName), point);
+            else subNodePositionMap.Add(subKey, point);
 
             gObjList.Add(point);
             gObjList.Add(edgeObj);
@@ -887,8 +919,8 @@ public class DataObjectManager : MonoBehaviour
         NodeInfo infoB = nodeManagerB.nodeInfo;
         if (infoA == null || infoB == null) return;
 
-        List<GameObject> objListA = subElementObjectMap[infoA.name];
-        List<GameObject> objListB = subElementObjectMap[infoB.name];
+        //List<GameObject> objListA = subElementObjectMap[infoA.name];
+        //List<GameObject> objListB = subElementObjectMap[infoB.name];
 
         Vector3[] ctrlPts = new Vector3[4];
         string keyA, keyB;
@@ -905,6 +937,10 @@ public class DataObjectManager : MonoBehaviour
         bool tmpVecBSet = false;
         Vector3 tmpVecA = Vector3.zero;
         Vector3 tmpVecB = Vector3.zero;
+
+        Vector3 ptScale = getCurrentPointSize();
+
+        GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
 
         for (int i = 0; i < infoA.subElements.Count; i++)
         {
@@ -986,13 +1022,79 @@ public class DataObjectManager : MonoBehaviour
                     else connMan.name = keyB + " |conn| " + keyA;
 
 
-                    objListA.Add(edgeObj);
-                    objListB.Add(edgeObj);
+                    //objListA.Add(edgeObj);
+                    //objListB.Add(edgeObj);
 
                     nodeManagerA.addInnerConnection(connMan);
                     nodeManagerB.addInnerConnection(connMan);
 
                     edgeObj.transform.SetParent(projSphere.transform);
+
+
+
+                    // new stuff
+
+                    connMan.assignMeshRenderers();
+                    connMan.hideEndSubNodes();
+
+                    GameObject point = (GameObject)Instantiate(innerNodePrefab);
+                    point.name = "MidPt: " + connMan.name;
+
+                    Destroy(point.GetComponent<NodeManager>());
+
+
+                    Vector3 centerPt = 0.125f * (ctrlPts[0] + 3f * (ctrlPts[1] + ctrlPts[2]) + ctrlPts[3]);
+
+                    point.transform.position = centerPt;
+                    point.transform.localScale = ptScale;
+
+
+                    MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
+                    meshRend.material.color = colorA*0.5f + colorB*0.5f;
+
+                    connMan.centerPoint = point;
+
+                    point.transform.SetParent(projSphere.transform);
+
+                    //objListA.Add(point);
+                    //objListB.Add(point);
+
+
+
+                    GameObject popupText = (GameObject)Instantiate(popupTextPrefab);
+                    popupText.name = "Text:" + keyA;
+                    popupText.transform.position = point.transform.position;
+                    popupText.transform.localScale = Vector3.one * 0.5f;
+                    popupText.transform.SetParent(point.transform);
+
+                    PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
+                    TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
+                    tMesh.text = infoA.subElements[i];
+                    popupTextObject.parentObject = point;
+
+                    if (popupTextObject != null) gazeScript.addTextObject(keyA, popupTextObject);
+                    else Debug.Log("No Popup-text stuff");
+
+                    SubNodeManager subNodeManA = connMan.subPointA.GetComponent<SubNodeManager>();
+                    subNodeManA.addInnerConnection(connMan, edgeObj);
+                    SubNodeManager subNodeManB = connMan.subPointB.GetComponent<SubNodeManager>();
+                    subNodeManB.addInnerConnection(connMan, edgeObj);
+
+
+
+                    // end: new stuff
+
+
+
+
+
+
+
+
+
+
+
+
 
                     j += infoB.subElements.Count;
                 }
@@ -1203,6 +1305,27 @@ public class DataObjectManager : MonoBehaviour
             }
         }
 
+        // TODO: update all sub node connections
+        List<GameObject> subObjectList;
+        SubNodeManager snManager;
+
+        ptLocalScale = getCurrentPointSize();
+        foreach (KeyValuePair<string, List<GameObject>> kv in subElementObjectMap)
+        {
+            subObjectList = kv.Value;
+            foreach (GameObject obj in subObjectList)
+            {
+                
+                snManager = obj.GetComponent<SubNodeManager>();
+                if (snManager != null)
+                {
+                    snManager.updateConnectionCenterNodeScale(ptLocalScale);
+                }
+            }
+        }
+
+
+
 
     }
 
@@ -1252,6 +1375,35 @@ public class DataObjectManager : MonoBehaviour
                 }
             }
         }
+
+
+
+        // TODO: update all sub node connections
+        List<GameObject> subObjectList;
+        SubNodeManager snManager;
+        foreach(KeyValuePair<string, List<GameObject>> kv in subElementObjectMap)
+        {
+            subObjectList = kv.Value;
+            foreach(GameObject obj in subObjectList)
+            {
+                bezierScript = obj.GetComponent<BezierBar>();
+                if (bezierScript != null)
+                {
+                    Transform parentTransform = obj.transform.parent;
+                    obj.transform.SetParent(null);
+                    bezierScript.radius = barRadius;
+                    bezierScript.refreshVertices();
+                    obj.transform.SetParent(parentTransform);
+                }
+
+                snManager = obj.GetComponent<SubNodeManager>();
+                if (snManager != null)
+                {
+                    snManager.updateConnectionEdgeThickness(barRadius);
+                }
+            }
+        }
+
     }
 
     private void populateEdges()
@@ -1263,7 +1415,6 @@ public class DataObjectManager : MonoBehaviour
     {
         Vector3[] basePts = new Vector3[4];
 
-        Vector3[] pts;
         Vector3 tVec1, tVec2;
 
         Color c0;
@@ -1420,8 +1571,7 @@ public class DataObjectManager : MonoBehaviour
             {
                 edgeObj = (GameObject)Instantiate(edgePrefab);
                 LineRenderer rend = edgeObj.GetComponent<LineRenderer>();
-
-                pts = Utils.getBezierPoints(basePts, 100);
+                Vector3[] pts = Utils.getBezierPoints(basePts, 100);
                 rend.SetPositions(pts);
                 rend.startColor = c0;
                 rend.endColor = c1;

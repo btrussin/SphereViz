@@ -160,18 +160,10 @@ public class ViveController : MonoBehaviour
                             beamLength = hitInfo.distance;
                             sliderActive = true;
                         }
-                        else if (buttonManager != null)
-                        {
-                            buttonManager.takeAction();
-                        }
-                        else if (closeManager != null)
-                        {
-                            closeManager.takeAction();
-                        }
-                        else if (hitInfo.collider.gameObject.name.Equals("Deselect"))
-                        {
-                            dataManager.deselectAllNodes();
-                        }
+                        else if (buttonManager != null) buttonManager.takeAction();
+                        else if (closeManager != null) closeManager.takeAction();
+                        else if (hitInfo.collider.gameObject.name.Equals("Deselect")) dataManager.deselectAllNodes();
+ 
                     }
 
                     int count = getNumCurvesAffectedByPulling() + otherController.getNumCurvesAffectedByPulling();
@@ -185,7 +177,6 @@ public class ViveController : MonoBehaviour
                     }
 
                     if (restrictCurveRedraw) Debug.Log("Restricting the Curves: " + count);
-
 
 
                 }
@@ -206,22 +197,10 @@ public class ViveController : MonoBehaviour
 
                     if( currSliderManager != null )
                     {
-                        if (currSliderManager.gameObject.name.Equals("slider_nodeSize"))
-                        {
-                            dataManager.recalculateNodeSizes();
-                        }
-                        else if (currSliderManager.gameObject.name.Equals("slider_barRadius"))
-                        {
-                            dataManager.recalculateEdgeRadii();
-                        }
-                        else if (currSliderManager.gameObject.name.Equals("slider_innerConnDist"))
-                        {
-                            dataManager.repopulateEdges();
-                        }
-                        else if (currSliderManager.gameObject.name.Equals("slider_outerConnDist"))
-                        {
-                            dataManager.repopulateEdges();
-                        }
+                        if (currSliderManager.gameObject.name.Equals("slider_nodeSize")) dataManager.recalculateNodeSizes();
+                        else if (currSliderManager.gameObject.name.Equals("slider_barRadius")) dataManager.recalculateEdgeRadii();
+                        else if (currSliderManager.gameObject.name.Equals("slider_innerConnDist")) dataManager.repopulateEdges();
+                        else if (currSliderManager.gameObject.name.Equals("slider_outerConnDist")) dataManager.repopulateEdges();
 
                         currSliderManager = null;
                     }

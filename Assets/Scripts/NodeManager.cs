@@ -63,9 +63,30 @@ public class NodeManager : MonoBehaviour {
         innerConnections.Add(conn.name, conn);
     }
 
+    public void removeInnerConnection(ConnectionManager conn)
+    {
+        if (innerConnections.ContainsKey(conn.name)) innerConnections.Remove(conn.name);  
+    }
+
     public void removeInnerConnections()
     {
+        ConnectionManager conn;
+        foreach (KeyValuePair<string, ConnectionManager> kv in innerConnections)
+        {
+            conn = kv.Value;
+            if (conn.centerPoint != null) GameObject.Destroy(conn.centerPoint);
+        }
+
         innerConnections.Clear();
+    }
+
+    public void hideAllInnerConnectionEdgeNodes()
+    {
+        foreach (KeyValuePair<string, ConnectionManager> kv in innerConnections)
+        {
+            kv.Value.hideEndSubNodes();
+        }
+
     }
 
     public float timeToSnapBack
@@ -113,13 +134,42 @@ public class NodeManager : MonoBehaviour {
 
 	}
 
+    void createStretchObjects()
+    {
+        stretchCurve = (GameObject)Instantiate(curvePrefab);
+        stretchCurve.name = nodeName + " [stretch curve";
+        bezBar = stretchCurve.GetComponent<BezierBar>();
+        bezBar.useSphericalInterpolation = false;
+
+
+        stretchLine = (GameObject)Instantiate(linePrefab);
+        stretchLine.name = nodeName + " [stretch line";
+        bezLine = stretchLine.GetComponent<BezierLine>();
+        bezLine.useSphericalInterpolation = false;
+    }
+
+    void destroyStretchObjects()
+    {
+        Destroy(stretchCurve);
+        stretchCurve = null;
+        Destroy(stretchLine);
+        stretchLine = null;
+    }
+
     public void beginPullEffect(float barRadius, bool restrictCurveRedraw)
     {
         restrictDrawingOfEdges = restrictCurveRedraw;
 
+        if (stretchCurve == null || stretchLine == null)
+        {
+            createStretchObjects();
+        }
+
+        /*
         if (stretchCurve == null)
         {
             stretchCurve = (GameObject)Instantiate(curvePrefab);
+            stretchCurve.name = nodeName + " [stretch curve";
             bezBar = stretchCurve.GetComponent<BezierBar>();
             bezBar.useSphericalInterpolation = false;
         }
@@ -127,9 +177,11 @@ public class NodeManager : MonoBehaviour {
         if( stretchLine == null )
         {
             stretchLine = (GameObject)Instantiate(linePrefab);
+            stretchLine.name = nodeName + " [stretch line";
             bezLine = stretchLine.GetComponent<BezierLine>();
             bezLine.useSphericalInterpolation = false;
         }
+        */
 
         bezBar.radius = barRadius;
         bezLine.radius = barRadius*2f;
@@ -158,11 +210,12 @@ public class NodeManager : MonoBehaviour {
         snapPosition = gameObject.transform.position;
         snapBack = true;
         snapTime = 0.0f;
-        
     }
 
     void updatePullCurve()
     {
+
+        if (stretchCurve == null) return;
 
         curveBasePoints[0] = baseSphereTransform.TransformPoint(positionOnSphere);
         curveBasePoints[3] = gameObject.transform.position;
@@ -191,7 +244,8 @@ public class NodeManager : MonoBehaviour {
                 break;
             case highlightState.FAR:
             case highlightState.NEAR:
-                mat.SetFloat("_Highlight", 0.1f);
+                //mat.SetFloat("_Highlight", 0.1f);
+                mat.SetFloat("_Highlight", 1f);
                 break;
 
         }
@@ -215,6 +269,10 @@ public class NodeManager : MonoBehaviour {
 
             restrictDrawingOfEdges = false;
             foreach (KeyValuePair<string, ConnectionManager> kv in innerConnections) kv.Value.recalculateEdge(restrictDrawingOfEdges);
+
+            destroyStretchObjects();
+            
+
         }
 
     }

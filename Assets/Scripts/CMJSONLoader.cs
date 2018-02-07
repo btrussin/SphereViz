@@ -83,10 +83,7 @@ public class CMJSONLoader : DataLoader {
             }
         }
 
-        Debug.Log("Number of Edges: " + edgeList.Count);
-
-        
-        //procData();
+       
     }
 
 	private void procData()

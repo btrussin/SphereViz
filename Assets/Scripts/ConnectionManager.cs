@@ -6,7 +6,7 @@ public class ConnectionManager : MonoBehaviour {
 
     public GameObject textPrefab;
 
-    GameObject textObject;
+    GameObject textObject = null;
     PopupTextFade popupText;
 
     bool recalcEdge = false;
@@ -19,6 +19,7 @@ public class ConnectionManager : MonoBehaviour {
     public GameObject nodePointB;
     public GameObject subPointA;
     public GameObject subPointB;
+    public GameObject centerPoint = null;
     public BezierBar bezBar;
     public BezierLine bezLine;
 
@@ -32,6 +33,11 @@ public class ConnectionManager : MonoBehaviour {
     bool restrictDrawingOfEdge = false;
 
     Vector3[] ctrlPts = new Vector3[4];
+
+    public bool useCenterNode = true;
+
+    MeshRenderer meshRendA;
+    MeshRenderer meshRendB;
 
     public void displayText(Vector3 pt)
     {
@@ -70,7 +76,13 @@ public class ConnectionManager : MonoBehaviour {
             updateEdge();
             recalcEdge = false;
         }
-	}
+    }
+    
+    public void destroyAttachedObjects()
+    {
+        if (centerPoint != null) Destroy(centerPoint);
+        if (textObject != null) Destroy(textObject);
+    }
 
     public void recalculateEdge(bool restrictCurveRedraw)
     {
@@ -93,9 +105,49 @@ public class ConnectionManager : MonoBehaviour {
         }
     }
 
-    bool tmpDel = true;
+    public void assignMeshRenderers()
+    {
+        meshRendA = subPointA.GetComponent<MeshRenderer>();
+        meshRendB = subPointB.GetComponent<MeshRenderer>();
+    }
 
-    void updateEdge()
+    public void hideEndSubNodes()
+    {
+        meshRendA.enabled = false;
+        meshRendB.enabled = false;
+    }
+
+    public void showEndSubNodes()
+    {
+        meshRendA.enabled = true;
+        meshRendB.enabled = true;
+    }
+
+    public void removeFromNodeManagers()
+    {
+        NodeManager nodeManager;
+        if (nodePointA != null)
+        {
+            nodeManager = nodePointA.GetComponent<NodeManager>();
+            if (nodeManager != null) nodeManager.removeInnerConnection(this);
+        }
+        if (nodePointB != null)
+        {
+            nodeManager = nodePointB.GetComponent<NodeManager>();
+            if (nodeManager != null) nodeManager.removeInnerConnection(this);
+        }
+    }
+
+    public void updateCenterPointScale(Vector3 scale)
+    {
+        if (centerPoint == null) return;
+        Transform parentTransform = centerPoint.transform.parent;
+        centerPoint.transform.SetParent(null);
+        centerPoint.transform.localScale = scale;
+        centerPoint.transform.SetParent(parentTransform);
+    }
+
+    public void updateEdge()
     {
         //if (tmpDel) return;
 
@@ -106,7 +158,7 @@ public class ConnectionManager : MonoBehaviour {
 
         //ctrlPts[0] = subPointA.transform.position;
         //ctrlPts[3] = subPointB.transform.position;
-        
+
         Vector3 tmpVecA = projSphereTransform.position - ctrlPts[0];
         tmpVecA.Normalize();
         tmpVecA *= Vector3.Dot(tmpVecA, ctrlPts[0] - nodePointA.transform.position);
@@ -128,14 +180,19 @@ public class ConnectionManager : MonoBehaviour {
         }
 
         // get node scale
-        float nScale = projSphereTransform.localScale.x;
+        //float nScale = projSphereTransform.localScale.x;
 
-        /*
-        Vector3 pos = gameObject.transform.position;
-        for( int i = 0; i < 4; i++ ) ctrlPts[i] = ctrlPts[i] - pos;
+        if (useCenterNode)
+        {
+            centerPoint.transform.SetParent(null);
 
-        for (int i = 0; i < 4; i++) ctrlPts[i] /= nScale;
-        */
+            // calculate center curve position
+            Vector3 centerPt = 0.125f * (ctrlPts[0] + 3f * (ctrlPts[1] + ctrlPts[2]) + ctrlPts[3]);
+            centerPoint.transform.position = centerPt;
+
+            centerPoint.transform.SetParent(projSphereTransform);
+
+        }
 
         
         if (restrictDrawingOfEdge)
@@ -147,7 +204,7 @@ public class ConnectionManager : MonoBehaviour {
             bezLine.gameObject.transform.localScale = Vector3.one;
             bezLine.gameObject.transform.position = Vector3.zero;
 
-            bezLine.radius = 2f * dataManager.getCurrBarRadius() / nScale;
+            bezLine.radius = 2f * dataManager.getCurrBarRadius();
             bezLine.init(ctrlPts, colorA, colorB, null);
 
             bezLine.gameObject.transform.SetParent(tParent);
@@ -161,7 +218,7 @@ public class ConnectionManager : MonoBehaviour {
             bezBar.gameObject.transform.localScale = Vector3.one;
             bezBar.gameObject.transform.position = Vector3.zero;
 
-            bezBar.radius = dataManager.getCurrBarRadius() / nScale;
+            bezBar.radius = dataManager.getCurrBarRadius();
             bezBar.init(ctrlPts, colorA, colorB, null);
 
 

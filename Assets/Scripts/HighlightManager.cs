@@ -13,8 +13,8 @@ public class HighlightManager : MonoBehaviour {
     public Material radioEmptyMaterial;
     public Material radioFullMaterial;
 
-    bool hlSelectedNear = true;
-    bool hlSelectedFar = true;
+    //bool hlSelectedNear = true;
+    //bool hlSelectedFar = true;
 
     highlightState highlightType = highlightState.NONE;
 
