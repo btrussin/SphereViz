@@ -692,6 +692,8 @@ public class DataObjectManager : MonoBehaviour
                         connManager = kv.Value.GetComponent<ConnectionManager>();
                         if (connManager == null) continue;
 
+                        gazeScript.removeTextObject(connManager.name);
+
                         connManager.showEndSubNodes();
 
                         SubNodeManager otherSubNodeManager = connManager.subPointA.GetComponent<SubNodeManager>();
@@ -923,7 +925,7 @@ public class DataObjectManager : MonoBehaviour
         //List<GameObject> objListB = subElementObjectMap[infoB.name];
 
         Vector3[] ctrlPts = new Vector3[4];
-        string keyA, keyB;
+        string keyA, keyB, connectionKey;
         Vector3 sphereCenter = projSphere.transform.position;
 
         Color colorA = groupColorMap[infoA.groupName];
@@ -951,6 +953,7 @@ public class DataObjectManager : MonoBehaviour
 
                     keyA = getSubNodeKey(infoA, i);
                     keyB = getSubNodeKey(infoB, j);
+                    connectionKey = getInnerNodeKey(infoA, infoB, i);
 
                     ctrlPts[0] = subNodePositionMap[keyA].transform.position;
                     ctrlPts[3] = subNodePositionMap[keyB].transform.position;
@@ -1019,7 +1022,7 @@ public class DataObjectManager : MonoBehaviour
                     connMan.altLineCurve.SetActive(false);
 
                     if (nodeManagerA.nodeName.CompareTo(nodeManagerB.nodeName) < 0) connMan.name = keyA + " |conn| " + keyB;
-                    else connMan.name = keyB + " |conn| " + keyA;
+                    else connMan.name = connectionKey;
 
 
                     //objListA.Add(edgeObj);
@@ -1056,13 +1059,10 @@ public class DataObjectManager : MonoBehaviour
 
                     point.transform.SetParent(projSphere.transform);
 
-                    //objListA.Add(point);
-                    //objListB.Add(point);
-
-
+                    
 
                     GameObject popupText = (GameObject)Instantiate(popupTextPrefab);
-                    popupText.name = "Text:" + keyA;
+                    popupText.name = "Text: " + connMan.name;
                     popupText.transform.position = point.transform.position;
                     popupText.transform.localScale = Vector3.one * 0.5f;
                     popupText.transform.SetParent(point.transform);
@@ -1072,7 +1072,7 @@ public class DataObjectManager : MonoBehaviour
                     tMesh.text = infoA.subElements[i];
                     popupTextObject.parentObject = point;
 
-                    if (popupTextObject != null) gazeScript.addTextObject(keyA, popupTextObject);
+                    if (popupTextObject != null) gazeScript.addTextObject(connMan.name, popupTextObject);
                     else Debug.Log("No Popup-text stuff");
 
                     SubNodeManager subNodeManA = connMan.subPointA.GetComponent<SubNodeManager>();
@@ -1113,6 +1113,17 @@ public class DataObjectManager : MonoBehaviour
     {
         if (idx >= nodeInfo.subElements.Count) return "";
         return getSubNodeKey(nodeInfo, nodeInfo.subElements[idx]);
+    }
+
+    public string getInnerNodeKey(NodeInfo nodeInfo1, NodeInfo nodeInfo2, string subName)
+    {
+        return subName + ": " + nodeInfo1.name + "|" + nodeInfo2.name;
+    }
+
+    public string getInnerNodeKey(NodeInfo nodeInfo1, NodeInfo nodeInfo2, int idx1)
+    {
+        if (idx1 >= nodeInfo1.subElements.Count) return "";
+        return getInnerNodeKey(nodeInfo1, nodeInfo2, nodeInfo1.subElements[idx1]);
     }
 
     public void repopulateEdges()
