@@ -30,6 +30,7 @@ public class PopupTextFade : MonoBehaviour {
 	void Update () {
 
         if (!gameObject.activeInHierarchy) return;
+        //if (!gameObject.activeSelf) return;
 
         gameObject.transform.forward = Camera.main.transform.forward;
 

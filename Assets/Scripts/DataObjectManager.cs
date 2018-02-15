@@ -10,6 +10,12 @@ public enum highlightState
     FAR
 }
 
+public enum SubNodeDisplayType
+{
+    BLOOM,
+    TABLE
+}
+
 public class DataObjectManager : MonoBehaviour
 {
 
@@ -92,6 +98,11 @@ public class DataObjectManager : MonoBehaviour
     public int maxCurvesUpdatedPerFrame = 10;
     bool activesUpdateEdges = false;
 
+    float highlightBrightness = 1f;
+    float dimmedBrightness = 0.1f;
+
+    public SubNodeDisplayType subNodeDisplayType = SubNodeDisplayType.BLOOM;
+
     protected void setDefaultParameterValues()
     {
         slider_innerConnDist.suggestValue(innerGroupEdgeDist);
@@ -115,16 +126,20 @@ public class DataObjectManager : MonoBehaviour
     void Start()
     {
         loadData();
+
+
+        updateHighlightState(highlightState.ONE_HOP);
+
     }
 
-    bool doFirstPosition = true;
 
+    
     // Update is called once per frame
     void Update()
     {
         if( doFirstPosition )
         {
-            projSphere.transform.position = Camera.main.transform.position;
+            recenterProjectionSphere();
             doFirstPosition = false;
         }
 
@@ -132,13 +147,82 @@ public class DataObjectManager : MonoBehaviour
         {
             recalcAllEdges();
         }
+
+        if(recenterSphereAnim)
+        {
+            recenterAnimation();
+        }
+    }
+
+
+
+    // new variables
+    bool doFirstPosition = true;
+
+    bool recenterSphereAnim = false;
+
+    Quaternion prevSphereRotation;
+    Quaternion targetSphereRotation;
+
+    Vector3 prevSpherePosition;
+    Vector3 targetSpherePosition;
+
+    public int numFramesRecenter = 50;
+    int currAnimationFrame = 0;
+ 
+    float[] smoothVals = new float[1];
+
+ 
+    void recenterAnimation()
+    {
+        projSphere.transform.rotation = Quaternion.Lerp(prevSphereRotation, targetSphereRotation, smoothVals[currAnimationFrame]);
+        projSphere.transform.position = Vector3.Lerp(prevSpherePosition, targetSpherePosition, smoothVals[currAnimationFrame]);
+
+        currAnimationFrame++;
+
+        if(currAnimationFrame >= numFramesRecenter - 1)
+        {
+            recenterSphereAnim = false;
+        }
+
+    }
+
+
+    public GameObject dummyCameraObject;
+
+    public void recenterProjectionSphere()
+    {
+
+        if (smoothVals.Length != numFramesRecenter)
+        {
+            float[] baseVals = { 0f, 0.05f, 0.95f, 1f };
+            smoothVals = Utils.getBezierFloats(baseVals, numFramesRecenter);
+        }
+
+
+        Vector3 tForward = Camera.main.transform.forward;
+        tForward.y = 0f;
+        tForward.Normalize();
+
+        dummyCameraObject.transform.right = tForward;
+
+
+        prevSphereRotation = projSphere.transform.rotation;
+        targetSphereRotation = dummyCameraObject.transform.rotation;
+
+        dummyCameraObject.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+
+       
+        prevSpherePosition = projSphere.transform.position;
+        targetSpherePosition = Camera.main.transform.position;
+
+        currAnimationFrame = 0;
+        recenterSphereAnim = true;
+        
     }
 
     public void updateHighlightState(highlightState type)
     {
-        Material mat;
-        BezierBar bezBar;
-        BasisSpline spline;
 
         currHighlightState = type;
 
@@ -153,33 +237,28 @@ public class DataObjectManager : MonoBehaviour
                 toggleSubNodes(null);
                 break;
             case highlightState.NEAR:
-                foreach(GameObject obj in outerEdgeList)
+
+                foreach( KeyValuePair<string, NodeManager> kv in nodeManagerMap)
                 {
-                    mat = obj.GetComponent<Renderer>().material;
-                    bezBar = obj.GetComponent<BezierBar>();
-                    if ( bezBar != null ) mat.SetFloat("_Highlight", 1f);
-                    else mat.SetFloat("_Highlight", 0.1f);
+                    kv.Value.setFarEdgeBrightness(dimmedBrightness);
+                    kv.Value.setNearEdgeBrightness(highlightBrightness);
                 }
 
                 break;
             case highlightState.FAR:
-                foreach (GameObject obj in outerEdgeList)
+                foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
                 {
-                    mat = obj.GetComponent<Renderer>().material;
-                    spline = obj.GetComponent<BasisSpline>();
-                    if (spline != null) mat.SetFloat("_Highlight", 1f);
-                    else mat.SetFloat("_Highlight", 0.1f);
+                    kv.Value.setFarEdgeBrightness(highlightBrightness);
+                    kv.Value.setNearEdgeBrightness(dimmedBrightness);
                 }
 
                 break;
             case highlightState.NONE:
-                foreach (GameObject obj in outerEdgeList)
+                foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
                 {
-                    mat = obj.GetComponent<Renderer>().material;
-                    mat.SetFloat("_Highlight", 1f);
+                    kv.Value.setFarEdgeBrightness(highlightBrightness);
+                    kv.Value.setNearEdgeBrightness(highlightBrightness);
                 }
-
-                toggleSubNodes(null);
                 break;
         }
 
@@ -629,7 +708,6 @@ public class DataObjectManager : MonoBehaviour
             else Debug.Log("No Popup-text stuff");
 
             nodeList.Add(point);
-            nodeList.Add(popupText);
             if (!nodeManagerMap.ContainsKey(kv.Value.name)) nodeManagerMap.Add(kv.Value.name, manager);
             else nodeManagerMap[kv.Value.name] = manager;
         }
@@ -732,7 +810,15 @@ public class DataObjectManager : MonoBehaviour
 
         for (int i = 0; i < newNodeManagers.Length; i++)
         {
-            populateSubNodes(newNodeManagers[i]);
+            switch(subNodeDisplayType)
+            {
+                case SubNodeDisplayType.BLOOM:
+                    populateSubNodes_bloom(newNodeManagers[i]);
+                    break;
+                case SubNodeDisplayType.TABLE:
+                    populateSubNodes_table(newNodeManagers[i]);
+                    break;
+            }
 
             foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap)
             {
@@ -751,19 +837,27 @@ public class DataObjectManager : MonoBehaviour
             selectedNodeMap.Add(newNodeManagers[i].nodeInfo.name, newNodeManagers[i]);
         }
 
-
-
-        if( selectedNodeMap.Count == 0 || currHighlightState == highlightState.NONE )
+        if (currHighlightState == highlightState.NONE || (currHighlightState == highlightState.ONE_HOP && selectedNodeMap.Count == 0))
         {
-            // if no new nodes, then everything is deselected and hightlight nothing
-            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap) kv.Value.activateSelection(highlightState.NONE);
+            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
+            {
+                kv.Value.setNearEdgeBrightness(highlightBrightness);
+                kv.Value.setFarEdgeBrightness(highlightBrightness);
+            }
         }
-        else if( currHighlightState == highlightState.ONE_HOP )
+        else if (currHighlightState == highlightState.ONE_HOP)
         {
-            // deactivate everything up front, then highlight just the nodes that need it
-            foreach (KeyValuePair < string, NodeManager > kv in nodeManagerMap) kv.Value.deactivateSelection(currHighlightState);
+            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
+            {
+                kv.Value.setNearEdgeBrightness(dimmedBrightness);
+                kv.Value.setFarEdgeBrightness(dimmedBrightness);
+            }
 
-            foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap) kv.Value.activateSelection(currHighlightState);
+            foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap)
+            {
+                kv.Value.setNearEdgeBrightness(highlightBrightness);
+                kv.Value.setFarEdgeBrightness(highlightBrightness);
+            }
         }
 
         foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap) kv.Value.hideAllInnerConnectionEdgeNodes();
@@ -783,7 +877,7 @@ public class DataObjectManager : MonoBehaviour
     }
 
 
-    void populateSubNodes(NodeManager nodeManager)
+    void populateSubNodes_bloom(NodeManager nodeManager)
     {
         if (nodeManager == null) return;
 
@@ -798,18 +892,10 @@ public class DataObjectManager : MonoBehaviour
         float tmpScale = projSphere.transform.localScale.x;
         float tmpRadius = radius * tmpScale;
         Vector3 ptScale = getCurrentPointSize();
-        //Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
-        //Vector3 ptScale = Vector3.one * radius * 2f / 125f * pointScaleFactor;
 
-        //Vector3 ptScale = Vector3.one * tmpRadius * 2f / 125f * pointScaleFactor;
-
-
-
-        //Vector3 upDir = nodeManager.gameObject.transform.position - projSphere.transform.position;
         Vector3 upDir = projSphere.transform.TransformPoint(nodeManager.nodeInfo.position3) - projSphere.transform.position;
         upDir.Normalize();
 
-        //upDir = nodeManager.transform.localRotation * upDir;
 
         Vector3 rightVec = new Vector3(1f, 0f, 0f);
         if (Vector3.Dot(upDir, rightVec) > 0.99f) rightVec = new Vector3(0f, 0f, 1f);
@@ -883,10 +969,14 @@ public class DataObjectManager : MonoBehaviour
             GameObject popupText = (GameObject)Instantiate(popupTextPrefab);
             popupText.name = subKey;
             popupText.transform.position = point.transform.position;
-            popupText.transform.localScale = Vector3.one * 0.5f;
+            popupText.transform.localScale = Vector3.one * 0.5f * projSphere.transform.localScale.x;
             popupText.transform.SetParent(point.transform);
 
             PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
+
+            CameraOriented camOriented = popupText.GetComponent<CameraOriented>();
+            Destroy(camOriented);
+
             TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
             tMesh.text = currName;
             popupTextObject.parentObject = point;
@@ -904,6 +994,84 @@ public class DataObjectManager : MonoBehaviour
             edgeObj.transform.SetParent(nodeManager.gameObject.transform);
 
 
+        }
+
+        subElementObjectMap.Add(nodeInfo.name, gObjList);
+
+    }
+
+    void populateSubNodes_table(NodeManager nodeManager)
+    {
+        if (nodeManager == null) return;
+
+        NodeInfo nodeInfo = nodeManager.nodeInfo;
+
+        if (nodeInfo == null) return;
+
+        if (subElementObjectMap.ContainsKey(nodeInfo.name)) return;
+
+      
+
+        Vector3 ptScale = getCurrentPointSize();
+
+        Vector3 upDir = projSphere.transform.TransformPoint(nodeManager.nodeInfo.position3) - projSphere.transform.position;
+        upDir.Normalize();
+
+
+        List<GameObject> gObjList = new List<GameObject>();
+
+         
+        string subKey;
+
+        nodeManager.gameObject.transform.localRotation = Quaternion.identity;
+
+        int numAdded = 0;
+
+        foreach (string currName in nodeInfo.subElements)
+        {
+           
+            GameObject point = (GameObject)Instantiate(innerNodePrefab);
+            point.name = "Sub: " + currName;
+
+ 
+            point.transform.localScale = ptScale;
+            point.transform.position = nodeManager.gameObject.transform.position - upDir * numAdded*0.02f;
+
+            Color color = groupColorMap[nodeInfo.groupName];
+
+            MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
+            meshRend.material.color = color;
+
+            meshRend.enabled = false;
+
+
+            subKey = getSubNodeKey(nodeInfo, currName);
+            if (subNodePositionMap.ContainsKey(subKey)) subNodePositionMap[subKey] = point;
+            else subNodePositionMap.Add(subKey, point);
+
+            gObjList.Add(point);
+
+
+            GameObject textLabel = (GameObject)Instantiate(popupTextPrefab);
+            textLabel.name = subKey;
+            textLabel.transform.position = point.transform.position;
+            textLabel.transform.localScale = Vector3.one * 0.5f * projSphere.transform.localScale.x;
+            textLabel.transform.SetParent(point.transform);
+
+            PopupTextFade popupTextObject = textLabel.GetComponent<PopupTextFade>();
+            Destroy(popupTextObject);
+            TextMesh tMesh = textLabel.GetComponent<TextMesh>();
+            tMesh.text = currName;
+
+            tMesh.anchor = TextAnchor.MiddleLeft;
+
+           
+
+
+
+            point.transform.SetParent(nodeManager.gameObject.transform);
+
+            numAdded++;
         }
 
         subElementObjectMap.Add(nodeInfo.name, gObjList);
@@ -1016,6 +1184,11 @@ public class DataObjectManager : MonoBehaviour
                     connMan.bezBar = bezBar;
                     connMan.dataManager = this;
 
+                    if(subNodeDisplayType == SubNodeDisplayType.TABLE)
+                    {
+                        connMan.neverShowMeshRenderers = true;
+                    }
+
 
                     BezierLine bezLine = connMan.altLineCurve.GetComponent<BezierLine>();
                     connMan.bezLine = bezLine;
@@ -1025,8 +1198,6 @@ public class DataObjectManager : MonoBehaviour
                     else connMan.name = connectionKey;
 
 
-                    //objListA.Add(edgeObj);
-                    //objListB.Add(edgeObj);
 
                     nodeManagerA.addInnerConnection(connMan);
                     nodeManagerB.addInnerConnection(connMan);
@@ -1034,8 +1205,7 @@ public class DataObjectManager : MonoBehaviour
                     edgeObj.transform.SetParent(projSphere.transform);
 
 
-
-                    // new stuff
+                    
 
                     connMan.assignMeshRenderers();
                     connMan.hideEndSubNodes();
@@ -1082,19 +1252,7 @@ public class DataObjectManager : MonoBehaviour
 
 
 
-                    // end: new stuff
-
-
-
-
-
-
-
-
-
-
-
-
+                    
 
                     j += infoB.subElements.Count;
                 }
@@ -1285,7 +1443,7 @@ public class DataObjectManager : MonoBehaviour
             if(obj.transform.childCount > 0)
             {
                 List<Transform> tList = new List<Transform>();
-                for(int i = 0; i < obj.transform.childCount; i++ ) tList.Add(obj.transform.GetChild(i));
+                for (int i = 0; i < obj.transform.childCount; i++) tList.Add(obj.transform.GetChild(i));
                 obj.transform.DetachChildren();
 
                 obj.transform.localScale = ptLocalScale;
@@ -1308,10 +1466,18 @@ public class DataObjectManager : MonoBehaviour
                 bezScript = obj.GetComponent<BezierBar>();
                 if (bezScript == null)
                 {
+                    List<Transform> tList = new List<Transform>();
+                    for (int i = 0; i < obj.transform.childCount; i++) tList.Add(obj.transform.GetChild(i));
+                    obj.transform.DetachChildren();
+
+
                     Transform parentTransform = obj.transform.parent;
                     obj.transform.SetParent(null);
                     obj.transform.localScale = ptLocalScale;
                     obj.transform.SetParent(parentTransform);
+
+                    foreach (Transform t in tList) t.SetParent(obj.transform);
+
                 }
             }
         }

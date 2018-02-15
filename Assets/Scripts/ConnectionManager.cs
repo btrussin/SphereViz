@@ -39,6 +39,8 @@ public class ConnectionManager : MonoBehaviour {
     MeshRenderer meshRendA;
     MeshRenderer meshRendB;
 
+    public bool neverShowMeshRenderers = false;
+
     public void displayText(Vector3 pt)
     {
         textObject.SetActive(true);
@@ -119,6 +121,7 @@ public class ConnectionManager : MonoBehaviour {
 
     public void showEndSubNodes()
     {
+        if (neverShowMeshRenderers) return;
         meshRendA.enabled = true;
         meshRendB.enabled = true;
     }

@@ -165,24 +165,6 @@ public class NodeManager : MonoBehaviour {
             createStretchObjects();
         }
 
-        /*
-        if (stretchCurve == null)
-        {
-            stretchCurve = (GameObject)Instantiate(curvePrefab);
-            stretchCurve.name = nodeName + " [stretch curve";
-            bezBar = stretchCurve.GetComponent<BezierBar>();
-            bezBar.useSphericalInterpolation = false;
-        }
-
-        if( stretchLine == null )
-        {
-            stretchLine = (GameObject)Instantiate(linePrefab);
-            stretchLine.name = nodeName + " [stretch line";
-            bezLine = stretchLine.GetComponent<BezierLine>();
-            bezLine.useSphericalInterpolation = false;
-        }
-        */
-
         bezBar.radius = barRadius;
         bezLine.radius = barRadius*2f;
         activePull = true;
@@ -310,6 +292,26 @@ public class NodeManager : MonoBehaviour {
         return innerConnections.Count + 1;
     }
 
+    public void setNearEdgeBrightness(float val)
+    {
+        Material mat;
+        foreach (GameObject obj in outerEdgesNear)
+        {
+            mat = obj.GetComponent<Renderer>().material;
+            mat.SetFloat("_Highlight", val);
+        }
+    }
+
+    public void setFarEdgeBrightness(float val)
+    {
+        Material mat;
+        foreach (GameObject obj in outerEdgesFar)
+        {
+            mat = obj.GetComponent<Renderer>().material;
+            mat.SetFloat("_Highlight", val);
+        }
+    }
+
     public void deactivateSelection(highlightState state)
     {
         currHighlightState = state;
@@ -338,7 +340,14 @@ public class NodeManager : MonoBehaviour {
         currHighlightState = state;
         Material mat;
 
-        if (state == highlightState.NONE) return;
+        if (state == highlightState.NONE)
+        {
+            foreach (GameObject obj in outerEdgesNear)
+            {
+                mat = obj.GetComponent<Renderer>().material;
+                mat.SetFloat("_Highlight", 1.0f);
+            }
+        }
         else if (state == highlightState.ONE_HOP)
         {
             foreach (GameObject obj in outerEdgesNear)

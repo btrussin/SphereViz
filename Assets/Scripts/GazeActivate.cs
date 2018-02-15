@@ -44,7 +44,6 @@ public class GazeActivate : MonoBehaviour {
                 if (count++ > maxLabelsToShow) break;
             }
         }
-
     }
 
     public void addTextObject(PopupTextFade scr)
@@ -62,9 +61,11 @@ public class GazeActivate : MonoBehaviour {
         if (textMap.ContainsKey(key)) textMap.Remove(key);
     }
 
+    /*
     public void removeAllTextObjects()
     {
         textList.Clear();
         textMap.Clear();
     }
+    */
 }

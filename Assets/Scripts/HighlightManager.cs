@@ -16,7 +16,7 @@ public class HighlightManager : MonoBehaviour {
     //bool hlSelectedNear = true;
     //bool hlSelectedFar = true;
 
-    highlightState highlightType = highlightState.NONE;
+    highlightState highlightType = highlightState.ONE_HOP;
 
     public DataObjectManager dataManager;
 

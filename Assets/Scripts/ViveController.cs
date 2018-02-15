@@ -213,17 +213,21 @@ public class ViveController : MonoBehaviour
                 beam.gameObject.SetActive(false);
                 beamIsActive = false;
             }
+
             //if ((state.ulButtonTouched & SteamVR_Controller.ButtonMask.Touchpad) != 0) textMesh.text = "Touched Touchpad";
             if ((state.ulButtonPressed & SteamVR_Controller.ButtonMask.Touchpad) != 0 && 
                 (prevState.ulButtonPressed & SteamVR_Controller.ButtonMask.Touchpad) == 0)
             {
-                if(currCollisionNodeManagers.Count > 0 && 
-                    state.rAxis0.y > 0 && 
-                    Mathf.Abs(state.rAxis0.y) >= Mathf.Abs(state.rAxis0.x))
+                if( currCollisionNodeManagers.Count > 0 && state.rAxis0.y >= 0 )
                 {
                     NodeManager[] nodes = new NodeManager[currCollisionNodeManagers.Count];
                     currCollisionNodeManagers.Values.CopyTo(nodes, 0);
                     dataManager.toggleSubNodes(nodes);
+                }
+                
+                if(state.rAxis0.y < 0)
+                {
+                    dataManager.recenterProjectionSphere();
                 }
             }
 
