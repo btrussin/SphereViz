@@ -49,6 +49,8 @@ public class NodeManager : MonoBehaviour {
 
     public highlightState currHighlightState = highlightState.NONE;
 
+    //bool dynamicNodeColor = true;
+
     public void addOuterConnection(GameObject obj, bool near)
     {
         if (near) outerEdgesNear.Add(obj);
@@ -300,6 +302,9 @@ public class NodeManager : MonoBehaviour {
             mat = obj.GetComponent<Renderer>().material;
             mat.SetFloat("_Highlight", val);
         }
+
+        //if (dynamicNodeColor) adjustNodeColor(val);
+        
     }
 
     public void setFarEdgeBrightness(float val)
@@ -310,58 +315,28 @@ public class NodeManager : MonoBehaviour {
             mat = obj.GetComponent<Renderer>().material;
             mat.SetFloat("_Highlight", val);
         }
+        
+        
+        //if (dynamicNodeColor) adjustNodeColor(val);
+     
     }
 
-    public void deactivateSelection(highlightState state)
+    void adjustNodeColor(float val)
     {
-        currHighlightState = state;
-        Material mat;
-
-        if (state == highlightState.NONE) return;
-        else if (state == highlightState.ONE_HOP)
+        if (meshRend == null)
         {
-            foreach (GameObject obj in outerEdgesNear)
+            meshRend = gameObject.GetComponent<MeshRenderer>();
             {
-                mat = obj.GetComponent<Renderer>().material;
-                mat.SetFloat("_Highlight", 0.1f);
-            }
-
-            foreach (GameObject obj in outerEdgesFar)
-            {
-                mat = obj.GetComponent<Renderer>().material;
-                mat.SetFloat("_Highlight", 0.1f);
+                material = meshRend.material;
+                origColor = material.color;
             }
         }
 
-    }
-
-    public void activateSelection(highlightState state)
-    {
-        currHighlightState = state;
-        Material mat;
-
-        if (state == highlightState.NONE)
+        if (material != null)
         {
-            foreach (GameObject obj in outerEdgesNear)
-            {
-                mat = obj.GetComponent<Renderer>().material;
-                mat.SetFloat("_Highlight", 1.0f);
-            }
-        }
-        else if (state == highlightState.ONE_HOP)
-        {
-            foreach (GameObject obj in outerEdgesNear)
-            {
-                mat = obj.GetComponent<Renderer>().material;
-                mat.SetFloat("_Highlight", 1.0f);
-            }
-
-            foreach (GameObject obj in outerEdgesFar)
-            {
-                mat = obj.GetComponent<Renderer>().material;
-                mat.SetFloat("_Highlight", 1.0f);
-            }
+            material.color = origColor * val;
         }
     }
 
+    
 }

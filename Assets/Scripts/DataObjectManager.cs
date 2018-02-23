@@ -103,6 +103,8 @@ public class DataObjectManager : MonoBehaviour
 
     public SubNodeDisplayType subNodeDisplayType = SubNodeDisplayType.BLOOM;
 
+    public bool invertFarEdgeGradient = true;
+
     protected void setDefaultParameterValues()
     {
         slider_innerConnDist.suggestValue(innerGroupEdgeDist);
@@ -137,7 +139,22 @@ public class DataObjectManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if( doFirstPosition )
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            List<NodeManager> list = searchNodesByTerm("Batman Forever");
+            List<NodeManager> list2 = searchNodesByTerm("Men in Black 3");
+
+            NodeManager[] tNodeArray = new NodeManager[2];
+            tNodeArray[0] = list[0];
+            tNodeArray[1] = list2[0];
+
+            toggleSubNodes(tNodeArray);
+
+        }
+
+
+
+        if ( doFirstPosition )
         {
             recenterProjectionSphere();
             doFirstPosition = false;
@@ -378,8 +395,6 @@ public class DataObjectManager : MonoBehaviour
 
             midVal = (hiVal + loVal) * 0.5f;
         }
-
-        Debug.Log("Final Mid Val: " + midVal);
 
 
         tmpGrpInfo[0].center2 = Vector2.zero;
@@ -1027,18 +1042,23 @@ public class DataObjectManager : MonoBehaviour
 
         int numAdded = 0;
 
+
+        float barRadius = getCurrBarRadius();
+
+        Vector3[] basePoints = new Vector3[4];
+
+        
+
         foreach (string currName in nodeInfo.subElements)
         {
            
             GameObject point = (GameObject)Instantiate(innerNodePrefab);
             point.name = "Sub: " + currName;
 
- 
-            point.transform.localScale = ptScale;
             point.transform.position = nodeManager.gameObject.transform.position - upDir * numAdded*0.02f;
+            point.transform.localScale = ptScale;
 
             Color color = groupColorMap[nodeInfo.groupName];
-
             MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
             meshRend.material.color = color;
 
@@ -1064,10 +1084,6 @@ public class DataObjectManager : MonoBehaviour
             tMesh.text = currName;
 
             tMesh.anchor = TextAnchor.MiddleLeft;
-
-           
-
-
 
             point.transform.SetParent(nodeManager.gameObject.transform);
 
@@ -1168,8 +1184,8 @@ public class DataObjectManager : MonoBehaviour
                     bezBar.useSphericalInterpolation = false;
                     bezBar.init(ctrlPts, colorA, colorB);
 
-                    var collider = mainCurve.GetComponent<MeshCollider>();
-                    collider.sharedMesh = bezBar.mesh;
+                    //var collider = mainCurve.GetComponent<MeshCollider>();
+                    //collider.sharedMesh = bezBar.mesh;
 
                     connMan.setupText(infoA.subElements[i]);
 
@@ -1184,10 +1200,8 @@ public class DataObjectManager : MonoBehaviour
                     connMan.bezBar = bezBar;
                     connMan.dataManager = this;
 
-                    if(subNodeDisplayType == SubNodeDisplayType.TABLE)
-                    {
-                        connMan.neverShowMeshRenderers = true;
-                    }
+                    //if(subNodeDisplayType == SubNodeDisplayType.TABLE) connMan.neverShowMeshRenderers = true;
+
 
 
                     BezierLine bezLine = connMan.altLineCurve.GetComponent<BezierLine>();
@@ -1250,9 +1264,6 @@ public class DataObjectManager : MonoBehaviour
                     SubNodeManager subNodeManB = connMan.subPointB.GetComponent<SubNodeManager>();
                     subNodeManB.addInnerConnection(connMan, edgeObj);
 
-
-
-                    
 
                     j += infoB.subElements.Count;
                 }
@@ -1724,7 +1735,8 @@ public class DataObjectManager : MonoBehaviour
                     BasisSpline bspline = edgeObj.GetComponent<BasisSpline>();
                     bspline.radius = barRadius;
                     bspline.useSphericalInterpolation = interpolateSpherical;
-                    bspline.init(basePts, c0, c1, projSphere.transform);
+                    if(invertFarEdgeGradient) bspline.init(basePts, c1, c0, projSphere.transform);
+                    else bspline.init(basePts, c0, c1, projSphere.transform);
                     //edgeObj.transform.position = projSphere.transform.position;
 
                     edgeObj.transform.SetParent(projSphere.transform);
@@ -1732,31 +1744,6 @@ public class DataObjectManager : MonoBehaviour
                     edge.edgeGameObject = edgeObj;
                 }
             }
-            /*
-            else if (useBezierBars)
-            {
-                edgeObj = (GameObject)Instantiate(bezierPrefab);
-                BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
-                bezBar.radius = barRadius;
-                bezBar.sphereCoords = false;
-                bezBar.init(basePts, c0, c1, projSphere.transform);
-                //edgeObj.transform.position = projSphere.transform.position;
-
-                edgeObj.transform.SetParent(projSphere.transform);
-            }
-            else
-            {
-                edgeObj = (GameObject)Instantiate(edgePrefab);
-                LineRenderer rend = edgeObj.GetComponent<LineRenderer>();
-                Vector3[] pts = Utils.getBezierPoints(basePts, 100);
-                rend.SetPositions(pts);
-                rend.startColor = c0;
-                rend.endColor = c1;
-                edgeObj.transform.position = projSphere.transform.position;
-
-                edgeObj.transform.SetParent(projSphere.transform);
-            }
-            */
 
             outerEdgeList.Add(edgeObj);
 
@@ -1828,6 +1815,63 @@ public class DataObjectManager : MonoBehaviour
         SortBySize(groups, divider + 1, endIdx);
     }
 
+    int t_testIdx = 0;
+
+    void testSearch()
+    {
+        string[] testTerms = { "howard", "robert" };
+
+        // scott, howard, judge, jonah
+        string term = testTerms[t_testIdx];
+
+        List<NodeManager> list = searchNodesByTerm(term);
+
+        Debug.Log("Found " + list.Count + " nodes while searching for " + term);
+        foreach (NodeManager nm in list)
+        {
+            Debug.Log("Found: " + nm.name);
+        }
+
+        t_testIdx++;
+        if (t_testIdx >= testTerms.Length) t_testIdx = 0;
+
+        
+    }
+
+
+    List<NodeManager> searchNodesByTerm(string term)
+    {
+        string uTerm = term.ToUpper();
+        List<NodeManager> results = new List<NodeManager>();
+
+        NodeManager currManager;
+        NodeInfo currInfo;
+        string tUpper;
+        foreach(KeyValuePair<string, NodeManager> kv in nodeManagerMap)
+        {
+            currManager = kv.Value;
+            currInfo = currManager.nodeInfo;
+            tUpper = currManager.name.ToUpper();
+            if (tUpper.Contains(uTerm) )
+            {
+                results.Add(currManager);
+                continue;
+            }
+
+            foreach(string currSubElement in currInfo.subElements)
+            {
+                tUpper = currSubElement.ToUpper();
+                if (tUpper.Contains(uTerm))
+                {
+                    results.Add(currManager);
+                    break;
+                }
+            }
+
+        }
+
+        return results;
+    }
 
 
 
