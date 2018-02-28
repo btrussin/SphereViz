@@ -6,9 +6,12 @@ public class NodeManager : MonoBehaviour {
 
     public string nodeName = "";
     Color origColor = Color.white;
-    Material material = null;
+    public Material nodeMaterial = null;
     MeshRenderer meshRend = null;
     public NodeInfo nodeInfo = null;
+
+    public MeshFilter meshFilter;
+    public Mesh mesh = null;
 
     List<string> subNodeNames = new List<string>();
 
@@ -49,7 +52,7 @@ public class NodeManager : MonoBehaviour {
 
     public highlightState currHighlightState = highlightState.NONE;
 
-    //bool dynamicNodeColor = true;
+    bool dynamicNodeColor = true;
 
     public void addOuterConnection(GameObject obj, bool near)
     {
@@ -106,16 +109,6 @@ public class NodeManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        meshRend = gameObject.GetComponent<MeshRenderer>();
-        if( meshRend != null )
-        {
-            material = meshRend.material;
-
-            if (material != null)
-            {
-                origColor = material.color;
-            }
-        }
 
         if (!origRotationSet)
         {
@@ -217,22 +210,8 @@ public class NodeManager : MonoBehaviour {
         else bezBar.init(curveBasePoints, origColor, origColor);
 
         Material mat = stretchCurve.GetComponent<Renderer>().material;
-        switch(currHighlightState)
-        {
-            case highlightState.ONE_HOP:
-                if (isSelected) mat.SetFloat("_Highlight", 1f);
-                else mat.SetFloat("_Highlight", 0.1f);
-                break;
-            case highlightState.NONE:
-                mat.SetFloat("_Highlight", 1f);
-                break;
-            case highlightState.FAR:
-            case highlightState.NEAR:
-                //mat.SetFloat("_Highlight", 0.1f);
-                mat.SetFloat("_Highlight", 1f);
-                break;
-
-        }
+        
+        mat.SetFloat("_Highlight", nodeMaterial.GetFloat("_Highlight"));
 
         foreach (KeyValuePair<string, ConnectionManager> kv in innerConnections) kv.Value.recalculateEdge(restrictDrawingOfEdges);
         
@@ -275,8 +254,8 @@ public class NodeManager : MonoBehaviour {
     void OnCollisionEnter(Collision collision)
     {
         numCollisions++;
-        if (material == null) material = gameObject.GetComponent<Material>();
-        if (material != null) material.color = Color.white;
+        if (nodeMaterial == null) nodeMaterial = gameObject.GetComponent<Material>();
+        if (nodeMaterial != null) nodeMaterial.color = Color.white;
     }
 
     void OnCollisionExit(Collision collision)
@@ -285,7 +264,7 @@ public class NodeManager : MonoBehaviour {
         if (numCollisions <= 0)
         {
             numCollisions = 0;
-            if (material != null) material.color = origColor;
+            if (nodeMaterial != null) nodeMaterial.color = origColor;
         }
     }
 
@@ -294,6 +273,7 @@ public class NodeManager : MonoBehaviour {
         return innerConnections.Count + 1;
     }
 
+    
     public void setNearEdgeBrightness(float val)
     {
         Material mat;
@@ -303,8 +283,8 @@ public class NodeManager : MonoBehaviour {
             mat.SetFloat("_Highlight", val);
         }
 
-        //if (dynamicNodeColor) adjustNodeColor(val);
-        
+        if (outerEdgesNear.Count > 0 && dynamicNodeColor) adjustNodeColor(val);
+
     }
 
     public void setFarEdgeBrightness(float val)
@@ -316,27 +296,28 @@ public class NodeManager : MonoBehaviour {
             mat.SetFloat("_Highlight", val);
         }
         
-        
-        //if (dynamicNodeColor) adjustNodeColor(val);
+        if( outerEdgesFar.Count > 0 && dynamicNodeColor) adjustNodeColor(val);
      
     }
 
-    void adjustNodeColor(float val)
+    public void adjustNodeColor(float val)
     {
-        if (meshRend == null)
-        {
-            meshRend = gameObject.GetComponent<MeshRenderer>();
-            {
-                material = meshRend.material;
-                origColor = material.color;
-            }
-        }
+        if (meshRend == null) meshRend = GetComponent<MeshRenderer>();
+        nodeMaterial = meshRend.material;
 
-        if (material != null)
-        {
-            material.color = origColor * val;
-        }
+
+        nodeMaterial = meshRend.material;
+        nodeMaterial.SetFloat("_Highlight", val);
     }
 
-    
+    public void setMeshColors(Color color)
+    {
+        origColor = color;
+        if (mesh == null) mesh = meshFilter.mesh;
+        Color[] meshColors = new Color[mesh.vertexCount];
+
+        for (int i = 0; i < meshColors.Length; i++) meshColors[i] = color;
+
+        mesh.colors = meshColors;
+    }
 }

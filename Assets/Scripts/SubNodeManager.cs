@@ -6,8 +6,11 @@ public class SubNodeManager : MonoBehaviour {
 
     Dictionary<string, GameObject> innerConnectionMap = new Dictionary<string, GameObject>();
 
-	// Use this for initialization
-	void Start () {
+    public MeshFilter meshFilter;
+    public Mesh mesh = null;
+
+    // Use this for initialization
+    void Start () {
 
 	}
 	
@@ -76,5 +79,15 @@ public class SubNodeManager : MonoBehaviour {
             ConnectionManager connMan = kv.Value.GetComponent<ConnectionManager>();
             if (connMan != null) connMan.updateCenterPointScale(scale);
         }
+    }
+
+    public void setMeshColors(Color color)
+    {
+        if (mesh == null) mesh = meshFilter.mesh;
+        Color[] meshColors = new Color[mesh.vertexCount];
+
+        for (int i = 0; i < meshColors.Length; i++) meshColors[i] = color;
+
+        mesh.colors = meshColors;
     }
 }

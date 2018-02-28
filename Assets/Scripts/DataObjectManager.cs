@@ -53,6 +53,7 @@ public class DataObjectManager : MonoBehaviour
     public SliderManager slider_nodeScale;
     public SliderManager slider_innerConnDist;
     public SliderManager slider_outerConnDist;
+    public SliderManager slider_gazeAngle;
 
     public float edgeDist = 0.4f; // original: 0.4f
     public float innerGroupEdgeDist = 0.1f; // original: 0.1f
@@ -101,6 +102,8 @@ public class DataObjectManager : MonoBehaviour
     float highlightBrightness = 1f;
     float dimmedBrightness = 0.1f;
 
+    public float gazeAngle = 8f;
+
     public SubNodeDisplayType subNodeDisplayType = SubNodeDisplayType.BLOOM;
 
     public bool invertFarEdgeGradient = true;
@@ -113,6 +116,8 @@ public class DataObjectManager : MonoBehaviour
         slider_nodeScale.suggestValue(pointScaleFactor);
         slider_barRadius.suggestValue(barRadiusScale);
 
+        slider_gazeAngle.suggestValue(gazeAngle);
+
         updateParameterValues();
     }
 
@@ -122,6 +127,16 @@ public class DataObjectManager : MonoBehaviour
         edgeDist = slider_outerConnDist.getValue();
         pointScaleFactor = slider_nodeScale.getValue();
         barRadiusScale = slider_barRadius.getValue();
+        gazeAngle = slider_gazeAngle.getValue();
+    }
+
+    public void updateGazeFactors()
+    {
+        updateParameterValues();
+
+        GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
+        if (gazeScript != null) gazeScript.gazeFactor = Mathf.Cos(gazeAngle / 180f * Mathf.PI);
+
     }
 
     // Use this for initialization
@@ -192,6 +207,7 @@ public class DataObjectManager : MonoBehaviour
  
     void recenterAnimation()
     {
+        // TODO: Recenter so that the sphere is a little farther from the user
         projSphere.transform.rotation = Quaternion.Lerp(prevSphereRotation, targetSphereRotation, smoothVals[currAnimationFrame]);
         projSphere.transform.position = Vector3.Lerp(prevSpherePosition, targetSpherePosition, smoothVals[currAnimationFrame]);
 
@@ -231,11 +247,99 @@ public class DataObjectManager : MonoBehaviour
 
        
         prevSpherePosition = projSphere.transform.position;
-        targetSpherePosition = Camera.main.transform.position;
+        targetSpherePosition = Camera.main.transform.position + tForward * 0.3f;
 
         currAnimationFrame = 0;
         recenterSphereAnim = true;
         
+    }
+
+    void updateHighlightNodesEdges()
+    {
+        NodeManager currNodeManager;
+        InnerGroupEdge innerEdge;
+        InterGroupEdge interEdge;
+        if(currHighlightState == highlightState.NONE || (currHighlightState == highlightState.ONE_HOP && selectedNodeMap.Count == 0) )
+        {
+            // highlight all nodes
+            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap) kv.Value.adjustNodeColor(highlightBrightness);
+
+            // update all edges
+            foreach (GameObject obj in outerEdgeList)
+            {
+                innerEdge = obj.GetComponent<InnerGroupEdge>();
+                if (innerEdge != null)
+                {
+                    innerEdge.updateHighlightState(highlightState.NONE);
+                    continue;
+                }
+
+                interEdge = obj.GetComponent<InterGroupEdge>();
+                if (interEdge != null)
+                {
+                    interEdge.updateHighlightState(highlightState.NONE);
+                    continue;
+                }
+            }
+
+        }
+        else if (currHighlightState == highlightState.ONE_HOP)
+        {
+            // highlight or dim all nodes
+            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
+            {
+                currNodeManager = kv.Value;
+                if (currNodeManager.isSelected) kv.Value.adjustNodeColor(highlightBrightness);
+                else kv.Value.adjustNodeColor(dimmedBrightness);
+            }
+
+            // update all edges
+            foreach (GameObject obj in outerEdgeList)
+            {
+                innerEdge = obj.GetComponent<InnerGroupEdge>();
+                if (innerEdge != null)
+                {
+                    innerEdge.updateHighlightState();
+                    continue;
+                }
+
+                interEdge = obj.GetComponent<InterGroupEdge>();
+                if (interEdge != null)
+                {
+                    interEdge.updateHighlightState();
+                    continue;
+                }
+            }
+        }
+
+        else if (currHighlightState == highlightState.NEAR || currHighlightState == highlightState.FAR)
+        {
+            // dim all nodes
+            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
+            {
+                currNodeManager = kv.Value;
+                if (currNodeManager.isSelected) kv.Value.adjustNodeColor(highlightBrightness);
+                else kv.Value.adjustNodeColor(dimmedBrightness);
+            }
+
+            // update all edges, highlighting the nodes attached to near edges
+            foreach (GameObject obj in outerEdgeList)
+            {
+                innerEdge = obj.GetComponent<InnerGroupEdge>();
+                if (innerEdge != null)
+                {
+                    innerEdge.updateHighlightState();
+                    continue;
+                }
+
+                interEdge = obj.GetComponent<InterGroupEdge>();
+                if (interEdge != null)
+                {
+                    interEdge.updateHighlightState();
+                    continue;
+                }
+            }
+        }
     }
 
     public void updateHighlightState(highlightState type)
@@ -243,42 +347,30 @@ public class DataObjectManager : MonoBehaviour
 
         currHighlightState = type;
 
-        foreach ( KeyValuePair<string, NodeManager> kv in nodeManagerMap)
+        foreach ( KeyValuePair<string, NodeManager> kv in nodeManagerMap) kv.Value.currHighlightState = currHighlightState;
+
+        InnerGroupEdge innerEdge;
+        InterGroupEdge interEdge;
+    
+        // update all edges
+        foreach (GameObject obj in outerEdgeList)
         {
-            kv.Value.currHighlightState = currHighlightState;
+            innerEdge = obj.GetComponent<InnerGroupEdge>();
+            if (innerEdge != null) 
+            {
+                innerEdge.currHighlightState = currHighlightState;
+                continue;
+            }
+
+            interEdge = obj.GetComponent<InterGroupEdge>();
+            if (interEdge != null)
+            {
+                interEdge.currHighlightState = currHighlightState;
+                continue;
+            }
         }
 
-        switch (currHighlightState)
-        {
-            case highlightState.ONE_HOP:
-                toggleSubNodes(null);
-                break;
-            case highlightState.NEAR:
-
-                foreach( KeyValuePair<string, NodeManager> kv in nodeManagerMap)
-                {
-                    kv.Value.setFarEdgeBrightness(dimmedBrightness);
-                    kv.Value.setNearEdgeBrightness(highlightBrightness);
-                }
-
-                break;
-            case highlightState.FAR:
-                foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
-                {
-                    kv.Value.setFarEdgeBrightness(highlightBrightness);
-                    kv.Value.setNearEdgeBrightness(dimmedBrightness);
-                }
-
-                break;
-            case highlightState.NONE:
-                foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
-                {
-                    kv.Value.setFarEdgeBrightness(highlightBrightness);
-                    kv.Value.setNearEdgeBrightness(highlightBrightness);
-                }
-                break;
-        }
-
+        updateHighlightNodesEdges();
     }
 
     public void loadData()
@@ -689,23 +781,28 @@ public class DataObjectManager : MonoBehaviour
             Debug.Log("No Gaze stuff");
         }
 
+        NodeInfo currNodeInfo;
+
         foreach (KeyValuePair<string, NodeInfo> kv in nodeMap)
         {
+            currNodeInfo = kv.Value;
             GameObject point = (GameObject)Instantiate(nodePrefab);
-            point.name = "Node: " + kv.Value.name;
-            point.transform.position = projSphere.transform.TransformPoint(kv.Value.position3);
+            point.name = "Node: " + currNodeInfo.name;
+            point.transform.position = projSphere.transform.TransformPoint(currNodeInfo.position3);
             point.transform.localScale = ptScale;
 
             MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
-            meshRend.material.color = groupColorMap[kv.Value.groupName];
+            meshRend.material.color = groupColorMap[currNodeInfo.groupName];
 
             NodeManager manager = point.GetComponent<NodeManager>();
-            manager.nodeName = kv.Value.name;
-            manager.setSubNodeNames(kv.Value.subElements);
-            manager.nodeInfo = kv.Value;
-            manager.positionOnSphere = kv.Value.position3;
+            manager.nodeName = currNodeInfo.name;
+            manager.setSubNodeNames(currNodeInfo.subElements);
+            manager.nodeInfo = currNodeInfo;
+            manager.positionOnSphere = currNodeInfo.position3;
             manager.baseSphereTransform = projSphere.transform;
             manager.timeToSnapBack = timeToSnapBack;
+
+            manager.setMeshColors(groupColorMap[currNodeInfo.groupName]);
 
             point.transform.SetParent(projSphere.transform);
 
@@ -715,7 +812,7 @@ public class DataObjectManager : MonoBehaviour
 
             PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
             TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
-            tMesh.text = kv.Value.name;
+            tMesh.text = currNodeInfo.name;
 
             popupTextObject.parentObject = point;
 
@@ -723,8 +820,8 @@ public class DataObjectManager : MonoBehaviour
             else Debug.Log("No Popup-text stuff");
 
             nodeList.Add(point);
-            if (!nodeManagerMap.ContainsKey(kv.Value.name)) nodeManagerMap.Add(kv.Value.name, manager);
-            else nodeManagerMap[kv.Value.name] = manager;
+            if (!nodeManagerMap.ContainsKey(currNodeInfo.name)) nodeManagerMap.Add(currNodeInfo.name, manager);
+            else nodeManagerMap[currNodeInfo.name] = manager;
         }
     }
 
@@ -852,6 +949,8 @@ public class DataObjectManager : MonoBehaviour
             selectedNodeMap.Add(newNodeManagers[i].nodeInfo.name, newNodeManagers[i]);
         }
 
+        updateHighlightNodesEdges();
+        /*
         if (currHighlightState == highlightState.NONE || (currHighlightState == highlightState.ONE_HOP && selectedNodeMap.Count == 0))
         {
             foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
@@ -874,7 +973,7 @@ public class DataObjectManager : MonoBehaviour
                 kv.Value.setFarEdgeBrightness(highlightBrightness);
             }
         }
-
+        */
         foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap) kv.Value.hideAllInnerConnectionEdgeNodes();
 
     }
@@ -972,6 +1071,9 @@ public class DataObjectManager : MonoBehaviour
             bezBar.useSphericalInterpolation = false;
             bezBar.init(basePoints, color, color);
             //edgeObj.transform.position = projSphere.transform.position;
+
+            SubNodeManager subNM = point.GetComponent<SubNodeManager>();
+            subNM.setMeshColors(color);
 
             subKey = getSubNodeKey(nodeInfo, currName);
             if (subNodePositionMap.ContainsKey(subKey)) subNodePositionMap[subKey] = point;
@@ -1183,6 +1285,7 @@ public class DataObjectManager : MonoBehaviour
                     bezBar.radius = barRadius;
                     bezBar.useSphericalInterpolation = false;
                     bezBar.init(ctrlPts, colorA, colorB);
+                    
 
                     //var collider = mainCurve.GetComponent<MeshCollider>();
                     //collider.sharedMesh = bezBar.mesh;
@@ -1236,14 +1339,17 @@ public class DataObjectManager : MonoBehaviour
                     point.transform.localScale = ptScale;
 
 
-                    MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
-                    meshRend.material.color = colorA*0.5f + colorB*0.5f;
+                    //MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
+                    //meshRend.material.color = colorA*0.5f + colorB*0.5f;
 
                     connMan.centerPoint = point;
 
                     point.transform.SetParent(projSphere.transform);
 
-                    
+                    SubNodeManager subNM = point.GetComponent<SubNodeManager>();
+                    subNM.setMeshColors(colorA*0.5f + colorB*0.5f);
+
+
 
                     GameObject popupText = (GameObject)Instantiate(popupTextPrefab);
                     popupText.name = "Text: " + connMan.name;
@@ -1625,6 +1731,7 @@ public class DataObjectManager : MonoBehaviour
         float bezEdgeDist = 1.0f + d2;
 
         GameObject edgeObj;
+        GameObject nodeA, nodeB;
 
         foreach (EdgeInfo edge in edgeList)
         {
@@ -1632,118 +1739,110 @@ public class DataObjectManager : MonoBehaviour
             c0 = groupColorMap[edge.startNode.groupName];
             c1 = groupColorMap[edge.endNode.groupName];
 
-            //if (!useBSplineBars)
-            if( false )
+            nodeA = nodeManagerMap[edge.startNode.name].gameObject;
+            nodeB = nodeManagerMap[edge.endNode.name].gameObject;
+
+            if (edge.isSameGroup())
             {
-                basePts[0] = edge.startNode.position3;
-                basePts[basePts.Length - 1] = edge.endNode.position3;
+                basePts = new Vector3[4];
 
-                basePts[1] = basePts[0] * 2.0f;
-                basePts[basePts.Length - 2] = basePts[basePts.Length - 1] * 2.0f;
-            }
-
-            //if (useBSplineBars)
-            if( true )
-            {
-
-                if (edge.isSameGroup())
+                if (interpolateSpherical)
                 {
-                    basePts = new Vector3[4];
+                    basePts[0] = edge.startNode.sphereCoords;
+                    basePts[1] = basePts[0];
+                    basePts[1].z *= bezEdgeDist; // the radius from the sphere center
 
-                    if (interpolateSpherical)
-                    {
-                        basePts[0] = edge.startNode.sphereCoords;
-                        basePts[1] = basePts[0];
-                        basePts[1].z *= bezEdgeDist; // the radius from the sphere center
-
-                        basePts[3] = edge.endNode.sphereCoords;
-                        basePts[2] = basePts[3];
-                        basePts[2].z *= bezEdgeDist;
-                    }
-                    else
-                    {
-                        basePts[0] = edge.startNode.position3;
-                        basePts[1] = basePts[0] * bezEdgeDist;
-
-                        basePts[3] = edge.endNode.position3;
-                        basePts[2] = basePts[3] * bezEdgeDist;
-                    }
-
-                    edgeObj = (GameObject)Instantiate(bezierPrefab);
-                    BezierBar bezBar = edgeObj.GetComponent<BezierBar>();
-                    bezBar.radius = barRadius;
-                    bezBar.useSphericalInterpolation = interpolateSpherical;
-                    bezBar.init(basePts, c0, c1, projSphere.transform);
-                    //edgeObj.transform.position = projSphere.transform.position;
-
-                    edgeObj.transform.SetParent(projSphere.transform);
-
-                    edge.edgeGameObject = edgeObj;
+                    basePts[3] = edge.endNode.sphereCoords;
+                    basePts[2] = basePts[3];
+                    basePts[2].z *= bezEdgeDist;
                 }
                 else
                 {
-                    fromGroup = groupMap[edge.startNode.groupName];
-                    toGroup = groupMap[edge.endNode.groupName];
+                    basePts[0] = edge.startNode.position3;
+                    basePts[1] = basePts[0] * bezEdgeDist;
 
-                    if (interpolateSpherical)
-                    {
-                        tVec1 = fromGroup.sphereCoords;
-                        tVec2 = toGroup.sphereCoords;
-
-                        basePts = new Vector3[7];
-
-                        basePts[0] = edge.startNode.sphereCoords;  // start point
-                        basePts[6] = edge.endNode.sphereCoords; // end point
-
-                        //basePts[1] = basePts[2] = tVec1;
-                        basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;
-                        basePts[1].z *= splineEdgeDistInner;  // group1 node radius 1.1*radius
-                        basePts[2].z *= splineEdgeDistOuter;  // group1 node radius 1.4*radius
-
-                        //basePts[4] = basePts[5] = tVec2;
-                        basePts[4] = basePts[5] = tVec2 * groupWeight + basePts[6] * nodeWeight;
-                        basePts[4].z *= splineEdgeDistOuter;  // group2 node radius 1.4*radius
-                        basePts[5].z *= splineEdgeDistInner;  // group2 node radius 1.1*radius
-
-                        basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
-                    }
-                    else
-                    {
-                        tVec1 = fromGroup.center3;
-                        tVec2 = toGroup.center3;
-
-                        basePts = new Vector3[7];
-
-
-                        basePts[0] = edge.startNode.position3;
-                        basePts[6] = edge.endNode.position3;
-
-                        basePts[1] = tVec1 * splineEdgeDistInner;
-                        basePts[2] = tVec1 * splineEdgeDistOuter;
-
-                        basePts[4] = tVec2 * splineEdgeDistOuter;
-                        basePts[5] = tVec2 * splineEdgeDistInner;
-
-                        basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
-
-                    }
-
-
-
-
-                    edgeObj = (GameObject)Instantiate(bSplinePrefab);
-                    BasisSpline bspline = edgeObj.GetComponent<BasisSpline>();
-                    bspline.radius = barRadius;
-                    bspline.useSphericalInterpolation = interpolateSpherical;
-                    if(invertFarEdgeGradient) bspline.init(basePts, c1, c0, projSphere.transform);
-                    else bspline.init(basePts, c0, c1, projSphere.transform);
-                    //edgeObj.transform.position = projSphere.transform.position;
-
-                    edgeObj.transform.SetParent(projSphere.transform);
-
-                    edge.edgeGameObject = edgeObj;
+                    basePts[3] = edge.endNode.position3;
+                    basePts[2] = basePts[3] * bezEdgeDist;
                 }
+
+                edgeObj = (GameObject)Instantiate(bezierPrefab);
+                InnerGroupEdge bezBar = edgeObj.GetComponent<InnerGroupEdge>();
+                bezBar.radius = barRadius;
+                bezBar.useSphericalInterpolation = interpolateSpherical;
+                bezBar.init(basePts, c0, c1, projSphere.transform);
+                //edgeObj.transform.position = projSphere.transform.position;
+                bezBar.setNode(nodeA);
+                bezBar.setNode(nodeB);
+
+                //bezBar.setNode(edge.startNode);
+
+                edgeObj.transform.SetParent(projSphere.transform);
+
+                edge.edgeGameObject = edgeObj;
             }
+            else
+            {
+                fromGroup = groupMap[edge.startNode.groupName];
+                toGroup = groupMap[edge.endNode.groupName];
+
+                if (interpolateSpherical)
+                {
+                    tVec1 = fromGroup.sphereCoords;
+                    tVec2 = toGroup.sphereCoords;
+
+                    basePts = new Vector3[7];
+
+                    basePts[0] = edge.startNode.sphereCoords;  // start point
+                    basePts[6] = edge.endNode.sphereCoords; // end point
+
+                    //basePts[1] = basePts[2] = tVec1;
+                    basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;
+                    basePts[1].z *= splineEdgeDistInner;  // group1 node radius 1.1*radius
+                    basePts[2].z *= splineEdgeDistOuter;  // group1 node radius 1.4*radius
+
+                    //basePts[4] = basePts[5] = tVec2;
+                    basePts[4] = basePts[5] = tVec2 * groupWeight + basePts[6] * nodeWeight;
+                    basePts[4].z *= splineEdgeDistOuter;  // group2 node radius 1.4*radius
+                    basePts[5].z *= splineEdgeDistInner;  // group2 node radius 1.1*radius
+
+                    basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+                }
+                else
+                {
+                    tVec1 = fromGroup.center3;
+                    tVec2 = toGroup.center3;
+
+                    basePts = new Vector3[7];
+
+
+                    basePts[0] = edge.startNode.position3;
+                    basePts[6] = edge.endNode.position3;
+
+                    basePts[1] = tVec1 * splineEdgeDistInner;
+                    basePts[2] = tVec1 * splineEdgeDistOuter;
+
+                    basePts[4] = tVec2 * splineEdgeDistOuter;
+                    basePts[5] = tVec2 * splineEdgeDistInner;
+
+                    basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+
+                }
+
+                edgeObj = (GameObject)Instantiate(bSplinePrefab);
+                InterGroupEdge bspline = edgeObj.GetComponent<InterGroupEdge>();
+                bspline.radius = barRadius;
+                bspline.useSphericalInterpolation = interpolateSpherical;
+                if (invertFarEdgeGradient) bspline.init(basePts, c1, c0, projSphere.transform);
+                else bspline.init(basePts, c0, c1, projSphere.transform);
+                //edgeObj.transform.position = projSphere.transform.position;
+                bspline.setNode(nodeA);
+                bspline.setNode(nodeB);
+
+                edgeObj.transform.SetParent(projSphere.transform);
+
+                edge.edgeGameObject = edgeObj;
+            }
+
 
             outerEdgeList.Add(edgeObj);
 

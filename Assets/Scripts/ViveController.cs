@@ -138,8 +138,11 @@ public class ViveController : MonoBehaviour
                 if ((prevState.ulButtonPressed & SteamVR_Controller.ButtonMask.Trigger) == 0)
                 {
                     // trigger began being pulled
-                    beam.gameObject.SetActive(true);
-                    beamIsActive = true;
+                    if(currCollisionNodeManagers.Count < 1 )
+                    {
+                        beam.gameObject.SetActive(true);
+                        beamIsActive = true;
+                    }
                 }
 
                 if (prevState.rAxis1.x < 1.0f && state.rAxis1.x == 1.0f)
@@ -201,6 +204,7 @@ public class ViveController : MonoBehaviour
                         else if (currSliderManager.gameObject.name.Equals("slider_barRadius")) dataManager.recalculateEdgeRadii();
                         else if (currSliderManager.gameObject.name.Equals("slider_innerConnDist")) dataManager.repopulateEdges();
                         else if (currSliderManager.gameObject.name.Equals("slider_outerConnDist")) dataManager.repopulateEdges();
+                        else if (currSliderManager.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
 
                         currSliderManager = null;
                     }

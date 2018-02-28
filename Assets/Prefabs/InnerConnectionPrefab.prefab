@@ -36,7 +36,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4039356126906744}
   - component: {fileID: 23030794192533342}
-  - component: {fileID: 114525635030255630}
+  - component: {fileID: 114051671228812994}
   - component: {fileID: 33741868257922834}
   m_Layer: 0
   m_Name: BezierBarCollPrefab
@@ -172,6 +172,24 @@ MonoBehaviour:
   altLineCurve: {fileID: 1701609898949652}
   useCenterNode: 1
   neverShowMeshRenderers: 0
+--- !u!114 &114051671228812994
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1404879536125484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a6828a1412529f4398e090b4d8a35f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlPoints: []
+  meshFilter: {fileID: 33741868257922834}
+  mesh: {fileID: 0}
+  numMajorDivisions: 60
+  numMinorDivisions: 30
+  radius: 0.01
+  useSphericalInterpolation: 0
 --- !u!114 &114239593504785188
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -191,24 +209,6 @@ MonoBehaviour:
   radius: 0.02
   useSphericalInterpolation: 0
   lineRend: {fileID: 120747372997468318}
---- !u!114 &114525635030255630
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1404879536125484}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa7d31094cbb8c843b6ccf501021cbb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controlPoints: []
-  meshFilter: {fileID: 33741868257922834}
-  mesh: {fileID: 0}
-  numMajorDivisions: 60
-  numMinorDivisions: 30
-  radius: 0.01
-  useSphericalInterpolation: 0
 --- !u!120 &120747372997468318
 LineRenderer:
   m_ObjectHideFlags: 1

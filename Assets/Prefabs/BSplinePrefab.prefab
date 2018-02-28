@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4455348017271534}
   - component: {fileID: 23511097239896296}
   - component: {fileID: 33567841841666408}
-  - component: {fileID: 114873071941393460}
+  - component: {fileID: 114992819919100144}
   m_Layer: 0
   m_Name: BSplinePrefab
   m_TagString: Untagged
@@ -83,7 +83,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1677676940826182}
   m_Mesh: {fileID: 0}
---- !u!114 &114873071941393460
+--- !u!114 &114992819919100144
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1677676940826182}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e933ad6bfb7b80458883d44a0494551, type: 3}
+  m_Script: {fileID: 11500000, guid: c9ef9f613eb8ea7449a53ec13d3bf1dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   controlPoints: []

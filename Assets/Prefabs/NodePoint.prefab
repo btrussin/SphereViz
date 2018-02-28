@@ -59,7 +59,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 9c20ccb60d32547368389c424520c0a2, type: 2}
+  - {fileID: 2100000, guid: 80c64652afacda8498b03178d9ab8abe, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -126,6 +126,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodeName: 
+  meshFilter: {fileID: 33495266364037652}
+  mesh: {fileID: 0}
   positionOnSphere: {x: 0, y: 0, z: 0}
   baseSphereTransform: {fileID: 0}
   curvePrefab: {fileID: 1791510126594462, guid: b5b47b7a23f8307468f6b9589d25f0bb,
