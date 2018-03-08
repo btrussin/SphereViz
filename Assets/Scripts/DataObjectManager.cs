@@ -54,6 +54,10 @@ public class DataObjectManager : MonoBehaviour
     public SliderManager slider_innerConnDist;
     public SliderManager slider_outerConnDist;
     public SliderManager slider_gazeAngle;
+    public SliderManager slider_collSize;
+
+    public ViveController rightController;
+    public ViveController leftController;
 
     public float edgeDist = 0.4f; // original: 0.4f
     public float innerGroupEdgeDist = 0.1f; // original: 0.1f
@@ -103,6 +107,7 @@ public class DataObjectManager : MonoBehaviour
     float dimmedBrightness = 0.1f;
 
     public float gazeAngle = 8f;
+    public float contrColliderScale = 1f;
 
     public SubNodeDisplayType subNodeDisplayType = SubNodeDisplayType.BLOOM;
 
@@ -118,6 +123,8 @@ public class DataObjectManager : MonoBehaviour
 
         slider_gazeAngle.suggestValue(gazeAngle);
 
+        slider_collSize.suggestValue(contrColliderScale);
+
         updateParameterValues();
     }
 
@@ -128,6 +135,7 @@ public class DataObjectManager : MonoBehaviour
         pointScaleFactor = slider_nodeScale.getValue();
         barRadiusScale = slider_barRadius.getValue();
         gazeAngle = slider_gazeAngle.getValue();
+        contrColliderScale = slider_collSize.getValue();
     }
 
     public void updateGazeFactors()
@@ -136,6 +144,20 @@ public class DataObjectManager : MonoBehaviour
 
         GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
         if (gazeScript != null) gazeScript.gazeFactor = Mathf.Cos(gazeAngle / 180f * Mathf.PI);
+
+    }
+
+    public void updateControllerColliderScale()
+    {
+        updateParameterValues();
+
+        float colliderScale = 0.027f * contrColliderScale + 0.003f;
+        float meshScale = 0.063f * contrColliderScale + 0.007f;
+
+        //Debug.Log("Controller Collider Scale: " + contrColliderScale);
+
+        leftController.setColliderValues(colliderScale, meshScale);
+        rightController.setColliderValues(colliderScale, meshScale);
 
     }
 
@@ -492,7 +514,14 @@ public class DataObjectManager : MonoBehaviour
         tmpGrpInfo[0].center2 = Vector2.zero;
 
         float currAngle = 0.0f;
+
         Vector2 currVec;
+
+        float randomPart = 0.9f;
+        float fixedPart = 1f - randomPart;
+        float prevRandVal = 0f;
+        float currRandVal;
+        float minRandOffeset = 0.3f;
         for (i = 0; i < tmpGrpInfo.Length; i++)
         {
             currGrp = tmpGrpInfo[i];
@@ -502,15 +531,25 @@ public class DataObjectManager : MonoBehaviour
             if (i == 0) currGrp.center2 = Vector2.zero;
             else currGrp.center2 = new Vector2(Mathf.Cos(currAngle), Mathf.Sin(currAngle)) * (radiusVals[0] + radiusVals[i]);
 
-            float partRadius = radiusVals[i] * 0.8f;
+            float partRadius = radiusVals[i] * 3f/5f;
+            float minRadius = radiusVals[i] * 3f/10f;
             float angleInc = 2f * Mathf.PI / (float)currGrp.nodeList.Count;
             float angle = 0f;
+            
             for (int j = 0; j < currGrp.nodeList.Count; j++)
             {
                 currVec = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                 //currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius * Random.value * 0.5f;
-                currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius * (0.5f + Random.value * 0.5f);
+                currRandVal = Random.value;
+                if( Mathf.Abs(currRandVal-prevRandVal) < minRandOffeset)
+                {
+                    currRandVal += minRandOffeset;
+                    if (currRandVal > 1f) currRandVal -= 1f;
+                }
+                //currGrp.nodeList[j].position2 = currGrp.center2 + currVec * partRadius * (fixedPart + currRandVal * randomPart);
+                currGrp.nodeList[j].position2 = currGrp.center2 + currVec * (minRadius + currRandVal * partRadius);
                 angle += angleInc;
+                prevRandVal = currRandVal;
             }
 
         }

@@ -9,10 +9,70 @@ public class SubNodeManager : MonoBehaviour {
     public MeshFilter meshFilter;
     public Mesh mesh = null;
 
+    static bool verticesCalculated = false;
+
+    static Vector3[] meshVertices;
+    static int[] meshTriangles;
+
+    static void setupMeshElements()
+    {
+        float flatDim = 0.3333f;
+        float tallDim = 0.5f;
+
+        meshVertices = new Vector3[24];
+
+        int idx = 0;
+        meshVertices[idx++] = new Vector3(-flatDim, 0f, flatDim);
+        meshVertices[idx++] = new Vector3(flatDim, 0f, flatDim);
+        meshVertices[idx++] = new Vector3(0f, tallDim, 0f);
+
+        meshVertices[idx++] = new Vector3(-flatDim, 0f, -flatDim);
+        meshVertices[idx++] = new Vector3(-flatDim, 0f, flatDim);
+        meshVertices[idx++] = new Vector3(0f, tallDim, 0f);
+
+        meshVertices[idx++] = new Vector3(flatDim, 0f, -flatDim);
+        meshVertices[idx++] = new Vector3(-flatDim, 0f, -flatDim);
+        meshVertices[idx++] = new Vector3(0f, tallDim, 0f);
+
+        meshVertices[idx++] = new Vector3(flatDim, 0f, flatDim);
+        meshVertices[idx++] = new Vector3(flatDim, 0f, -flatDim);
+        meshVertices[idx++] = new Vector3(0f, tallDim, 0f);
+
+
+        meshVertices[idx++] = new Vector3(flatDim, 0f, flatDim);
+        meshVertices[idx++] = new Vector3(-flatDim, 0f, flatDim);
+        meshVertices[idx++] = new Vector3(0f, -tallDim, 0f);
+
+        meshVertices[idx++] = new Vector3(-flatDim, 0f, flatDim);
+        meshVertices[idx++] = new Vector3(-flatDim, 0f, -flatDim);
+        meshVertices[idx++] = new Vector3(0f, -tallDim, 0f);
+
+        meshVertices[idx++] = new Vector3(-flatDim, 0f, -flatDim);
+        meshVertices[idx++] = new Vector3(flatDim, 0f, -flatDim);
+        meshVertices[idx++] = new Vector3(0f, -tallDim, 0f);
+
+        meshVertices[idx++] = new Vector3(flatDim, 0f, -flatDim);
+        meshVertices[idx++] = new Vector3(flatDim, 0f, flatDim);
+        meshVertices[idx++] = new Vector3(0f, -tallDim, 0f);
+
+
+        meshTriangles = new int[meshVertices.Length];
+        for (idx = 0; idx < meshTriangles.Length; idx++) meshTriangles[idx] = idx;
+
+        verticesCalculated = true;
+    }
+
     // Use this for initialization
     void Start () {
 
-	}
+        if (mesh == null) mesh = new Mesh();
+        meshFilter.mesh = mesh;
+
+        if (!verticesCalculated) setupMeshElements();
+        
+        mesh.vertices = meshVertices;
+        mesh.triangles = meshTriangles;
+    }
 	
 	// Update is called once per frame
 	void Update () {

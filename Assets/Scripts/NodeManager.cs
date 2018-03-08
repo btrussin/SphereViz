@@ -251,11 +251,13 @@ public class NodeManager : MonoBehaviour {
         return subNodeNames;
     }
 
+    /*
     void OnCollisionEnter(Collision collision)
     {
         numCollisions++;
         if (nodeMaterial == null) nodeMaterial = gameObject.GetComponent<Material>();
-        if (nodeMaterial != null) nodeMaterial.color = Color.white;
+        if (nodeMaterial != null) adjustNodeColor(10f);
+        //if (nodeMaterial != null) nodeMaterial.color = Color.white;
     }
 
     void OnCollisionExit(Collision collision)
@@ -264,7 +266,25 @@ public class NodeManager : MonoBehaviour {
         if (numCollisions <= 0)
         {
             numCollisions = 0;
-            if (nodeMaterial != null) nodeMaterial.color = origColor;
+            //if (nodeMaterial != null) nodeMaterial.color = origColor;
+            if (nodeMaterial != null) adjustNodeColor(1f);
+        }
+    }
+    */
+    public void addCollision()
+    {
+        numCollisions++;
+        if (nodeMaterial == null) nodeMaterial = gameObject.GetComponent<Material>();
+        if (nodeMaterial != null) adjustNodeColor(10f);
+    }
+
+    public void subtractCollision()
+    {
+        numCollisions--;
+        if (numCollisions <= 0)
+        {
+            numCollisions = 0;
+            if (nodeMaterial != null) adjustNodeColor(1f);
         }
     }
 

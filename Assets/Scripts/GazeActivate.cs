@@ -11,6 +11,8 @@ public class GazeActivate : MonoBehaviour {
 
     public int maxLabelsToShow = 30;
 
+    public LineRenderer beamLine;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -44,6 +46,9 @@ public class GazeActivate : MonoBehaviour {
                 if (count++ > maxLabelsToShow) break;
             }
         }
+
+        beamLine.SetPosition(0, gameObject.transform.position);
+        beamLine.SetPosition(1, gameObject.transform.position + forward * 10f);
     }
 
     public void addTextObject(PopupTextFade scr)

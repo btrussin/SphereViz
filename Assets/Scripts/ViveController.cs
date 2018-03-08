@@ -15,6 +15,8 @@ public class ViveController : MonoBehaviour
     protected VRControllerState_t prevState = new VRControllerState_t();
 
     public TextMesh textMesh;
+    public SphereCollider sphereCollider;
+    public GameObject colliderObject;
 
     public DataObjectManager dataManager;
 
@@ -38,6 +40,20 @@ public class ViveController : MonoBehaviour
     public Vector3 foreRtUp;
 
     public int maxNumberCurvesToRedraw = 20;
+
+    public void setColliderValues(float colliderRadius, float meshScale)
+    {
+        sphereCollider.radius = colliderRadius;
+        colliderObject.transform.localScale = Vector3.one * meshScale;
+    }
+
+    public void setColliderValues(float scale)
+    {
+        float colliderScale = 0.027f * scale + 0.003f;
+        float meshScale = 0.063f * scale + 0.007f;
+
+        setColliderValues(colliderScale, meshScale);
+    }
 
     // Use this for initialization
     void Start () {
@@ -205,6 +221,7 @@ public class ViveController : MonoBehaviour
                         else if (currSliderManager.gameObject.name.Equals("slider_innerConnDist")) dataManager.repopulateEdges();
                         else if (currSliderManager.gameObject.name.Equals("slider_outerConnDist")) dataManager.repopulateEdges();
                         else if (currSliderManager.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
+                        else if (currSliderManager.gameObject.name.Equals("slider_collSize")) dataManager.updateControllerColliderScale();
 
                         currSliderManager = null;
                     }
@@ -256,6 +273,7 @@ public class ViveController : MonoBehaviour
         NodeManager nodeMan = collision.gameObject.GetComponent<NodeManager>();
         if( nodeMan != null )
         {
+            nodeMan.addCollision();
             if (!currCollisionNodeManagers.ContainsKey(nodeMan.name)) currCollisionNodeManagers.Add(nodeMan.name, nodeMan);
 
             return;
@@ -276,6 +294,7 @@ public class ViveController : MonoBehaviour
         NodeManager nodeMan = collision.gameObject.GetComponent<NodeManager>();
         if (nodeMan != null)
         {
+            nodeMan.subtractCollision();
             if (currCollisionNodeManagers.ContainsKey(nodeMan.name)) currCollisionNodeManagers.Remove(nodeMan.name);
 
             return;

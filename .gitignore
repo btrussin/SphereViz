@@ -33,6 +33,7 @@ Thumbs.db
 # Brian thinks this should also be ignored #
 .vs/
 UnityPackageManager/
+UnityAdsSettings.asset.meta
 
 # Do not include the SteamVR directory #
 Assets/SteamVR/
