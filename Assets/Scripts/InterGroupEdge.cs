@@ -77,5 +77,6 @@ public class InterGroupEdge : BasisSpline
 
                 break;
         }
+
     }
 }

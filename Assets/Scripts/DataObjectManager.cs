@@ -461,7 +461,7 @@ public class DataObjectManager : MonoBehaviour
         float sumAngles = 0.0f;
         angleVals[0] = angleVals[1] = 0.0f;
 
-        float hiVal = 20.0f;
+        float hiVal = 100.0f;
         float loVal = 0.01f;
         float midVal = (hiVal + loVal) * 0.5f;
 
@@ -469,8 +469,36 @@ public class DataObjectManager : MonoBehaviour
         for (i = 0; i < tmpGrpInfo.Length; i++)
         {
             currGrp = tmpGrpInfo[i];
-
             portionVals[i] = (float)currGrp.nodeList.Count / (float)N;
+        }
+
+        // testing new layout
+        bool doNewTest = false;
+        if( doNewTest )
+        {
+            float vecLength = 0f;
+            for (i = 0; i < portionVals.Length; i++)
+            {
+                Debug.Log("[" + i + "]: " + portionVals[i]);
+
+                //portionVals[i] *= portionVals[i];
+                portionVals[i] *= 10f;
+                vecLength += portionVals[i] * portionVals[i];
+            }
+
+            vecLength = Mathf.Sqrt(vecLength);
+
+            for (i = 0; i < portionVals.Length; i++)
+            {
+                portionVals[i] /= vecLength;
+
+                Debug.Log("[" + i + "]: " + portionVals[i]);
+            }
+        }
+
+
+        for (i = 0; i < tmpGrpInfo.Length; i++)
+        {
             radiusVals[i] = Mathf.Sqrt(portionVals[i]) * R;
         }
 
@@ -531,8 +559,8 @@ public class DataObjectManager : MonoBehaviour
             if (i == 0) currGrp.center2 = Vector2.zero;
             else currGrp.center2 = new Vector2(Mathf.Cos(currAngle), Mathf.Sin(currAngle)) * (radiusVals[0] + radiusVals[i]);
 
-            float partRadius = radiusVals[i] * 3f/5f;
-            float minRadius = radiusVals[i] * 3f/10f;
+            float partRadius = radiusVals[i] * 9f/10f;
+            float minRadius = radiusVals[i] * 1f/10f;
             float angleInc = 2f * Mathf.PI / (float)currGrp.nodeList.Count;
             float angle = 0f;
             

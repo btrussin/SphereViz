@@ -181,7 +181,12 @@ public class ViveController : MonoBehaviour
                         }
                         else if (buttonManager != null) buttonManager.takeAction();
                         else if (closeManager != null) closeManager.takeAction();
-                        else if (hitInfo.collider.gameObject.name.Equals("Deselect")) dataManager.deselectAllNodes();
+                        else if (hitInfo.collider.gameObject.name.Equals("Deselect"))
+                        {
+                            DeselectButtonAnimation anim = hitInfo.collider.gameObject.GetComponent<DeselectButtonAnimation>();
+                            anim.setAltColors();
+                            dataManager.deselectAllNodes();
+                        }
  
                     }
 

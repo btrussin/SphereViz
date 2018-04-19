@@ -145,8 +145,12 @@ public class SubNodeManager : MonoBehaviour {
     {
         if (mesh == null) mesh = meshFilter.mesh;
         Color[] meshColors = new Color[mesh.vertexCount];
+        Color[] emissionColors = new Color[mesh.vertexCount];
 
-        for (int i = 0; i < meshColors.Length; i++) meshColors[i] = color;
+        for (int i = 0; i < meshColors.Length; i++)
+        {
+            meshColors[i] = color;
+        }
 
         mesh.colors = meshColors;
     }

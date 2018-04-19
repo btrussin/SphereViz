@@ -210,7 +210,6 @@ public class NodeManager : MonoBehaviour {
         else bezBar.init(curveBasePoints, origColor, origColor);
 
         Material mat = stretchCurve.GetComponent<Renderer>().material;
-        
         mat.SetFloat("_Highlight", nodeMaterial.GetFloat("_Highlight"));
 
         foreach (KeyValuePair<string, ConnectionManager> kv in innerConnections) kv.Value.recalculateEdge(restrictDrawingOfEdges);
@@ -235,7 +234,6 @@ public class NodeManager : MonoBehaviour {
 
             destroyStretchObjects();
             
-
         }
 
     }
@@ -251,26 +249,6 @@ public class NodeManager : MonoBehaviour {
         return subNodeNames;
     }
 
-    /*
-    void OnCollisionEnter(Collision collision)
-    {
-        numCollisions++;
-        if (nodeMaterial == null) nodeMaterial = gameObject.GetComponent<Material>();
-        if (nodeMaterial != null) adjustNodeColor(10f);
-        //if (nodeMaterial != null) nodeMaterial.color = Color.white;
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        numCollisions--;
-        if (numCollisions <= 0)
-        {
-            numCollisions = 0;
-            //if (nodeMaterial != null) nodeMaterial.color = origColor;
-            if (nodeMaterial != null) adjustNodeColor(1f);
-        }
-    }
-    */
     public void addCollision()
     {
         numCollisions++;
@@ -297,6 +275,7 @@ public class NodeManager : MonoBehaviour {
     public void setNearEdgeBrightness(float val)
     {
         Material mat;
+       
         foreach (GameObject obj in outerEdgesNear)
         {
             mat = obj.GetComponent<Renderer>().material;
@@ -310,6 +289,7 @@ public class NodeManager : MonoBehaviour {
     public void setFarEdgeBrightness(float val)
     {
         Material mat;
+        
         foreach (GameObject obj in outerEdgesFar)
         {
             mat = obj.GetComponent<Renderer>().material;
@@ -324,7 +304,6 @@ public class NodeManager : MonoBehaviour {
     {
         if (meshRend == null) meshRend = GetComponent<MeshRenderer>();
         nodeMaterial = meshRend.material;
-
 
         nodeMaterial = meshRend.material;
         nodeMaterial.SetFloat("_Highlight", val);

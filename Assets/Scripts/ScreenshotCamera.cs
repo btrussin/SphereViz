@@ -103,7 +103,7 @@ public class ScreenshotCamera : MonoBehaviour {
                 int t = int.Parse(subComps[subComps.Length - 1]);
                 if (t > max) max = t;
             }
-            catch (System.FormatException fe) { }
+            catch (System.FormatException fe) { Debug.Log(fe.Message); }
         }
 
         max++;

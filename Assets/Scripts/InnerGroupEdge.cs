@@ -76,5 +76,6 @@ public class InnerGroupEdge : BezierBar {
 
                 break;
         }
+       
     }
 }
