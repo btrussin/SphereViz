@@ -16,15 +16,20 @@ public enum SubNodeDisplayType
     TABLE
 }
 
+public enum NodeClusterMode
+{
+    RANDOM,
+    SQUARE_CLUSTER,
+    CIRCLE_CLUSTER,
+    FORCE_DIRECTED
+}
+
 public class DataObjectManager : MonoBehaviour
 {
-
+    public NodeClusterMode nodeClusterMode;
     public DataLoader dataLoader;
-    //public CMJSONLoader dataLoader;
-    //public GOTLoader dataLoader;
 
     public bool excludeIsolatedNodes = false;
-    public bool performForceDirectedLayout = false;
     public int numForceIterations = 300;
     public float radius = 2.5f;
 
@@ -414,15 +419,21 @@ public class DataObjectManager : MonoBehaviour
         // populate the groupMap
         populateGroupMap();
 
-
-        clusterByGroups();
-        //randomizeNodePoints();
-
-
-        // do the force-directed layout
-        if (performForceDirectedLayout) doForceDirLayout();
-
-
+        switch(nodeClusterMode)
+        {
+            case NodeClusterMode.RANDOM:
+                randomizeNodePoints();
+                break;
+            case NodeClusterMode.SQUARE_CLUSTER:
+                clusterByGroupsInSquares();
+                break;
+            case NodeClusterMode.CIRCLE_CLUSTER:
+                clusterByGroupsInCircles();
+                break;
+            case NodeClusterMode.FORCE_DIRECTED:
+                doForceDirLayout();
+                break;
+        }
 
         // populate the groupColorMap
         populateColorMap();
@@ -436,7 +447,175 @@ public class DataObjectManager : MonoBehaviour
         populateEdges();
     }
 
-    private void clusterByGroups()
+    private void clusterByGroupsInSquares()
+    {
+        int N = nodeMap.Count; // number of nodes
+        int M = groupMap.Count; // number of groups
+
+        GroupInfo[] tmpGrpInfo = new GroupInfo[M];
+
+        int i = 0;
+        foreach (GroupInfo grp in groupMap.Values) tmpGrpInfo[i++] = grp;
+
+        SortBySize(tmpGrpInfo, 0, M - 1);
+
+        int w, h;
+
+        int[][] assignedSpots = new int[N][];
+        for( i = 0; i < assignedSpots.Length; i++ )
+        {
+            assignedSpots[i] = new int[N];
+        }
+
+        for (i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                assignedSpots[i][j] = 0;
+            }
+        }
+
+        int usedWidth = 0;
+        int usedHeight = 0;
+
+        List<KeyValuePair<int, int>> startingPositions = new List<KeyValuePair<int, int>>();
+        startingPositions.Add(new KeyValuePair<int, int>(0, 0));
+
+        int minExpansionArea, minExpansionIdx;
+        int currArea, proposedW, proposedH;
+        KeyValuePair<int, int> currPair;
+        int baseX, baseY, nodeIdx;
+        float randX, randY;
+
+        foreach (GroupInfo grp in tmpGrpInfo)
+        {
+           
+            minExpansionArea = N * (N+1);
+            minExpansionIdx = 0;
+            getDimensions(grp.nodeList.Count, out w, out h);
+
+            for (i = 0; i < startingPositions.Count; i++)
+            {
+                currPair = startingPositions[i];
+
+                proposedW = currPair.Key + w;
+                proposedH = currPair.Value + h;
+
+                currArea = proposedW * proposedH;
+
+                if ((proposedW <= usedWidth && proposedH <= usedHeight)
+                    || currArea < minExpansionArea )
+                {
+                    bool good = true;
+
+                    for (int x = proposedW - w; x <= proposedW; x++)
+                    {
+                        for (int y = proposedH - h; y <= proposedH; y++)
+                        {
+                            if(assignedSpots[x][y] != 0 )
+                            {
+                                good = false;
+                                x += w;
+                                y += h;
+                                break;
+                            }
+                        }
+                    }
+
+                    if( good )
+                    {
+                        minExpansionArea = currArea;
+                        minExpansionIdx = i;
+
+                        if (proposedW <= usedWidth && proposedH <= usedHeight)
+                        {
+                            i += startingPositions.Count;
+                            break;
+                        }
+                    
+                    }
+
+                }
+            }
+
+            currPair = startingPositions[minExpansionIdx];
+            baseX = currPair.Key;
+            baseY = currPair.Value;
+
+            nodeIdx = 0;
+            for (int x = baseX; x < baseX + w; x++)
+            {
+                for (int y = baseY; y < baseY + h; y++)
+                {
+                    assignedSpots[x][y] = 1;
+
+                    if( nodeIdx < grp.nodeList.Count )
+                    {
+                        randX = (Random.value - 0.5f) * 0.8f;
+                        randY = (Random.value - 0.5f) * 0.8f;
+                        NodeInfo info = grp.nodeList[nodeIdx];
+                        info.position2.x = (float)x + randX;
+                        info.position2.y = (float)(N-y) + randY;
+                    }
+                    nodeIdx++;
+                }
+            }
+
+            for (int x = baseX; x <= baseX + w; x++)
+            {
+                assignedSpots[x][baseY + h] = -1;
+            }
+
+            for (int y = baseY; y <= baseY + h; y++)
+            {
+                assignedSpots[baseX + w][y] = -1;
+            }
+
+            usedWidth = (baseX + w) > usedWidth ? (baseX + w) : usedWidth;
+            usedHeight = (baseY + h) > usedHeight ? (baseY + h) : usedHeight;
+
+            startingPositions.Add(new KeyValuePair<int, int>(baseX + w + 1, baseY));
+            startingPositions.Add(new KeyValuePair<int, int>(baseX, baseY + h + 1));
+
+            startingPositions.Remove(currPair);
+
+        }
+
+
+    }
+
+    private void getDimensions(int count, out int w, out int h)
+    {
+        float fCount = (float)count;
+        int minDim = (int)Mathf.Ceil(Mathf.Sqrt(fCount));
+        int maxDim = (count+1) / 2;
+
+        w = minDim;
+        h = minDim;
+
+        /*
+        int minArea = minDim*minDim+1;
+        int area;
+
+        w = minDim;
+        h = minDim;
+
+        for ( int mainDim = minDim; mainDim <= maxDim; mainDim++ )
+        {
+            int altDim =(int)Mathf.Ceil(fCount/(float)mainDim);
+            area = mainDim * altDim;
+            if( area < minArea )
+            {
+                minArea = area;
+                w = mainDim;
+                h = altDim;
+            }
+        }
+        Debug.Log("Count: " + count + "; MinArea: " + minArea + "; Dimensions: " + w + ", " + h);
+        */
+    }
+
+    private void clusterByGroupsInCircles()
     {
         //protected Dictionary<string, GroupInfo> groupMap = new Dictionary<string, GroupInfo>();
         int N = nodeMap.Count; // number of nodes
@@ -686,7 +865,23 @@ public class DataObjectManager : MonoBehaviour
             currGroup.center2 = centerVec;
         }
 
+        /*
+        Vector2 minPos = new Vector2(float.MaxValue, float.MaxValue);
+        Vector2 maxPos = new Vector2(float.MinValue, float.MinValue);
+        Vector2 tPos;
+        foreach (KeyValuePair<string, NodeInfo> kv in nodeMap)
+        {
+            currNode = kv.Value;
+            tPos = currNode.position2;
+            if (tPos.x < minPos.x) minPos.x = tPos.x;
+            if (tPos.y < minPos.y) minPos.y = tPos.y;
+            if (tPos.x > maxPos.x) maxPos.x = tPos.x;
+            if (tPos.y > maxPos.y) maxPos.y = tPos.y;
+        }
 
+        Debug.Log("Min: " + minPos);
+        Debug.Log("Max: " + maxPos);
+        */
     }
 
     private void projectPointsForNodesAndGroups()
