@@ -408,13 +408,11 @@ public class DataObjectManager : MonoBehaviour
 
         setDefaultParameterValues();
 
-
         // populate the nodes (derived class should do this and populate the 2D points)
         // populate the edges (derived class should do this and populate the 2D points)
 
         // cull isolated nodes (is applicable)
         if (excludeIsolatedNodes) cullIsolatedNodes();
-
 
         // populate the groupMap
         populateGroupMap();
@@ -593,26 +591,29 @@ public class DataObjectManager : MonoBehaviour
         w = minDim;
         h = minDim;
 
-        /*
-        int minArea = minDim*minDim+1;
-        int area;
+        bool searchForMinDimensions = false;
 
-        w = minDim;
-        h = minDim;
-
-        for ( int mainDim = minDim; mainDim <= maxDim; mainDim++ )
+        if( searchForMinDimensions )
         {
-            int altDim =(int)Mathf.Ceil(fCount/(float)mainDim);
-            area = mainDim * altDim;
-            if( area < minArea )
+            int minArea = minDim * minDim + 1;
+            int area;
+
+            w = minDim;
+            h = minDim;
+
+            for (int mainDim = minDim; mainDim <= maxDim; mainDim++)
             {
-                minArea = area;
-                w = mainDim;
-                h = altDim;
+                int altDim = (int)Mathf.Ceil(fCount / (float)mainDim);
+                area = mainDim * altDim;
+                if (area < minArea)
+                {
+                    minArea = area;
+                    w = mainDim;
+                    h = altDim;
+                }
             }
         }
-        Debug.Log("Count: " + count + "; MinArea: " + minArea + "; Dimensions: " + w + ", " + h);
-        */
+        
     }
 
     private void clusterByGroupsInCircles()

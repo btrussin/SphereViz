@@ -81,4 +81,16 @@ public class SliderManager : MonoBehaviour {
         valueLabel.text = currentSliderValue.ToString("0.00");
     }
 
+    public void pointColorOnContact()
+    {
+        Renderer rend = sliderCircle.GetComponent<Renderer>();
+        rend.material.color = Color.yellow;
+    }
+
+    public void pointColorOnRelease()
+    {
+        Renderer rend = sliderCircle.GetComponent<Renderer>();
+        rend.material.color = Color.white;
+    }
+
 }

@@ -9,6 +9,7 @@ public class ViveController : MonoBehaviour
     SteamVR_TrackedObject svrto;
 
     Dictionary<string, NodeManager> currCollisionNodeManagers = new Dictionary<string, NodeManager>();
+    List<GameObject> currMenuCollisionObjects = new List<GameObject>();
 
     protected CVRSystem vrSystem;
     protected VRControllerState_t state;
@@ -29,8 +30,10 @@ public class ViveController : MonoBehaviour
 
     public LineRenderer beam;
     bool beamIsActive = false;
-    bool sliderActive;
-    SliderManager currSliderManager;
+    bool sliderActiveByRay = false;
+    bool sliderActiveByContact = false;
+    SliderManager currSliderManagerByRay;
+    SliderManager currSliderManagerByContact;
     float beamLength = 5f;
     Vector3[] beamPts = new Vector3[2];
 
@@ -76,24 +79,36 @@ public class ViveController : MonoBehaviour
 
         deviceRay.direction = rayRotation * transform.forward;
 
+        if(sliderActiveByContact)
+        {
+            currSliderManagerByContact.tryMoveValue(deviceRay.origin);
+        }
         if( beamIsActive )
         {
             beamPts[0] = deviceRay.origin;
 
             RaycastHit hitInfo;
-            if( sliderActive )
+            if( sliderActiveByRay )
             {
                 beam.startColor = Color.yellow;
                 beam.endColor = Color.yellow;
                 beamPts[1] = beamPts[0] + deviceRay.direction * beamLength;
 
-                currSliderManager.tryMoveValue(beamPts[1]);
+                currSliderManagerByRay.tryMoveValue(beamPts[1]);
             }
             else if (Physics.Raycast(deviceRay.origin, deviceRay.direction, out hitInfo, 5f, menuLayerMask))
             {
                 beam.startColor = Color.yellow;
                 beam.endColor = Color.yellow;
                 beamPts[1] = beamPts[0] + deviceRay.direction * hitInfo.distance;
+    
+                if( currSliderManagerByRay == null )
+                {
+                    currSliderManagerByRay = hitInfo.transform.parent.GetComponent<SliderManager>();
+
+                    if (currSliderManagerByRay != null) currSliderManagerByRay.pointColorOnContact();
+                }
+
             }
             else
             {
@@ -101,6 +116,12 @@ public class ViveController : MonoBehaviour
                 beam.endColor = Color.white;
 
                 beamPts[1] = beamPts[0] + deviceRay.direction * 5f;
+
+                if (currSliderManagerByRay != null)
+                {
+                    currSliderManagerByRay.pointColorOnRelease();
+                    currSliderManagerByRay = null;
+                }
             }
 
             beam.SetPositions(beamPts);
@@ -154,7 +175,7 @@ public class ViveController : MonoBehaviour
                 if ((prevState.ulButtonPressed & SteamVR_Controller.ButtonMask.Trigger) == 0)
                 {
                     // trigger began being pulled
-                    if(currCollisionNodeManagers.Count < 1 )
+                    if (currCollisionNodeManagers.Count < 1)
                     {
                         beam.gameObject.SetActive(true);
                         beamIsActive = true;
@@ -164,20 +185,25 @@ public class ViveController : MonoBehaviour
                 if (prevState.rAxis1.x < 1.0f && state.rAxis1.x == 1.0f)
                 {
                     // trigger just now pulled to the max
+                    if (currSliderManagerByContact != null)
+                    {
+                        sliderActiveByContact = true;
+                    }
 
                     // this is menu logic
                     RaycastHit hitInfo;
 
                     if (Physics.Raycast(deviceRay.origin, deviceRay.direction, out hitInfo, 10f, menuLayerMask))
                     {
-                        currSliderManager = hitInfo.transform.parent.GetComponent<SliderManager>();
+                        currSliderManagerByRay = hitInfo.transform.parent.GetComponent<SliderManager>();
                         HLButtonManger buttonManager = hitInfo.collider.gameObject.GetComponent<HLButtonManger>();
                         CloseButtonManager closeManager = hitInfo.collider.gameObject.GetComponent<CloseButtonManager>();
 
-                        if (currSliderManager != null)
+                        if (currSliderManagerByRay != null)
                         {
+                            currSliderManagerByRay.pointColorOnContact();
                             beamLength = hitInfo.distance;
-                            sliderActive = true;
+                            sliderActiveByRay = true;
                         }
                         else if (buttonManager != null) buttonManager.takeAction();
                         else if (closeManager != null) closeManager.takeAction();
@@ -187,8 +213,25 @@ public class ViveController : MonoBehaviour
                             anim.setAltColors();
                             dataManager.deselectAllNodes();
                         }
- 
+
                     }
+
+                    // process the menu objects that are currently colliding with the controller
+                    foreach(GameObject obj in currMenuCollisionObjects)
+                    {
+                        HLButtonManger buttonManager = obj.GetComponent<HLButtonManger>();
+                        CloseButtonManager closeManager = obj.GetComponent<CloseButtonManager>();
+
+                        if (buttonManager != null) buttonManager.takeAction();
+                        else if (closeManager != null) closeManager.takeAction();
+                        else if (obj.name.Equals("Deselect"))
+                        {
+                            DeselectButtonAnimation anim = obj.GetComponent<DeselectButtonAnimation>();
+                            anim.setAltColors();
+                            dataManager.deselectAllNodes();
+                        }
+                    }
+
 
                     int count = getNumCurvesAffectedByPulling() + otherController.getNumCurvesAffectedByPulling();
                     bool restrictCurveRedraw = count >= maxNumberCurvesToRedraw;
@@ -207,30 +250,48 @@ public class ViveController : MonoBehaviour
                 else if (prevState.rAxis1.x == 1.0f && state.rAxis1.x < 1.0f)
                 {
                     // trigger just now released from the max
-                    sliderActive = false;
 
                     if (currCollisionNodeManagers.Count > 0)
                     {
                         foreach (NodeManager nm in currCollisionNodeManagers.Values)
                         {
                             MoveScaleObject moveObj = nm.gameObject.GetComponent<MoveScaleObject>();
-                            if( moveObj != null ) moveObj.releaseSphereWithObject(gameObject);
+                            if (moveObj != null) moveObj.releaseSphereWithObject(gameObject);
                             nm.endPullEffect();
                         }
                     }
 
-                    if( currSliderManager != null )
+                    if (currSliderManagerByRay != null)
                     {
-                        if (currSliderManager.gameObject.name.Equals("slider_nodeSize")) dataManager.recalculateNodeSizes();
-                        else if (currSliderManager.gameObject.name.Equals("slider_barRadius")) dataManager.recalculateEdgeRadii();
-                        else if (currSliderManager.gameObject.name.Equals("slider_innerConnDist")) dataManager.repopulateEdges();
-                        else if (currSliderManager.gameObject.name.Equals("slider_outerConnDist")) dataManager.repopulateEdges();
-                        else if (currSliderManager.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
-                        else if (currSliderManager.gameObject.name.Equals("slider_collSize")) dataManager.updateControllerColliderScale();
+                        if (currSliderManagerByRay.gameObject.name.Equals("slider_nodeSize")) dataManager.recalculateNodeSizes();
+                        else if (currSliderManagerByRay.gameObject.name.Equals("slider_barRadius")) dataManager.recalculateEdgeRadii();
+                        else if (currSliderManagerByRay.gameObject.name.Equals("slider_innerConnDist")) dataManager.repopulateEdges();
+                        else if (currSliderManagerByRay.gameObject.name.Equals("slider_outerConnDist")) dataManager.repopulateEdges();
+                        else if (currSliderManagerByRay.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
+                        else if (currSliderManagerByRay.gameObject.name.Equals("slider_collSize")) dataManager.updateControllerColliderScale();
 
-                        currSliderManager = null;
+                        currSliderManagerByRay.pointColorOnRelease();
+                        sliderActiveByRay = false;
+
+                        currSliderManagerByRay = null;
                     }
-                    
+
+
+                    if (currSliderManagerByContact )
+                    {
+                        if (currSliderManagerByContact.gameObject.name.Equals("slider_nodeSize")) dataManager.recalculateNodeSizes();
+                        else if (currSliderManagerByContact.gameObject.name.Equals("slider_barRadius")) dataManager.recalculateEdgeRadii();
+                        else if (currSliderManagerByContact.gameObject.name.Equals("slider_innerConnDist")) dataManager.repopulateEdges();
+                        else if (currSliderManagerByContact.gameObject.name.Equals("slider_outerConnDist")) dataManager.repopulateEdges();
+                        else if (currSliderManagerByContact.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
+                        else if (currSliderManagerByContact.gameObject.name.Equals("slider_collSize")) dataManager.updateControllerColliderScale();
+
+                        currSliderManagerByContact.pointColorOnRelease();
+                        sliderActiveByContact = false;
+
+                        currSliderManagerByContact = null;
+                    }
+
                 }
             }
             else if((prevState.ulButtonPressed & SteamVR_Controller.ButtonMask.Trigger) != 0)
@@ -292,6 +353,18 @@ public class ViveController : MonoBehaviour
             connMan.displayText(collision.contacts[0].point);
             return;
         }
+
+        SliderManager sliderMan = collision.gameObject.transform.parent.gameObject.GetComponent<SliderManager>();
+        if (sliderMan != null)
+        {
+            sliderMan.pointColorOnContact();
+            currSliderManagerByContact = sliderMan;
+            return;
+        }
+
+        currMenuCollisionObjects.Add(collision.gameObject);
+
+        currMenuCollisionObjects.Remove(collision.gameObject);
     }
 
     void OnCollisionExit(Collision collision)
@@ -310,8 +383,11 @@ public class ViveController : MonoBehaviour
         if (connMan != null)
         {
             connMan.hideText();
+            currSliderManagerByContact = null;
             return;
         }
+
+        if(currMenuCollisionObjects.Contains(collision.gameObject)) currMenuCollisionObjects.Remove(collision.gameObject);
     }
 
     public int getNumCurvesAffectedByPulling()
