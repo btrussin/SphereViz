@@ -36,6 +36,7 @@ public class DataObjectManager : MonoBehaviour
     public float timeToSnapBack = 2.0f;
 
     public GameObject nodePrefab;
+    public GameObject groupNodePrefab;
     public GameObject innerNodePrefab;
     public GameObject edgePrefab;
     public GameObject bezierPrefab;
@@ -46,6 +47,7 @@ public class DataObjectManager : MonoBehaviour
     public GameObject popupTextPrefab;
 
     public GameObject projSphere;
+    public GameObject projSphereCenterReference;
 
     //public bool useBezierBars = true;
     //public bool useBSplineBars = true;
@@ -60,6 +62,7 @@ public class DataObjectManager : MonoBehaviour
     public SliderManager slider_outerConnDist;
     public SliderManager slider_gazeAngle;
     public SliderManager slider_collSize;
+    public SliderManager slider_sphereViz;
 
     public ViveController rightController;
     public ViveController leftController;
@@ -113,6 +116,7 @@ public class DataObjectManager : MonoBehaviour
 
     public float gazeAngle = 8f;
     public float contrColliderScale = 1f;
+    public float sphereVisibility = 0.085f;
 
     public SubNodeDisplayType subNodeDisplayType = SubNodeDisplayType.BLOOM;
 
@@ -130,6 +134,8 @@ public class DataObjectManager : MonoBehaviour
 
         slider_collSize.suggestValue(contrColliderScale);
 
+        slider_sphereViz.suggestValue(sphereVisibility);
+
         updateParameterValues();
     }
 
@@ -141,6 +147,7 @@ public class DataObjectManager : MonoBehaviour
         barRadiusScale = slider_barRadius.getValue();
         gazeAngle = slider_gazeAngle.getValue();
         contrColliderScale = slider_collSize.getValue();
+        sphereVisibility = slider_sphereViz.getValue();
     }
 
     public void updateGazeFactors()
@@ -176,7 +183,7 @@ public class DataObjectManager : MonoBehaviour
 
     }
 
-
+    float currVis = 0.2f;
     
     // Update is called once per frame
     void Update()
@@ -193,8 +200,6 @@ public class DataObjectManager : MonoBehaviour
             toggleSubNodes(tNodeArray);
 
         }
-
-
 
         if ( doFirstPosition )
         {
@@ -443,6 +448,7 @@ public class DataObjectManager : MonoBehaviour
 
         populatePts();
         populateEdges();
+        populateGroupNodes();
     }
 
     private void clusterByGroupsInSquares()
@@ -887,23 +893,29 @@ public class DataObjectManager : MonoBehaviour
 
     private void projectPointsForNodesAndGroups()
     {
-        NodeInfo currNode;
         foreach (KeyValuePair<string, NodeInfo> kv in nodeMap)
         {
-            currNode = kv.Value;
-            currNode.position3 = getProjectedPoint(currNode.position2);
-            currNode.sphereCoords = get3DPointProjectionSphereCoords(currNode.position2);
+            updateProjectedPointsForNodeInfo(kv.Value);
         }
 
-        GroupInfo currGroup;
         foreach (KeyValuePair<string, GroupInfo> kv in groupMap)
         {
-            currGroup = kv.Value;
-            currGroup.center3 = getProjectedPoint(currGroup.center2);
-            currGroup.sphereCoords = get3DPointProjectionSphereCoords(currGroup.center2);
+            updateProjectedPointsForGroupInfo(kv.Value);
         }
 
 
+    }
+
+    public void updateProjectedPointsForNodeInfo(NodeInfo currNode)
+    {
+        currNode.position3 = getProjectedPoint(currNode.position2);
+        currNode.sphereCoords = get3DPointProjectionSphereCoords(currNode.position2);
+    }
+
+    public void updateProjectedPointsForGroupInfo(GroupInfo currGroup)
+    {
+        currGroup.center3 = getProjectedPoint(currGroup.center2);
+        currGroup.sphereCoords = get3DPointProjectionSphereCoords(currGroup.center2);
     }
 
     private Vector3 getProjectedPoint(Vector2 pt)
@@ -1030,6 +1042,40 @@ public class DataObjectManager : MonoBehaviour
 
     }
 
+    private void populateGroupNodes()
+    {
+
+        foreach ( KeyValuePair<string, GroupInfo> kv in groupMap )
+        {
+            GroupInfo currGrpInfo = kv.Value;
+            GameObject node = (GameObject)Instantiate(groupNodePrefab);
+            GroupManager grpManager = node.GetComponent<GroupManager>();
+            Vector3 centerToPt = projSphere.transform.TransformPoint(currGrpInfo.center3) - projSphere.transform.position;
+            centerToPt.Normalize();
+
+            grpManager.dataObjManager = this;
+            grpManager.groupInfo = currGrpInfo;
+            grpManager.sphereCenterReference = projSphereCenterReference;
+
+            //node.transform.position = projSphere.transform.position + centerToPt * projSphere.transform.localScale.x * 0.08f;
+            node.transform.position = projSphere.transform.position + centerToPt * projSphere.transform.localScale.x * radius * 0.8f;
+
+            node.transform.SetParent(projSphere.transform);
+
+            grpManager.init(currGrpInfo.name);
+            Renderer rend = node.GetComponent<Renderer>();
+            Color targetColor = groupColorMap[kv.Key];
+            targetColor.a = 0.25f;
+            rend.material.color = targetColor;
+
+            foreach( NodeInfo ni in currGrpInfo.nodeList)
+            {
+                NodeManager nm = nodeManagerMap[ni.name];
+                grpManager.addNode(ni, nm.gameObject);
+            }
+        }
+    }
+
 
     private void populatePts()
     {
@@ -1061,7 +1107,7 @@ public class DataObjectManager : MonoBehaviour
             manager.nodeName = currNodeInfo.name;
             manager.setSubNodeNames(currNodeInfo.subElements);
             manager.nodeInfo = currNodeInfo;
-            manager.positionOnSphere = currNodeInfo.position3;
+            //manager.positionOnSphere = currNodeInfo.position3;
             manager.baseSphereTransform = projSphere.transform;
             manager.timeToSnapBack = timeToSnapBack;
 
@@ -1073,13 +1119,13 @@ public class DataObjectManager : MonoBehaviour
             popupText.transform.position = point.transform.position;
             popupText.transform.SetParent(point.transform);
 
-            PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
-            TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
+            PopupTextFade popupTextFade = popupText.GetComponent<PopupTextFade>();
+            TextMesh tMesh = popupTextFade.GetComponent<TextMesh>();
             tMesh.text = currNodeInfo.name;
 
-            popupTextObject.parentObject = point;
+            popupTextFade.parentObject = point;
 
-            if (popupTextObject != null) gazeScript.addTextObject(popupTextObject);
+            if (popupTextFade != null) gazeScript.addTextObject(popupTextFade);
             else Debug.Log("No Popup-text stuff");
 
             nodeList.Add(point);
@@ -1666,13 +1712,17 @@ public class DataObjectManager : MonoBehaviour
 
     public void repopulateEdges()
     {
+        repopulateEdges(edgeList);
+    }
+
+    public void repopulateEdges(List<EdgeInfo> list)
+    {
         updateParameterValues();
 
-        foreach (EdgeInfo edge in edgeList) edge.updateNextFrame = true;
+        foreach (EdgeInfo edge in list) edge.updateNextFrame = true;
 
         activesUpdateEdges = true;
     }
-
 
     private void recalcAllEdges()
     {
@@ -1703,108 +1753,102 @@ public class DataObjectManager : MonoBehaviour
         {
             if (!edge.updateNextFrame) continue;
           
-
             if (numUpdatedThisFrame >= maxCurvesUpdatedPerFrame) break;
-
 
             numUpdatedThisFrame++;
 
             edgeObj = edge.edgeGameObject;
             edge.updateNextFrame = false;
 
-            if (true) {
+            bezBarScript = edgeObj.GetComponent<BezierBar>();
+            splineScript = edgeObj.GetComponent<BasisSpline>();
 
-                bezBarScript = edgeObj.GetComponent<BezierBar>();
-                splineScript = edgeObj.GetComponent<BasisSpline>();
+            if (edge.isSameGroup())
+            {
+                basePts = bezBarScript.controlPoints;
 
-                if (edge.isSameGroup())
+                if (interpolateSpherical)
                 {
-                    basePts = bezBarScript.controlPoints;
+                    basePts[0] = edge.startNode.sphereCoords;
+                    basePts[1] = basePts[0];
+                    basePts[1].z *= bezEdgeDist; // the radius from the sphere center
 
-                    if (interpolateSpherical)
-                    {
-                        basePts[0] = edge.startNode.sphereCoords;
-                        basePts[1] = basePts[0];
-                        basePts[1].z *= bezEdgeDist; // the radius from the sphere center
-
-                        basePts[3] = edge.endNode.sphereCoords;
-                        basePts[2] = basePts[3];
-                        basePts[2].z *= bezEdgeDist;
-                    }
-                    else
-                    {
-                        basePts[0] = edge.startNode.position3;
-                        basePts[1] = basePts[0] * bezEdgeDist;
-
-                        basePts[3] = edge.endNode.position3;
-                        basePts[2] = basePts[3] * bezEdgeDist;
-                    }
-
-                    edgeObj.transform.SetParent(null);
-
-                    bezBarScript.radius = barRadius;
-                    bezBarScript.useSphericalInterpolation = interpolateSpherical;
-                    bezBarScript.init(basePts);
-
-                    edgeObj.transform.SetParent(projSphere.transform);
+                    basePts[3] = edge.endNode.sphereCoords;
+                    basePts[2] = basePts[3];
+                    basePts[2].z *= bezEdgeDist;
                 }
                 else
                 {
-                    fromGroup = groupMap[edge.startNode.groupName];
-                    toGroup = groupMap[edge.endNode.groupName];
+                    basePts[0] = edge.startNode.position3;
+                    basePts[1] = basePts[0] * bezEdgeDist;
 
-                    if (interpolateSpherical)
-                    {
-                        tVec1 = fromGroup.sphereCoords;
-                        tVec2 = toGroup.sphereCoords;
-
-                        basePts = splineScript.controlPoints;
-
-                        basePts[0] = edge.startNode.sphereCoords;  // start point
-                        basePts[6] = edge.endNode.sphereCoords; // end point
-
-                        basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;
-                        basePts[1].z *= splineEdgeDistInner;  // group1 node radius 1.1*radius
-                        basePts[2].z *= splineEdgeDistOuter;  // group1 node radius 1.4*radius
-
-                        basePts[4] = basePts[5] = tVec2 * groupWeight + basePts[6] * nodeWeight;
-                        basePts[4].z *= splineEdgeDistOuter;  // group2 node radius 1.4*radius
-                        basePts[5].z *= splineEdgeDistInner;  // group2 node radius 1.1*radius
-
-                        basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
-                    }
-                    else
-                    {
-                        tVec1 = fromGroup.center3;
-                        tVec2 = toGroup.center3;
-
-                        basePts = new Vector3[7];
-
-
-                        basePts[0] = edge.startNode.position3;
-                        basePts[6] = edge.endNode.position3;
-
-                        basePts[1] = tVec1 * splineEdgeDistInner;
-                        basePts[2] = tVec1 * splineEdgeDistOuter;
-
-                        basePts[4] = tVec2 * splineEdgeDistOuter;
-                        basePts[5] = tVec2 * splineEdgeDistInner;
-
-                        basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
-
-                    }
-
-                    edgeObj.transform.SetParent(null);
-
-                    splineScript.radius = barRadius;
-                    splineScript.useSphericalInterpolation = interpolateSpherical;
-                    splineScript.init(basePts);
-
-                    edgeObj.transform.SetParent(projSphere.transform);
+                    basePts[3] = edge.endNode.position3;
+                    basePts[2] = basePts[3] * bezEdgeDist;
                 }
+
+                edgeObj.transform.SetParent(null);
+
+                bezBarScript.radius = barRadius;
+                bezBarScript.useSphericalInterpolation = interpolateSpherical;
+                bezBarScript.init(basePts);
+
+                edgeObj.transform.SetParent(projSphere.transform);
+            }
+            else
+            {
+                fromGroup = groupMap[edge.startNode.groupName];
+                toGroup = groupMap[edge.endNode.groupName];
+
+                if (interpolateSpherical)
+                {
+                    tVec1 = fromGroup.sphereCoords;
+                    tVec2 = toGroup.sphereCoords;
+
+                    basePts = splineScript.controlPoints;
+
+                    basePts[0] = edge.startNode.sphereCoords;  // start point
+                    basePts[6] = edge.endNode.sphereCoords; // end point
+
+                    basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;
+                    basePts[1].z *= splineEdgeDistInner;  // group1 node radius 1.1*radius
+                    basePts[2].z *= splineEdgeDistOuter;  // group1 node radius 1.4*radius
+
+                    basePts[4] = basePts[5] = tVec2 * groupWeight + basePts[6] * nodeWeight;
+                    basePts[4].z *= splineEdgeDistOuter;  // group2 node radius 1.4*radius
+                    basePts[5].z *= splineEdgeDistInner;  // group2 node radius 1.1*radius
+
+                    basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+                }
+                else
+                {
+                    tVec1 = fromGroup.center3;
+                    tVec2 = toGroup.center3;
+
+                    basePts = new Vector3[7];
+
+
+                    basePts[0] = edge.startNode.position3;
+                    basePts[6] = edge.endNode.position3;
+
+                    basePts[1] = tVec1 * splineEdgeDistInner;
+                    basePts[2] = tVec1 * splineEdgeDistOuter;
+
+                    basePts[4] = tVec2 * splineEdgeDistOuter;
+                    basePts[5] = tVec2 * splineEdgeDistInner;
+
+                    basePts[3] = (basePts[4] + basePts[2]) * 0.5f;
+
+                }
+
+                edgeObj.transform.SetParent(null);
+
+                splineScript.radius = barRadius;
+                splineScript.useSphericalInterpolation = interpolateSpherical;
+                splineScript.init(basePts);
+
+                edgeObj.transform.SetParent(projSphere.transform);
             }
 
-            
         }
 
         if (numUpdatedThisFrame == 0) activesUpdateEdges = false;
@@ -1882,8 +1926,6 @@ public class DataObjectManager : MonoBehaviour
         }
 
 
-
-
     }
 
     public void recalculateEdgeRadii()
@@ -1932,8 +1974,6 @@ public class DataObjectManager : MonoBehaviour
                 }
             }
         }
-
-
 
         // TODO: update all sub node connections
         List<GameObject> subObjectList;
@@ -2235,7 +2275,13 @@ public class DataObjectManager : MonoBehaviour
         return results;
     }
 
-
+    public void updateSphereVisibility()
+    {
+        updateParameterValues();
+        Color c = Color.white;
+        c.a = sphereVisibility;
+        projSphere.GetComponent<Renderer>().material.color = c;
+    }
 
 }
 
@@ -2293,4 +2339,6 @@ public class EdgeInfo
         return (startNode.name.Equals(otherInfo.startNode.name) && endNode.name.Equals(otherInfo.endNode.name)) ||
             (startNode.name.Equals(otherInfo.endNode.name) && endNode.name.Equals(otherInfo.startNode.name));
     }
+
+
 }

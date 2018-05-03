@@ -37,6 +37,8 @@ public class ViveController : MonoBehaviour
     float beamLength = 5f;
     Vector3[] beamPts = new Vector3[2];
 
+    GroupManager currGrpManager = null;
+
     public GameObject mainMenu;
     public ViveController otherController;
     public bool menuIsAttached = false;
@@ -243,6 +245,14 @@ public class ViveController : MonoBehaviour
                         nm.beginPullEffect(dataManager.getCurrBarRadius(), restrictCurveRedraw);
                     }
 
+                    if( currGrpManager != null )
+                    {
+                        // move the group
+                        dataManager.deselectAllNodes();
+                        currGrpManager.gameObject.GetComponent<MoveScaleObject>().grabSphereWithObject(gameObject);
+                        currGrpManager.startMove();
+                    }
+
                     if (restrictCurveRedraw) Debug.Log("Restricting the Curves: " + count);
 
 
@@ -261,6 +271,16 @@ public class ViveController : MonoBehaviour
                         }
                     }
 
+                    if (currGrpManager != null)
+                    {
+                        // move the group
+                        currGrpManager.gameObject.GetComponent<MoveScaleObject>().releaseSphereWithObject(gameObject);
+                        currGrpManager.endActive();
+                        currGrpManager.endMove();
+                        currGrpManager = null;
+                        dataManager.repopulateEdges();
+                    }
+
                     if (currSliderManagerByRay != null)
                     {
                         if (currSliderManagerByRay.gameObject.name.Equals("slider_nodeSize")) dataManager.recalculateNodeSizes();
@@ -269,6 +289,7 @@ public class ViveController : MonoBehaviour
                         else if (currSliderManagerByRay.gameObject.name.Equals("slider_outerConnDist")) dataManager.repopulateEdges();
                         else if (currSliderManagerByRay.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
                         else if (currSliderManagerByRay.gameObject.name.Equals("slider_collSize")) dataManager.updateControllerColliderScale();
+                        else if (currSliderManagerByRay.gameObject.name.Equals("slider_sphereViz")) dataManager.updateSphereVisibility();
 
                         currSliderManagerByRay.pointColorOnRelease();
                         sliderActiveByRay = false;
@@ -285,6 +306,7 @@ public class ViveController : MonoBehaviour
                         else if (currSliderManagerByContact.gameObject.name.Equals("slider_outerConnDist")) dataManager.repopulateEdges();
                         else if (currSliderManagerByContact.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
                         else if (currSliderManagerByContact.gameObject.name.Equals("slider_collSize")) dataManager.updateControllerColliderScale();
+                        else if (currSliderManagerByContact.gameObject.name.Equals("slider_sphereViz")) dataManager.updateSphereVisibility();
 
                         currSliderManagerByContact.pointColorOnRelease();
                         sliderActiveByContact = false;
@@ -336,7 +358,9 @@ public class ViveController : MonoBehaviour
   
     void OnCollisionEnter(Collision collision)
     {
-        NodeManager nodeMan = collision.gameObject.GetComponent<NodeManager>();
+        GameObject firstGameObject = collision.gameObject;
+
+        NodeManager nodeMan = firstGameObject.GetComponent<NodeManager>();
         if( nodeMan != null )
         {
             nodeMan.addCollision();
@@ -345,31 +369,43 @@ public class ViveController : MonoBehaviour
             return;
         }
 
-        //ConnectionManager connMan = collision.gameObject.GetComponent<ConnectionManager>();
-        ConnectionManager connMan = collision.gameObject.transform.parent.gameObject.GetComponent<ConnectionManager>();
-        if (connMan != null)
+        GroupManager grpMan = firstGameObject.GetComponent<GroupManager>();
+        if (grpMan != null)
         {
-            //connMan.displayText(gameObject.transform.position + gameObject.transform.forward * 0.08f);
-            connMan.displayText(collision.contacts[0].point);
+            currGrpManager = grpMan;
+            currGrpManager.startActive();
             return;
         }
 
-        SliderManager sliderMan = collision.gameObject.transform.parent.gameObject.GetComponent<SliderManager>();
-        if (sliderMan != null)
+        GameObject secondGameObject = collision.gameObject.transform.parent != null ? collision.gameObject.transform.parent.gameObject : null;
+        if ( secondGameObject != null )
         {
-            sliderMan.pointColorOnContact();
-            currSliderManagerByContact = sliderMan;
-            return;
+            ConnectionManager connMan = secondGameObject.GetComponent<ConnectionManager>();
+            if (connMan != null)
+            {
+                //connMan.displayText(gameObject.transform.position + gameObject.transform.forward * 0.08f);
+                connMan.displayText(collision.contacts[0].point);
+                return;
+            }
+
+            SliderManager sliderMan = secondGameObject.GetComponent<SliderManager>();
+            if (sliderMan != null)
+            {
+                sliderMan.pointColorOnContact();
+                currSliderManagerByContact = sliderMan;
+                return;
+            }
+
         }
 
         currMenuCollisionObjects.Add(collision.gameObject);
-
-        currMenuCollisionObjects.Remove(collision.gameObject);
     }
 
     void OnCollisionExit(Collision collision)
     {
-        NodeManager nodeMan = collision.gameObject.GetComponent<NodeManager>();
+        GameObject firstGameObject = collision.gameObject;
+
+        NodeManager nodeMan = firstGameObject.GetComponent<NodeManager>();
         if (nodeMan != null)
         {
             nodeMan.subtractCollision();
@@ -378,16 +414,28 @@ public class ViveController : MonoBehaviour
             return;
         }
 
-        //ConnectionManager connMan = collision.gameObject.GetComponent<ConnectionManager>();
-        ConnectionManager connMan = collision.gameObject.transform.parent.gameObject.GetComponent<ConnectionManager>();
-        if (connMan != null)
+        GroupManager grpMan = firstGameObject.GetComponent<GroupManager>();
+        if (grpMan != null)
         {
-            connMan.hideText();
-            currSliderManagerByContact = null;
+            grpMan.endActive();
+            currGrpManager = null;
             return;
         }
 
-        if(currMenuCollisionObjects.Contains(collision.gameObject)) currMenuCollisionObjects.Remove(collision.gameObject);
+        GameObject secondGameObject = collision.gameObject.transform.parent != null ? collision.gameObject.transform.parent.gameObject : null;
+
+        if( secondGameObject != null )
+        {
+            ConnectionManager connMan = secondGameObject.GetComponent<ConnectionManager>();
+            if (connMan != null)
+            {
+                connMan.hideText();
+                currSliderManagerByContact = null;
+                return;
+            }
+        }
+
+        if (currMenuCollisionObjects.Contains(collision.gameObject)) currMenuCollisionObjects.Remove(collision.gameObject);
     }
 
     public int getNumCurvesAffectedByPulling()

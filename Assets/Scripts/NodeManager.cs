@@ -20,7 +20,7 @@ public class NodeManager : MonoBehaviour {
 
     int numCollisions = 0;
     bool origRotationSet = false;
-    public Vector3 positionOnSphere = Vector3.zero;
+    //public Vector3 positionOnSphere = Vector3.zero;
     Quaternion origRotation;
     Quaternion snapRotation;
     Vector3 snapPosition;
@@ -194,7 +194,8 @@ public class NodeManager : MonoBehaviour {
 
         if (stretchCurve == null) return;
 
-        curveBasePoints[0] = baseSphereTransform.TransformPoint(positionOnSphere);
+        //curveBasePoints[0] = baseSphereTransform.TransformPoint(positionOnSphere);
+        curveBasePoints[0] = baseSphereTransform.TransformPoint(nodeInfo.position3);
         curveBasePoints[3] = gameObject.transform.position;
 
         Vector3 centerVec = baseSphereTransform.position - curveBasePoints[0];
@@ -222,7 +223,8 @@ public class NodeManager : MonoBehaviour {
 
         gameObject.transform.localRotation = Quaternion.Slerp(snapRotation, origRotation, snapTime * timeToSnapBack_inv);
 
-        gameObject.transform.position = Vector3.Slerp(snapPosition, baseSphereTransform.TransformPoint(positionOnSphere), snapTime * timeToSnapBack_inv);
+        //gameObject.transform.position = Vector3.Slerp(snapPosition, baseSphereTransform.TransformPoint(positionOnSphere), snapTime * timeToSnapBack_inv);
+        gameObject.transform.position = Vector3.Slerp(snapPosition, baseSphereTransform.TransformPoint(nodeInfo.position3), snapTime * timeToSnapBack_inv);
 
         if (snapTime >= timeToSnapBack)
         {

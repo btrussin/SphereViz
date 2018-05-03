@@ -143,4 +143,37 @@ public class Utils {
 
         return pts;
     }
+
+
+    public static void getYZSphericalCoordinates(Transform baseTrans, Transform targetTrans, out float y, out float z)
+    {
+        Vector3 toNode = targetTrans.position - baseTrans.position;
+        toNode.Normalize();
+
+        Vector3 projX = Vector3.Dot(toNode, baseTrans.right) * baseTrans.right;
+        Vector3 projZ = Vector3.Dot(toNode, baseTrans.forward) * baseTrans.forward;
+
+
+        Vector3 projZX = projX + projZ;
+        projZX.Normalize();
+        y = Mathf.Acos(Vector3.Dot(baseTrans.right, projZX)) * 180f / Mathf.PI;
+        if (Vector3.Dot(Vector3.Cross(projZX, baseTrans.right), baseTrans.up) > 0f) y = -y;
+
+        Quaternion firstRotation = Quaternion.Euler(0f, y, 0f);
+        Vector3 t_right = firstRotation * baseTrans.right;
+        t_right.Normalize();
+        Vector3 t_up = firstRotation * baseTrans.up;
+        t_up.Normalize();
+        Vector3 t_forward = firstRotation * baseTrans.forward;
+        t_forward.Normalize();
+
+        projX = Vector3.Dot(toNode, t_right) * t_right;
+        Vector3 projY = Vector3.Dot(toNode, t_up) * t_up;
+
+
+        Vector3 projXY = projX + projY;
+        projXY.Normalize();
+        z = Mathf.Acos(Vector3.Dot(t_right, projXY)) * 180f / Mathf.PI;
+        if (Vector3.Dot(Vector3.Cross(t_right, projXY), t_forward) < 0f) z = -z;
+    }
 }
