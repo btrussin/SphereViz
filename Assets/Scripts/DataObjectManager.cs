@@ -122,6 +122,8 @@ public class DataObjectManager : MonoBehaviour
 
     public bool invertFarEdgeGradient = true;
 
+    public bool useGroupNodes = true;
+
     protected void setDefaultParameterValues()
     {
         slider_innerConnDist.suggestValue(innerGroupEdgeDist);
@@ -448,7 +450,8 @@ public class DataObjectManager : MonoBehaviour
 
         populatePts();
         populateEdges();
-        populateGroupNodes();
+
+        if( useGroupNodes ) populateGroupNodes();
     }
 
     private void clusterByGroupsInSquares()
