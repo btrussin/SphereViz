@@ -20,22 +20,29 @@ public class BezierBar : BaseCurve
         init(bPts, transform);
     }
 
-    public new void init(Vector3[] bPts, Transform transform = null)
+    public new void init(Vector3[] ctrlPts, Transform transform = null)
     {
         
-        controlPoints = new Vector3[bPts.Length];
-        for (int i = 0; i < bPts.Length; i++)
+        controlPoints = new Vector3[ctrlPts.Length];
+        for (int i = 0; i < ctrlPts.Length; i++)
         {
-            controlPoints[i] = bPts[i];
+            controlPoints[i] = ctrlPts[i];
         }
 
         if (useSphericalInterpolation)
         {
-            Vector3[] tmpPoints = Utils.getBezierPoints(bPts, numMajorDivisions);
+            Vector3[] tmpPoints = Utils.getBezierPoints(ctrlPts, numMajorDivisions);
             basePoints = new Vector3[tmpPoints.Length];
             baseTangents = new Vector3[tmpPoints.Length];
             Vector3 tmpVec;
             Quaternion rotation;
+
+            if( transform != null )
+            {
+
+            }
+
+            /*
             for (int i = 0; i < basePoints.Length; i++)
             {
                 tmpVec = new Vector3(tmpPoints[i].z, 0.0f, 0.0f);
@@ -50,6 +57,7 @@ public class BezierBar : BaseCurve
                     basePoints[i] = transform.TransformPoint(basePoints[i]);
                 }
             }
+            */
 
             for (int i = 1; i < basePoints.Length; i++)
             {
@@ -62,7 +70,7 @@ public class BezierBar : BaseCurve
         }
         else
         {
-            basePoints = Utils.getBezierPoints(bPts, numMajorDivisions);
+            basePoints = Utils.getBezierPoints(ctrlPts, numMajorDivisions);
 
             if (transform != null)
             {
@@ -72,7 +80,7 @@ public class BezierBar : BaseCurve
                 }
             }
 
-            baseTangents = Utils.getBezierPointTangents(bPts, numMajorDivisions);
+            baseTangents = Utils.getBezierPointTangents(ctrlPts, numMajorDivisions);
         }
 
         populateCurveBarMesh(basePoints, baseTangents);

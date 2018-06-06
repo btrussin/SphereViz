@@ -102,30 +102,35 @@ public class GroupManager : MonoBehaviour {
             info = kv.Key;
             node = kv.Value;
 
+            node.transform.SetParent(null);
+
             centerToPt = node.transform.position - sphereCenter;
             centerToPt.Normalize();
 
-            node.transform.position = projSphereTrans.localScale.x * 0.5f * centerToPt + sphereCenter;
+            node.transform.position = sphereCenter + projSphereTrans.localScale.x * centerToPt;
             Utils.getYZSphericalCoordinates(projSphereTrans, node.transform, out y, out z);
 
-            info.position2.x = y / 90f;
-            info.position2.y = z / 60f;
+            info.position2.x = y / dataObjManager.projHorizontalAngle;
+            info.position2.y = z / dataObjManager.projVerticalAngle;
             dataObjManager.updateProjectedPointsForNodeInfo(info);
+            
             node.transform.SetParent(projSphereTrans);
         }
-
 
         centerToPt = transform.position - sphereCenter;
         centerToPt.Normalize();
 
+        transform.position = sphereCenter + centerToPt * projSphereTrans.localScale.x * dataObjManager.radius * 0.8f;
         Utils.getYZSphericalCoordinates(projSphereTrans, transform, out y, out z);
 
-        groupInfo.center2.x = y / 90f;
-        groupInfo.center2.y = z / 60f;
+        groupInfo.center2.x = y / dataObjManager.projHorizontalAngle;
+        groupInfo.center2.y = z / dataObjManager.projVerticalAngle;
         dataObjManager.updateProjectedPointsForGroupInfo(groupInfo);
 
-        transform.position = sphereCenter + centerToPt * projSphereTrans.localScale.x * dataObjManager.radius * 0.8f;
+        
 
         gameObject.transform.SetParent(projSphereTrans);
+
+        Debug.Log("Group Distance from center: " + projSphereTrans.localScale.x);
     }
 }

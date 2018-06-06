@@ -39,7 +39,7 @@ public class ConnectionManager : MonoBehaviour {
     MeshRenderer meshRendA;
     MeshRenderer meshRendB;
 
-    public bool neverShowMeshRenderers = false;
+    public bool dontToggleMeshRenderes = false;
 
     public void displayText(Vector3 pt)
     {
@@ -109,19 +109,21 @@ public class ConnectionManager : MonoBehaviour {
 
     public void assignMeshRenderers()
     {
+        if (dontToggleMeshRenderes) return;
         meshRendA = subPointA.GetComponent<MeshRenderer>();
         meshRendB = subPointB.GetComponent<MeshRenderer>();
     }
 
     public void hideEndSubNodes()
     {
+        if (dontToggleMeshRenderes) return;
         meshRendA.enabled = false;
         meshRendB.enabled = false;
     }
 
     public void showEndSubNodes()
     {
-        if (neverShowMeshRenderers) return;
+        if (dontToggleMeshRenderes) return;
         meshRendA.enabled = true;
         meshRendB.enabled = true;
     }

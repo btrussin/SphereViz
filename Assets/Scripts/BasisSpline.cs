@@ -27,12 +27,12 @@ public class BasisSpline : BaseCurve
         init(bPts, transform);
     }
 
-    public new void init(Vector3[] bPts, Transform transform = null)
+    public new void init(Vector3[] ctrlPts, Transform transform = null)
     {
-        controlPoints = new Vector3[bPts.Length];
-        for (int i = 0; i < bPts.Length; i++)
+        controlPoints = new Vector3[ctrlPts.Length];
+        for (int i = 0; i < ctrlPts.Length; i++)
         {
-            controlPoints[i] = bPts[i];
+            controlPoints[i] = ctrlPts[i];
         }
 
         setup(transform);

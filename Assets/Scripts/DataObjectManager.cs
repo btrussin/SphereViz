@@ -13,7 +13,8 @@ public enum highlightState
 public enum SubNodeDisplayType
 {
     BLOOM,
-    TABLE
+    TABLE,
+    INNER_SPHERE
 }
 
 public enum NodeClusterMode
@@ -47,14 +48,16 @@ public class DataObjectManager : MonoBehaviour
     public GameObject popupTextPrefab;
 
     public GameObject projSphere;
+    public Renderer projSphereRenderer;
+    public GameObject innerSphere;
     public GameObject projSphereCenterReference;
 
     //public bool useBezierBars = true;
     //public bool useBSplineBars = true;
     public bool useSLERP = false;
 
-    public float barRadiusScale = 1.0f;     // aesthetically appealing: 0.3
-    public float pointScaleFactor = 1.0f;   // aesthetically appealing: 1.5
+    public float barRadiusScale   = 1.0f; // aesthetically appealing: 0.3
+    public float pointScaleFactor = 1.0f; // aesthetically appealing: 1.5
 
     public SliderManager slider_barRadius;
     public SliderManager slider_nodeScale;
@@ -124,6 +127,41 @@ public class DataObjectManager : MonoBehaviour
 
     public bool useGroupNodes = true;
 
+    [Range(60f, 170f)]
+    public float projHorizontalAngle = 90.0f;
+    [Range(20f, 80f)]
+    public float projVerticalAngle = 60.0f;
+
+    // Use this for initialization
+    void Start()
+    {
+        projSphere.transform.localScale = Vector3.one * radius;
+
+        loadData();
+
+
+        updateHighlightState(highlightState.ONE_HOP);
+
+    }
+
+    float currVis = 0.2f;
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (doFirstPosition)
+        {
+            recenterProjectionSphere();
+            doFirstPosition = false;
+        }
+
+        if (activesUpdateEdges) recalcAllEdges();
+
+        if (recenterSphereAnim) recenterAnimation();
+        
+    }
+
     protected void setDefaultParameterValues()
     {
         slider_innerConnDist.suggestValue(innerGroupEdgeDist);
@@ -173,51 +211,6 @@ public class DataObjectManager : MonoBehaviour
         leftController.setColliderValues(colliderScale, meshScale);
         rightController.setColliderValues(colliderScale, meshScale);
 
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-        loadData();
-
-
-        updateHighlightState(highlightState.ONE_HOP);
-
-    }
-
-    float currVis = 0.2f;
-    
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            List<NodeManager> list = searchNodesByTerm("Batman Forever");
-            List<NodeManager> list2 = searchNodesByTerm("Men in Black 3");
-
-            NodeManager[] tNodeArray = new NodeManager[2];
-            tNodeArray[0] = list[0];
-            tNodeArray[1] = list2[0];
-
-            toggleSubNodes(tNodeArray);
-
-        }
-
-        if ( doFirstPosition )
-        {
-            recenterProjectionSphere();
-            doFirstPosition = false;
-        }
-
-        if(activesUpdateEdges)
-        {
-            recalcAllEdges();
-        }
-
-        if(recenterSphereAnim)
-        {
-            recenterAnimation();
-        }
     }
 
 
@@ -874,24 +867,6 @@ public class DataObjectManager : MonoBehaviour
 
             currGroup.center2 = centerVec;
         }
-
-        /*
-        Vector2 minPos = new Vector2(float.MaxValue, float.MaxValue);
-        Vector2 maxPos = new Vector2(float.MinValue, float.MinValue);
-        Vector2 tPos;
-        foreach (KeyValuePair<string, NodeInfo> kv in nodeMap)
-        {
-            currNode = kv.Value;
-            tPos = currNode.position2;
-            if (tPos.x < minPos.x) minPos.x = tPos.x;
-            if (tPos.y < minPos.y) minPos.y = tPos.y;
-            if (tPos.x > maxPos.x) maxPos.x = tPos.x;
-            if (tPos.y > maxPos.y) maxPos.y = tPos.y;
-        }
-
-        Debug.Log("Min: " + minPos);
-        Debug.Log("Max: " + maxPos);
-        */
     }
 
     private void projectPointsForNodesAndGroups()
@@ -923,31 +898,33 @@ public class DataObjectManager : MonoBehaviour
 
     private Vector3 getProjectedPoint(Vector2 pt)
     {
-        return get3DPointProjectionSphere(pt, radius * projSphere.transform.localScale.x);
+        return get3DPointProjectionSphere(pt, radius);
     }
 
     private Vector3 get3DPointProjectionSphere(Vector2 v, float r)
     {
+        
         Vector3 result = new Vector3(r, 0.0f, 0.0f);
-
-        float horizontalAngle = v.x * 90.0f;
-        float verticalAngle = v.y * 60.0f;
+        
+        float horizontalAngle = v.x * projHorizontalAngle;
+        float verticalAngle = v.y * projVerticalAngle;
 
         Quaternion rotation = Quaternion.Euler(0.0f, horizontalAngle, verticalAngle);
 
-        result = rotation * result;
-        return result;
+        return rotation * result;
     }
 
-    private Vector3 get3DPointProjectionSphereCoords(Vector3 v)
+    private Vector3 get3DPointProjectionSphereCoords(Vector2 v)
     {
-        return get3DPointProjectionSphereCoords(v, radius * projSphere.transform.localScale.x);
+        //return get3DPointProjectionSphereCoords(v, projSphere.transform.localScale.x);
+        return get3DPointProjectionSphereCoords(v, radius);
+        ///return get3DPointProjectionSphereCoords(v, transform.localScale.x * radius * 2f);
+        //return get3DPointProjectionSphereCoords(v, transform.localScale.x * radius);
     }
 
-    private Vector3 get3DPointProjectionSphereCoords(Vector3 v, float r)
+    private Vector3 get3DPointProjectionSphereCoords(Vector2 v, float r)
     {
-        Vector3 result = new Vector3(v.x * 90.0f, v.y * 60.0f, r);
-        return result;
+        return new Vector3(v.x * projHorizontalAngle, v.y * projVerticalAngle, r);
     }
 
     Vector2 forceDirCenter = Vector2.zero;
@@ -1061,7 +1038,7 @@ public class DataObjectManager : MonoBehaviour
             grpManager.sphereCenterReference = projSphereCenterReference;
 
             //node.transform.position = projSphere.transform.position + centerToPt * projSphere.transform.localScale.x * 0.08f;
-            node.transform.position = projSphere.transform.position + centerToPt * projSphere.transform.localScale.x * radius * 0.8f;
+            node.transform.position = projSphere.transform.position + centerToPt * projSphere.transform.localScale.x * 0.8f;
 
             node.transform.SetParent(projSphere.transform);
 
@@ -1100,7 +1077,8 @@ public class DataObjectManager : MonoBehaviour
             currNodeInfo = kv.Value;
             GameObject point = (GameObject)Instantiate(nodePrefab);
             point.name = "Node: " + currNodeInfo.name;
-            point.transform.position = projSphere.transform.TransformPoint(currNodeInfo.position3);
+            //point.transform.position = projSphere.transform.TransformPoint(currNodeInfo.position3);
+            point.transform.position = transform.TransformPoint(currNodeInfo.position3);
             point.transform.localScale = ptScale;
 
             MeshRenderer meshRend = point.GetComponent<MeshRenderer>();
@@ -1145,87 +1123,101 @@ public class DataObjectManager : MonoBehaviour
         toggleSubNodes(tmpNodeManagers);
     }
 
-    public void toggleSubNodes(NodeManager[] nodeManagers)
+    public void unselectNode(NodeManager nm, GazeActivate gazeScript)
     {
-        List<NodeManager> newNodes = new List<NodeManager>();
-        //HashSet<string> oldNodes = new HashSet<string>();
-        List<NodeManager> oldNodes = new List<NodeManager>();
-
         NodeInfo nodeInfo;
         SubNodeManager subNodeManager;
         ConnectionManager connManager;
+
+        nm.isSelected = false;
+        nodeInfo = nm.nodeInfo;
+        string str = nodeInfo.name;
+        List<GameObject> objList = subElementObjectMap[str];
+        foreach (GameObject obj in objList)
+        {
+            subNodeManager = obj.GetComponent<SubNodeManager>();
+            if (subNodeManager != null)
+            {
+                Dictionary<string, GameObject> subNodeConnections = subNodeManager.getInnerConnectionMap();
+                foreach (KeyValuePair<string, GameObject> kv in subNodeConnections)
+                {
+                    connManager = kv.Value.GetComponent<ConnectionManager>();
+                    if (connManager == null) continue;
+                    gazeScript.removeTextObject(connManager.name);
+                    connManager.showEndSubNodes();
+                    SubNodeManager otherSubNodeManager = connManager.subPointA.GetComponent<SubNodeManager>();
+                    if (otherSubNodeManager == subNodeManager) otherSubNodeManager = connManager.subPointB.GetComponent<SubNodeManager>();
+                    otherSubNodeManager.removeInnerConnection(connManager);
+                    connManager.removeFromNodeManagers();
+                }
+                subNodeManager.destroyAndRemoveAllInnerConnections();
+            }
+
+            Destroy(obj);
+        }
+        objList.Clear();
+        subElementObjectMap.Remove(str);
+        selectedNodeMap.Remove(str);
+
+        if (subNodeDisplayType == SubNodeDisplayType.INNER_SPHERE)
+        {
+            GameObject targetObj = nm.gameObject;
+            targetObj.transform.position = projSphere.transform.TransformPoint(nodeInfo.position3);
+
+            List<ConnectionManager> connManList = new List<ConnectionManager>();
+            nm.getInnerConnections(connManList);
+
+            List<GameObject> connObjects = new List<GameObject>();
+
+            foreach (ConnectionManager cm in connManList)
+            {
+                gazeScript.removeTextObject(cm.name);
+                if (cm.centerPoint != null) GameObject.Destroy(cm.centerPoint);
+                connObjects.Add(cm.gameObject);
+
+                cm.nodePointA.GetComponent<NodeManager>().removeInnerConnection(cm);
+                cm.nodePointB.GetComponent<NodeManager>().removeInnerConnection(cm);
+            }
+
+            foreach (GameObject obj in connObjects)
+            { 
+                Destroy(obj);
+            }
+
+        }
+        else
+        {
+            foreach (string currName in nodeInfo.subElements)
+            {
+                gazeScript.removeTextObject(getSubNodeKey(nodeInfo, currName));
+            }
+
+            nm.removeInnerConnections();
+        }
+
+    }
+
+    public void toggleSubNodes(NodeManager[] nodeManagers)
+    {
+        List<NodeManager> newNodes = new List<NodeManager>();
+        List<NodeManager> oldNodes = new List<NodeManager>();
+
+        NodeInfo nodeInfo;
 
         if ( nodeManagers != null )
         {
             foreach (NodeManager nm in nodeManagers)
             {
                 nodeInfo = nm.nodeInfo;
-                if (subElementObjectMap.ContainsKey(nodeInfo.name))
-                {
-                    oldNodes.Add(nm);
-                }
-                else
-                {
-                    newNodes.Add(nm);
-                }
+                if (subElementObjectMap.ContainsKey(nodeInfo.name)) oldNodes.Add(nm);
+                else newNodes.Add(nm);
             }
         }
 
- 
         GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
-        string subKey;
         foreach (NodeManager nm in oldNodes)
         {
-            nm.isSelected = false;
-            nodeInfo = nm.nodeInfo;
-            string str = nodeInfo.name;
-            List<GameObject> objList = subElementObjectMap[str];
-            foreach (GameObject obj in objList)
-            {
-                
-                subNodeManager = obj.GetComponent<SubNodeManager>();
-                if(subNodeManager != null )
-                {
-
-                    Dictionary<string, GameObject> subNodeConnections = subNodeManager.getInnerConnectionMap();
-
-                    foreach(KeyValuePair<string, GameObject> kv in subNodeConnections)
-                    {
-                        connManager = kv.Value.GetComponent<ConnectionManager>();
-                        if (connManager == null) continue;
-
-                        gazeScript.removeTextObject(connManager.name);
-
-                        connManager.showEndSubNodes();
-
-                        SubNodeManager otherSubNodeManager = connManager.subPointA.GetComponent<SubNodeManager>();
-
-                        if (otherSubNodeManager == subNodeManager) otherSubNodeManager = connManager.subPointB.GetComponent<SubNodeManager>();
-
-                        otherSubNodeManager.removeInnerConnection(connManager);
-
-                        connManager.removeFromNodeManagers();
-                    }
-
-                    subNodeManager.destroyAndRemoveAllInnerConnections();
-                    
-                }
-
-                Destroy(obj);
-            }
-            objList.Clear();
-
-            subElementObjectMap.Remove(str);
-
-            selectedNodeMap.Remove(str);
-
-            foreach (string currName in nodeInfo.subElements)
-            {
-                subKey = getSubNodeKey(nodeInfo, currName);
-                gazeScript.removeTextObject(subKey);
-            }
-
-            nm.removeInnerConnections();
+            unselectNode(nm, gazeScript);
         }
 
 
@@ -1242,16 +1234,35 @@ public class DataObjectManager : MonoBehaviour
                 case SubNodeDisplayType.TABLE:
                     populateSubNodes_table(newNodeManagers[i]);
                     break;
+                case SubNodeDisplayType.INNER_SPHERE:
+                    populateSubNodes_innerSphere(newNodeManagers[i]);
+                    break;
             }
 
-            foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap)
+            if(subNodeDisplayType!= SubNodeDisplayType.INNER_SPHERE)
             {
-                populateSubNodeConnections(newNodeManagers[i], kv.Value);
+                foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap)
+                {
+                    populateSubNodeConnections(newNodeManagers[i], kv.Value);
+                }
+
+                for (int j = 0; j < i; j++)
+                {
+                    populateSubNodeConnections(newNodeManagers[i], newNodeManagers[j]);
+                }
             }
 
-            for (int j = 0; j < i; j++)
+            else
             {
-                populateSubNodeConnections(newNodeManagers[i], newNodeManagers[j]);
+                foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap)
+                {
+                    populateInnerNodeConnections(newNodeManagers[i], kv.Value);
+                }
+
+                for (int j = 0; j < i; j++)
+                {
+                    populateInnerNodeConnections(newNodeManagers[i], newNodeManagers[j]);
+                }
             }
         }
 
@@ -1262,46 +1273,52 @@ public class DataObjectManager : MonoBehaviour
         }
 
         updateHighlightNodesEdges();
-        /*
-        if (currHighlightState == highlightState.NONE || (currHighlightState == highlightState.ONE_HOP && selectedNodeMap.Count == 0))
-        {
-            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
-            {
-                kv.Value.setNearEdgeBrightness(highlightBrightness);
-                kv.Value.setFarEdgeBrightness(highlightBrightness);
-            }
-        }
-        else if (currHighlightState == highlightState.ONE_HOP)
-        {
-            foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap)
-            {
-                kv.Value.setNearEdgeBrightness(dimmedBrightness);
-                kv.Value.setFarEdgeBrightness(dimmedBrightness);
-            }
-
-            foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap)
-            {
-                kv.Value.setNearEdgeBrightness(highlightBrightness);
-                kv.Value.setFarEdgeBrightness(highlightBrightness);
-            }
-        }
-        */
+        
         foreach (KeyValuePair<string, NodeManager> kv in selectedNodeMap) kv.Value.hideAllInnerConnectionEdgeNodes();
 
     }
 
     public float getCurrBarRadius()
     {
-        return radius * projSphere.transform.localScale.x / 125.0f * barRadiusScale;
-        //return radius / 125.0f * barRadiusScale;
+        return barRadiusScale / 125.0f;
     }
 
     private Vector3 getCurrentPointSize()
     {
-        Vector3 ptScale = Vector3.one * radius * projSphere.transform.localScale.x * 2f / 125f * pointScaleFactor;
+        Vector3 ptScale = Vector3.one * projSphere.transform.localScale.x * 2f / 125f * pointScaleFactor;
         return ptScale;
     }
 
+    void populateSubNodes_innerSphere(NodeManager nodeManager)
+    {
+        if (nodeManager == null) return;
+
+        NodeInfo nodeInfo = nodeManager.nodeInfo;
+
+        if (nodeInfo == null) return;
+
+        if (subElementObjectMap.ContainsKey(nodeInfo.name)) return;
+
+        GameObject targetObj = nodeManager.gameObject;
+
+        targetObj.transform.position = innerSphere.transform.TransformPoint(nodeInfo.position3);
+
+
+
+
+
+        List<GameObject> gObjList = new List<GameObject>();
+
+        string subKey;
+        foreach (string currName in nodeInfo.subElements)
+        {
+            subKey = getSubNodeKey(nodeInfo, currName);
+            if (subNodePositionMap.ContainsKey(subKey)) subNodePositionMap[subKey] = targetObj;
+            else subNodePositionMap.Add(subKey, targetObj);
+        }
+
+        subElementObjectMap.Add(nodeInfo.name, gObjList);
+    }
 
     void populateSubNodes_bloom(NodeManager nodeManager)
     {
@@ -1316,7 +1333,7 @@ public class DataObjectManager : MonoBehaviour
         GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
 
         float tmpScale = projSphere.transform.localScale.x;
-        float tmpRadius = radius * tmpScale;
+        float tmpRadius = tmpScale;
         Vector3 ptScale = getCurrentPointSize();
 
         Vector3 upDir = projSphere.transform.TransformPoint(nodeManager.nodeInfo.position3) - projSphere.transform.position;
@@ -1508,7 +1525,182 @@ public class DataObjectManager : MonoBehaviour
 
     }
 
+    void populateInnerNodeConnections(NodeManager nodeManagerA, NodeManager nodeManagerB)
+    {
+        if (nodeManagerA == null || nodeManagerB == null) return;
+        NodeInfo infoA = nodeManagerA.nodeInfo;
+        NodeInfo infoB = nodeManagerB.nodeInfo;
+        if (infoA == null || infoB == null) return;
 
+        Vector3[] ctrlPts = new Vector3[4];
+        string connectionKey;
+        Vector3 sphereCenter = projSphere.transform.position;
+
+        Color colorA = groupColorMap[infoA.groupName];
+        Color colorB = groupColorMap[infoB.groupName];
+
+        float barRadius = getCurrBarRadius();
+
+        Vector3 tmpVecA = Vector3.zero;
+        Vector3 tmpVecB = Vector3.zero;
+
+        Vector3 ptScale = getCurrentPointSize();
+
+        GazeActivate gazeScript = Camera.main.GetComponent<GazeActivate>();
+
+        List<string> subsInCommon = new List<string>();
+
+        for (int i = 0; i < infoA.subElements.Count; i++)
+        {
+            for (int j = 0; j < infoB.subElements.Count; j++)
+            {
+                if (infoA.subElements[i].Equals(infoB.subElements[j]))
+                {
+                    subsInCommon.Add(infoA.subElements[i]);
+                }
+            }
+        }
+
+        if (subsInCommon.Count < 1) return;
+
+
+
+
+
+
+
+
+
+        // start the connection
+
+
+        connectionKey =  "[]: " + infoA.name + "|" + infoB.name;
+
+        ctrlPts[0] = nodeManagerA.gameObject.transform.position;
+        ctrlPts[3] = nodeManagerB.gameObject.transform.position;
+
+        tmpVecA = sphereCenter - nodeManagerA.gameObject.transform.position;
+        tmpVecB = sphereCenter - nodeManagerB.gameObject.transform.position;
+
+        if (innerConnectionsStraightLines)
+        {
+            
+            ctrlPts[1] = ctrlPts[0] + tmpVecA * 0.001f;
+            ctrlPts[2] = ctrlPts[3] + tmpVecB * 0.001f;
+        }
+        else
+        {
+            ctrlPts[1] = ctrlPts[0] + tmpVecA * 0.5f;
+            ctrlPts[2] = ctrlPts[3] + tmpVecB * 0.5f;
+        }
+
+
+        GameObject edgeObj = (GameObject)Instantiate(bezierCollPrefab);
+        ConnectionManager connMan = edgeObj.GetComponent<ConnectionManager>();
+        GameObject mainCurve = connMan.mainCurve;
+
+
+        BezierBar bezBar = mainCurve.GetComponent<BezierBar>();
+        bezBar.radius = barRadius;
+        bezBar.useSphericalInterpolation = false;
+        bezBar.init(ctrlPts, colorA, colorB);
+
+
+        //var collider = mainCurve.GetComponent<MeshCollider>();
+        //collider.sharedMesh = bezBar.mesh;
+
+        string textForPopup = "";
+
+        foreach(string s in subsInCommon)
+        {
+            if(textForPopup.Length > 0) textForPopup += "\n" + s;
+            else textForPopup += s;
+        }
+
+        connMan.setupText(textForPopup);
+
+        connMan.colorA = colorA;
+        connMan.colorB = colorB;
+        connMan.innerConnStraightLine = innerConnectionsStraightLines;
+        connMan.projSphereTransform = projSphere.transform;
+        connMan.subPointA = nodeManagerA.gameObject;
+        connMan.subPointB = nodeManagerB.gameObject;
+        connMan.nodePointA = nodeManagerA.gameObject;
+        connMan.nodePointB = nodeManagerB.gameObject;
+        connMan.bezBar = bezBar;
+        connMan.dataManager = this;
+
+        connMan.dontToggleMeshRenderes = true;
+
+        //if(subNodeDisplayType == SubNodeDisplayType.TABLE) connMan.neverShowMeshRenderers = true;
+
+
+
+        BezierLine bezLine = connMan.altLineCurve.GetComponent<BezierLine>();
+        connMan.bezLine = bezLine;
+        connMan.altLineCurve.SetActive(false);
+
+        if (nodeManagerA.nodeName.CompareTo(nodeManagerB.nodeName) < 0) connMan.name = nodeManagerA.nodeName + " |conn| " + nodeManagerB.nodeName;
+        else connMan.name = nodeManagerB.nodeName + " |conn| " + nodeManagerA.nodeName;
+
+
+
+        nodeManagerA.addInnerConnection(connMan);
+        nodeManagerB.addInnerConnection(connMan);
+
+        edgeObj.transform.SetParent(projSphere.transform);
+
+
+
+
+        connMan.assignMeshRenderers();
+        connMan.hideEndSubNodes();
+
+        GameObject point = (GameObject)Instantiate(innerNodePrefab);
+        point.name = "MidPt: " + connMan.name;
+
+        Destroy(point.GetComponent<NodeManager>());
+
+
+        Vector3 centerPt = 0.125f * (ctrlPts[0] + 3f * (ctrlPts[1] + ctrlPts[2]) + ctrlPts[3]);
+
+        point.transform.position = centerPt;
+        point.transform.localScale = ptScale;
+
+        connMan.centerPoint = point;
+
+        point.transform.SetParent(projSphere.transform);
+
+        SubNodeManager subNM = point.GetComponent<SubNodeManager>();
+        subNM.setMeshColors(colorA * 0.5f + colorB * 0.5f);
+
+
+
+        GameObject popupText = (GameObject)Instantiate(popupTextPrefab);
+        popupText.name = "Text: " + connMan.name;
+        popupText.transform.position = point.transform.position;
+        popupText.transform.localScale = Vector3.one * 0.5f;
+        popupText.transform.SetParent(point.transform);
+
+        PopupTextFade popupTextObject = popupText.GetComponent<PopupTextFade>();
+        TextMesh tMesh = popupTextObject.GetComponent<TextMesh>();
+        tMesh.text = textForPopup;
+        popupTextObject.parentObject = point;
+
+        if (popupTextObject != null) gazeScript.addTextObject(connMan.name, popupTextObject);
+        else Debug.Log("No Popup-text stuff");
+
+        /*
+        SubNodeManager subNodeManA = connMan.subPointA.GetComponent<SubNodeManager>();
+        subNodeManA.addInnerConnection(connMan, edgeObj);
+        SubNodeManager subNodeManB = connMan.subPointB.GetComponent<SubNodeManager>();
+        subNodeManB.addInnerConnection(connMan, edgeObj);
+        */
+        // end the connections
+
+
+
+    }
 
     void populateSubNodeConnections(NodeManager nodeManagerA, NodeManager nodeManagerB)
     {
@@ -1752,6 +1944,15 @@ public class DataObjectManager : MonoBehaviour
 
         int numUpdatedThisFrame = 0;
 
+        // save off the current transform
+        Vector3 currScale = projSphere.transform.localScale;
+        Vector3 currPosition = projSphere.transform.position;
+        Quaternion currRotation = projSphere.transform.rotation;
+
+        projSphere.transform.localScale = Vector3.one;
+        projSphere.transform.position = Vector3.zero;
+        projSphere.transform.rotation = Quaternion.identity;
+
         foreach (EdgeInfo edge in edgeList)
         {
             if (!edge.updateNextFrame) continue;
@@ -1789,13 +1990,14 @@ public class DataObjectManager : MonoBehaviour
                     basePts[2] = basePts[3] * bezEdgeDist;
                 }
 
-                edgeObj.transform.SetParent(null);
+                //edgeObj.transform.SetParent(null);
 
                 bezBarScript.radius = barRadius;
                 bezBarScript.useSphericalInterpolation = interpolateSpherical;
+                //bezBarScript.init(basePts, projSphere.transform);
                 bezBarScript.init(basePts);
 
-                edgeObj.transform.SetParent(projSphere.transform);
+                //edgeObj.transform.SetParent(projSphere.transform);
             }
             else
             {
@@ -1843,16 +2045,23 @@ public class DataObjectManager : MonoBehaviour
 
                 }
 
-                edgeObj.transform.SetParent(null);
+                //edgeObj.transform.SetParent(null);
 
                 splineScript.radius = barRadius;
                 splineScript.useSphericalInterpolation = interpolateSpherical;
+                //splineScript.init(basePts, projSphere.transform);
                 splineScript.init(basePts);
 
-                edgeObj.transform.SetParent(projSphere.transform);
+                //edgeObj.transform.SetParent(projSphere.transform);
             }
 
         }
+
+
+        // restore the current transform
+        projSphere.transform.localScale = currScale;
+        projSphere.transform.position = currPosition;
+        projSphere.transform.rotation = currRotation;
 
         if (numUpdatedThisFrame == 0) activesUpdateEdges = false;
 
@@ -2076,7 +2285,7 @@ public class DataObjectManager : MonoBehaviour
                 bezBar.radius = barRadius;
                 bezBar.useSphericalInterpolation = interpolateSpherical;
                 bezBar.init(basePts, c0, c1, projSphere.transform);
-                //edgeObj.transform.position = projSphere.transform.position;
+
                 bezBar.setNode(nodeA);
                 bezBar.setNode(nodeB);
 
@@ -2140,7 +2349,7 @@ public class DataObjectManager : MonoBehaviour
                 bspline.useSphericalInterpolation = interpolateSpherical;
                 if (invertFarEdgeGradient) bspline.init(basePts, c1, c0, projSphere.transform);
                 else bspline.init(basePts, c0, c1, projSphere.transform);
-                //edgeObj.transform.position = projSphere.transform.position;
+
                 bspline.setNode(nodeA);
                 bspline.setNode(nodeB);
 
@@ -2283,7 +2492,9 @@ public class DataObjectManager : MonoBehaviour
         updateParameterValues();
         Color c = Color.white;
         c.a = sphereVisibility;
-        projSphere.GetComponent<Renderer>().material.color = c;
+        //projSphere.GetComponent<Renderer>().material.color = c;
+        projSphereRenderer.material.color = c;
+
     }
 
 }

@@ -6,7 +6,7 @@ public class SubNodeManager : MonoBehaviour {
 
     Dictionary<string, GameObject> innerConnectionMap = new Dictionary<string, GameObject>();
 
-    public MeshFilter meshFilter;
+    public MeshFilter meshFilter = null;
     public Mesh mesh = null;
 
     static bool verticesCalculated = false;
@@ -65,13 +65,16 @@ public class SubNodeManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        if (mesh == null) mesh = new Mesh();
-        meshFilter.mesh = mesh;
+        if(meshFilter != null)
+        {
+            if (mesh == null) mesh = new Mesh();
+            meshFilter.mesh = mesh;
 
-        if (!verticesCalculated) setupMeshElements();
-        
-        mesh.vertices = meshVertices;
-        mesh.triangles = meshTriangles;
+            if (!verticesCalculated) setupMeshElements();
+
+            mesh.vertices = meshVertices;
+            mesh.triangles = meshTriangles;
+        }
     }
 	
 	// Update is called once per frame

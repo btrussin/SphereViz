@@ -60,7 +60,10 @@ public class NodeManager : MonoBehaviour {
         else outerEdgesFar.Add(obj);
     }
 
-
+    public void getInnerConnections(List<ConnectionManager> list)
+    {
+        list.AddRange(innerConnections.Values);
+    }
 
     public void addInnerConnection(ConnectionManager conn)
     {
