@@ -142,6 +142,15 @@ public class DataObjectManager : MonoBehaviour
 
         updateHighlightState(highlightState.ONE_HOP);
 
+
+
+
+        //testing();
+    }
+
+    void testing()
+    {
+        
     }
 
     float currVis = 0.2f;
@@ -819,10 +828,11 @@ public class DataObjectManager : MonoBehaviour
 
     private void normalizePointsForNodesAndGroups()
     {
-        float xMin = 1000000000.0f;
-        float xMax = -100000000.0f;
-        float yMin = 1000000000.0f;
-        float yMax = -100000000.0f;
+        float xMin = float.MaxValue;
+        float xMax = float.MinValue;
+        float yMin = float.MaxValue;
+        float yMax = float.MinValue;
+
         Vector2 v;
         NodeInfo currNode;
 
@@ -1944,6 +1954,7 @@ public class DataObjectManager : MonoBehaviour
 
         int numUpdatedThisFrame = 0;
 
+        /*
         // save off the current transform
         Vector3 currScale = projSphere.transform.localScale;
         Vector3 currPosition = projSphere.transform.position;
@@ -1952,6 +1963,7 @@ public class DataObjectManager : MonoBehaviour
         projSphere.transform.localScale = Vector3.one;
         projSphere.transform.position = Vector3.zero;
         projSphere.transform.rotation = Quaternion.identity;
+        */
 
         foreach (EdgeInfo edge in edgeList)
         {
@@ -2057,11 +2069,12 @@ public class DataObjectManager : MonoBehaviour
 
         }
 
-
+        /*
         // restore the current transform
         projSphere.transform.localScale = currScale;
         projSphere.transform.position = currPosition;
         projSphere.transform.rotation = currRotation;
+        */
 
         if (numUpdatedThisFrame == 0) activesUpdateEdges = false;
 

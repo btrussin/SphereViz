@@ -108,12 +108,19 @@ public class GroupManager : MonoBehaviour {
             centerToPt.Normalize();
 
             node.transform.position = sphereCenter + projSphereTrans.localScale.x * centerToPt;
-            Utils.getYZSphericalCoordinates(projSphereTrans, node.transform, out y, out z);
+            Utils.getYZSphericalCoordinates(projSphereTrans, sphereCenter + projSphereTrans.localScale.x * centerToPt, out y, out z);
 
+            
             info.position2.x = y / dataObjManager.projHorizontalAngle;
             info.position2.y = z / dataObjManager.projVerticalAngle;
+
+           
+
             dataObjManager.updateProjectedPointsForNodeInfo(info);
-            
+
+            node.transform.position = projSphereTrans.TransformPoint(info.position3);
+
+
             node.transform.SetParent(projSphereTrans);
         }
 
@@ -121,7 +128,7 @@ public class GroupManager : MonoBehaviour {
         centerToPt.Normalize();
 
         transform.position = sphereCenter + centerToPt * projSphereTrans.localScale.x * dataObjManager.radius * 0.8f;
-        Utils.getYZSphericalCoordinates(projSphereTrans, transform, out y, out z);
+        Utils.getYZSphericalCoordinates(projSphereTrans, transform.position, out y, out z);
 
         groupInfo.center2.x = y / dataObjManager.projHorizontalAngle;
         groupInfo.center2.y = z / dataObjManager.projVerticalAngle;

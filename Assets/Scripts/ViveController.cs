@@ -277,7 +277,7 @@ public class ViveController : MonoBehaviour
                         currGrpManager.gameObject.GetComponent<MoveScaleObject>().releaseSphereWithObject(gameObject);
                         currGrpManager.endActive();
                         currGrpManager.endMove();
-                        currGrpManager = null;
+                        //currGrpManager = null;
                         dataManager.repopulateEdges();
                     }
 
