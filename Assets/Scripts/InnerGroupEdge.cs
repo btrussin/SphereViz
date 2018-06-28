@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class InnerGroupEdge : BezierBar {
 
-    GameObject nodeA = null;
-    GameObject nodeB = null;
-
-    NodeManager nodeManagerA;
-    NodeManager nodeManagerB;
-
-    Material objectMaterial = null;
-
-    public highlightState currHighlightState = highlightState.ONE_HOP;
 
     // Use this for initialization
     void Start () {
@@ -38,12 +29,12 @@ public class InnerGroupEdge : BezierBar {
         }
     }
 
-    public void updateHighlightState()
+    public override void updateHighlightState()
     {
         updateHighlightState(currHighlightState);
     }
 
-    public void updateHighlightState(highlightState state)
+    public override void updateHighlightState(highlightState state)
     {
         if (objectMaterial == null)
         {
@@ -76,6 +67,33 @@ public class InnerGroupEdge : BezierBar {
 
                 break;
         }
-       
+
     }
+
+    public override void updateRadiusBasedOnHighlightState()
+    {
+        updateRadiusBasedOnHighlightState(currHighlightState);
+    }
+
+    public override void updateRadiusBasedOnHighlightState(highlightState state)
+    {
+        switch (state)
+        {
+            case highlightState.NONE:
+            case highlightState.NEAR:
+                restoreTheEdgeToOriginalThickness();
+                break;
+            case highlightState.FAR:
+                thinTheEdge();
+                break;
+            case highlightState.ONE_HOP:
+                if (nodeManagerA.isSelected || nodeManagerB.isSelected) restoreTheEdgeToOriginalThickness();
+                else thinTheEdge();
+               
+                break;
+        }
+
+    }
+
+  
 }

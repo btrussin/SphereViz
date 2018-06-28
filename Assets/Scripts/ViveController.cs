@@ -290,6 +290,7 @@ public class ViveController : MonoBehaviour
                         else if (currSliderManagerByRay.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
                         else if (currSliderManagerByRay.gameObject.name.Equals("slider_collSize")) dataManager.updateControllerColliderScale();
                         else if (currSliderManagerByRay.gameObject.name.Equals("slider_sphereViz")) dataManager.updateSphereVisibility();
+                        else if (currSliderManagerByRay.gameObject.name.Equals("slider_edgeThinning")) dataManager.updateEdgeThinningAmount();
 
                         currSliderManagerByRay.pointColorOnRelease();
                         sliderActiveByRay = false;
@@ -307,6 +308,7 @@ public class ViveController : MonoBehaviour
                         else if (currSliderManagerByContact.gameObject.name.Equals("slider_gazeAngle")) dataManager.updateGazeFactors();
                         else if (currSliderManagerByContact.gameObject.name.Equals("slider_collSize")) dataManager.updateControllerColliderScale();
                         else if (currSliderManagerByContact.gameObject.name.Equals("slider_sphereViz")) dataManager.updateSphereVisibility();
+                        else if (currSliderManagerByContact.gameObject.name.Equals("slider_edgeThinning")) dataManager.updateEdgeThinningAmount();
 
                         currSliderManagerByContact.pointColorOnRelease();
                         sliderActiveByContact = false;

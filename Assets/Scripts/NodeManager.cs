@@ -47,6 +47,8 @@ public class NodeManager : MonoBehaviour {
 
     public List<GameObject> outerEdgesNear = new List<GameObject>();
     public List<GameObject> outerEdgesFar = new List<GameObject>();
+    public List<EdgeInfo> edgeInfoList = new List<EdgeInfo>();
+
 
     public bool isSelected = false;
 
@@ -58,6 +60,11 @@ public class NodeManager : MonoBehaviour {
     {
         if (near) outerEdgesNear.Add(obj);
         else outerEdgesFar.Add(obj);
+    }
+
+    public void addOuterEdgeInfo(EdgeInfo info)
+    {
+        edgeInfoList.Add(info);
     }
 
     public void getInnerConnections(List<ConnectionManager> list)

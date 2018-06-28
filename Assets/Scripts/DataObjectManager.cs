@@ -32,7 +32,7 @@ public class DataObjectManager : MonoBehaviour
 
     public bool excludeIsolatedNodes = false;
     public int numForceIterations = 300;
-    public float radius = 2.5f;
+    public float mainObjRadius = 2.5f;
 
     public float timeToSnapBack = 2.0f;
 
@@ -66,6 +66,7 @@ public class DataObjectManager : MonoBehaviour
     public SliderManager slider_gazeAngle;
     public SliderManager slider_collSize;
     public SliderManager slider_sphereViz;
+    public SliderManager slider_edgeThin;
 
     public ViveController rightController;
     public ViveController leftController;
@@ -120,6 +121,7 @@ public class DataObjectManager : MonoBehaviour
     public float gazeAngle = 8f;
     public float contrColliderScale = 1f;
     public float sphereVisibility = 0.085f;
+    public float edgeThinAmount = 0.1f;
 
     public SubNodeDisplayType subNodeDisplayType = SubNodeDisplayType.BLOOM;
 
@@ -132,10 +134,12 @@ public class DataObjectManager : MonoBehaviour
     [Range(20f, 80f)]
     public float projVerticalAngle = 60.0f;
 
+    public bool doHighlightEdgeThinning = false;
+
     // Use this for initialization
     void Start()
     {
-        projSphere.transform.localScale = Vector3.one * radius;
+        projSphere.transform.localScale = Vector3.one * mainObjRadius;
 
         loadData();
 
@@ -150,7 +154,21 @@ public class DataObjectManager : MonoBehaviour
 
     void testing()
     {
-        
+        Vector3 v1 = Vector3.one;
+
+        Quaternion q = Quaternion.Euler(30f, 40f, 50f);
+
+        Vector3 w = q * v1;
+
+        Debug.Log("Target: " + w.x + "," + w.y + "," + w.z);
+
+        Quaternion qx = Quaternion.Euler(30f, 0f, 0f); // #2
+        Quaternion qy = Quaternion.Euler(0f, 40f, 0f); // #3
+        Quaternion qz = Quaternion.Euler(0f, 0f, 50f); // #1
+
+        w = qy * qx * qz * v1;
+
+        Debug.Log("Result: " + w.x + "," + w.y + "," + w.z);
     }
 
     float currVis = 0.2f;
@@ -185,6 +203,8 @@ public class DataObjectManager : MonoBehaviour
 
         slider_sphereViz.suggestValue(sphereVisibility);
 
+        slider_edgeThin.suggestValue(edgeThinAmount);
+
         updateParameterValues();
     }
 
@@ -197,6 +217,7 @@ public class DataObjectManager : MonoBehaviour
         gazeAngle = slider_gazeAngle.getValue();
         contrColliderScale = slider_collSize.getValue();
         sphereVisibility = slider_sphereViz.getValue();
+        edgeThinAmount = slider_edgeThin.getValue();
     }
 
     public void updateGazeFactors()
@@ -243,7 +264,7 @@ public class DataObjectManager : MonoBehaviour
  
     void recenterAnimation()
     {
-        // TODO: Recenter so that the sphere is a little farther from the user
+        // Recenter so that the sphere is a little farther from the user
         projSphere.transform.rotation = Quaternion.Lerp(prevSphereRotation, targetSphereRotation, smoothVals[currAnimationFrame]);
         projSphere.transform.position = Vector3.Lerp(prevSpherePosition, targetSpherePosition, smoothVals[currAnimationFrame]);
 
@@ -293,9 +314,8 @@ public class DataObjectManager : MonoBehaviour
     void updateHighlightNodesEdges()
     {
         NodeManager currNodeManager;
-        InnerGroupEdge innerEdge;
-        InterGroupEdge interEdge;
-        if(currHighlightState == highlightState.NONE || (currHighlightState == highlightState.ONE_HOP && selectedNodeMap.Count == 0) )
+        BaseCurve baseCurve;
+        if (currHighlightState == highlightState.NONE || (currHighlightState == highlightState.ONE_HOP && selectedNodeMap.Count == 0) )
         {
             // highlight all nodes
             foreach (KeyValuePair<string, NodeManager> kv in nodeManagerMap) kv.Value.adjustNodeColor(highlightBrightness);
@@ -303,19 +323,8 @@ public class DataObjectManager : MonoBehaviour
             // update all edges
             foreach (GameObject obj in outerEdgeList)
             {
-                innerEdge = obj.GetComponent<InnerGroupEdge>();
-                if (innerEdge != null)
-                {
-                    innerEdge.updateHighlightState(highlightState.NONE);
-                    continue;
-                }
-
-                interEdge = obj.GetComponent<InterGroupEdge>();
-                if (interEdge != null)
-                {
-                    interEdge.updateHighlightState(highlightState.NONE);
-                    continue;
-                }
+                baseCurve = obj.GetComponent<BaseCurve>();
+                if (baseCurve != null) baseCurve.updateHighlightState(highlightState.NONE);
             }
 
         }
@@ -332,19 +341,8 @@ public class DataObjectManager : MonoBehaviour
             // update all edges
             foreach (GameObject obj in outerEdgeList)
             {
-                innerEdge = obj.GetComponent<InnerGroupEdge>();
-                if (innerEdge != null)
-                {
-                    innerEdge.updateHighlightState();
-                    continue;
-                }
-
-                interEdge = obj.GetComponent<InterGroupEdge>();
-                if (interEdge != null)
-                {
-                    interEdge.updateHighlightState();
-                    continue;
-                }
+                baseCurve = obj.GetComponent<BaseCurve>();
+                if (baseCurve != null) baseCurve.updateHighlightState();
             }
         }
 
@@ -361,21 +359,45 @@ public class DataObjectManager : MonoBehaviour
             // update all edges, highlighting the nodes attached to near edges
             foreach (GameObject obj in outerEdgeList)
             {
-                innerEdge = obj.GetComponent<InnerGroupEdge>();
-                if (innerEdge != null)
+                baseCurve = obj.GetComponent<BaseCurve>();
+                if (baseCurve != null) baseCurve.updateHighlightState();
+            }
+        }
+
+
+        if(doHighlightEdgeThinning)
+        {
+
+            if (currHighlightState == highlightState.NONE || (currHighlightState == highlightState.ONE_HOP && selectedNodeMap.Count == 0))
+            {
+                // update all edges
+                foreach (GameObject obj in outerEdgeList)
                 {
-                    innerEdge.updateHighlightState();
-                    continue;
+                    baseCurve = obj.GetComponent<BaseCurve>();
+                    if (baseCurve != null) baseCurve.updateRadiusBasedOnHighlightState(highlightState.NONE);
                 }
 
-                interEdge = obj.GetComponent<InterGroupEdge>();
-                if (interEdge != null)
+            }
+            else if (currHighlightState == highlightState.ONE_HOP)
+            {
+                // update all edges
+                foreach (GameObject obj in outerEdgeList)
                 {
-                    interEdge.updateHighlightState();
-                    continue;
+                    baseCurve = obj.GetComponent<BaseCurve>();
+                    if (baseCurve != null) baseCurve.updateRadiusBasedOnHighlightState();
+                }
+            }
+
+            else if (currHighlightState == highlightState.NEAR || currHighlightState == highlightState.FAR)
+            {
+                foreach (GameObject obj in outerEdgeList)
+                {
+                    baseCurve = obj.GetComponent<BaseCurve>();
+                    if (baseCurve != null) baseCurve.updateRadiusBasedOnHighlightState();
                 }
             }
         }
+
     }
 
     public void updateHighlightState(highlightState type)
@@ -385,25 +407,14 @@ public class DataObjectManager : MonoBehaviour
 
         foreach ( KeyValuePair<string, NodeManager> kv in nodeManagerMap) kv.Value.currHighlightState = currHighlightState;
 
-        InnerGroupEdge innerEdge;
-        InterGroupEdge interEdge;
+        BaseCurve curve;
     
         // update all edges
         foreach (GameObject obj in outerEdgeList)
         {
-            innerEdge = obj.GetComponent<InnerGroupEdge>();
-            if (innerEdge != null) 
-            {
-                innerEdge.currHighlightState = currHighlightState;
-                continue;
-            }
+            curve = obj.GetComponent<BaseCurve>();
+            if (curve != null) curve.currHighlightState = currHighlightState;
 
-            interEdge = obj.GetComponent<InterGroupEdge>();
-            if (interEdge != null)
-            {
-                interEdge.currHighlightState = currHighlightState;
-                continue;
-            }
         }
 
         updateHighlightNodesEdges();
@@ -908,7 +919,7 @@ public class DataObjectManager : MonoBehaviour
 
     private Vector3 getProjectedPoint(Vector2 pt)
     {
-        return get3DPointProjectionSphere(pt, radius);
+        return get3DPointProjectionSphere(pt, mainObjRadius);
     }
 
     private Vector3 get3DPointProjectionSphere(Vector2 v, float r)
@@ -926,10 +937,7 @@ public class DataObjectManager : MonoBehaviour
 
     private Vector3 get3DPointProjectionSphereCoords(Vector2 v)
     {
-        //return get3DPointProjectionSphereCoords(v, projSphere.transform.localScale.x);
-        return get3DPointProjectionSphereCoords(v, radius);
-        ///return get3DPointProjectionSphereCoords(v, transform.localScale.x * radius * 2f);
-        //return get3DPointProjectionSphereCoords(v, transform.localScale.x * radius);
+        return get3DPointProjectionSphereCoords(v, mainObjRadius);
     }
 
     private Vector3 get3DPointProjectionSphereCoords(Vector2 v, float r)
@@ -1174,6 +1182,9 @@ public class DataObjectManager : MonoBehaviour
             GameObject targetObj = nm.gameObject;
             targetObj.transform.position = projSphere.transform.TransformPoint(nodeInfo.position3);
 
+            // TODO: move the edges
+            //nm.removeInnerSphereExtention();
+
             List<ConnectionManager> connManList = new List<ConnectionManager>();
             nm.getInnerConnections(connManList);
 
@@ -1311,11 +1322,11 @@ public class DataObjectManager : MonoBehaviour
 
         GameObject targetObj = nodeManager.gameObject;
 
-        targetObj.transform.position = innerSphere.transform.TransformPoint(nodeInfo.position3);
+        Vector3 initPos = targetObj.transform.position;
+        Vector3 destPos = innerSphere.transform.TransformPoint(nodeInfo.position3);
+        //Vector3 destPos = projSphere.transform.TransformPoint(nodeInfo.position3);        
 
-
-
-
+        targetObj.transform.position = destPos;
 
         List<GameObject> gObjList = new List<GameObject>();
 
@@ -1328,6 +1339,10 @@ public class DataObjectManager : MonoBehaviour
         }
 
         subElementObjectMap.Add(nodeInfo.name, gObjList);
+
+        // TODO: move the edges
+
+        //nodeManager.setupInnerSphereExtension(bezierPrefab, initPos, destPos, getCurrBarRadius());
     }
 
     void populateSubNodes_bloom(NodeManager nodeManager)
@@ -1572,13 +1587,6 @@ public class DataObjectManager : MonoBehaviour
         }
 
         if (subsInCommon.Count < 1) return;
-
-
-
-
-
-
-
 
 
         // start the connection
@@ -1954,17 +1962,6 @@ public class DataObjectManager : MonoBehaviour
 
         int numUpdatedThisFrame = 0;
 
-        /*
-        // save off the current transform
-        Vector3 currScale = projSphere.transform.localScale;
-        Vector3 currPosition = projSphere.transform.position;
-        Quaternion currRotation = projSphere.transform.rotation;
-
-        projSphere.transform.localScale = Vector3.one;
-        projSphere.transform.position = Vector3.zero;
-        projSphere.transform.rotation = Quaternion.identity;
-        */
-
         foreach (EdgeInfo edge in edgeList)
         {
             if (!edge.updateNextFrame) continue;
@@ -2061,20 +2058,12 @@ public class DataObjectManager : MonoBehaviour
 
                 splineScript.radius = barRadius;
                 splineScript.useSphericalInterpolation = interpolateSpherical;
-                //splineScript.init(basePts, projSphere.transform);
                 splineScript.init(basePts);
 
                 //edgeObj.transform.SetParent(projSphere.transform);
             }
 
         }
-
-        /*
-        // restore the current transform
-        projSphere.transform.localScale = currScale;
-        projSphere.transform.position = currPosition;
-        projSphere.transform.rotation = currRotation;
-        */
 
         if (numUpdatedThisFrame == 0) activesUpdateEdges = false;
 
@@ -2131,7 +2120,7 @@ public class DataObjectManager : MonoBehaviour
             }
         }
 
-        // TODO: update all sub node connections
+        // update all sub node connections
         List<GameObject> subObjectList;
         SubNodeManager snManager;
 
@@ -2157,30 +2146,15 @@ public class DataObjectManager : MonoBehaviour
     {
         updateParameterValues();
 
-        BasisSpline splineScript;
-        BezierBar bezierScript;
-
         float barRadius = getCurrBarRadius();
+
+        BaseCurve curve;
 
         foreach (GameObject obj in outerEdgeList)
         {
-            splineScript = obj.GetComponent<BasisSpline>();
-            bezierScript = obj.GetComponent<BezierBar>();
+            curve = obj.GetComponent<BaseCurve>();
 
-            obj.transform.SetParent(null);
-
-            if (splineScript != null)
-            {
-                splineScript.radius = barRadius;
-                splineScript.refreshVertices();
-            }
-            else if (bezierScript != null)
-            {
-                bezierScript.radius = barRadius;
-                bezierScript.refreshVertices();
-            }
-
-            obj.transform.SetParent(projSphere.transform);
+            curve.updateBarRadius(barRadius);
         }
 
         // subnode edges
@@ -2188,19 +2162,20 @@ public class DataObjectManager : MonoBehaviour
         {
             foreach (GameObject obj in kv.Value)
             {
-                bezierScript = obj.GetComponent<BezierBar>();
-                if (bezierScript != null)
+                curve = obj.GetComponent<BaseCurve>();
+                if (curve != null)
                 {
                     Transform parentTransform = obj.transform.parent;
                     obj.transform.SetParent(null);
-                    bezierScript.radius = barRadius;
-                    bezierScript.refreshVertices();
+                    curve.radius = barRadius;
+                    curve.refreshVertices();
                     obj.transform.SetParent(parentTransform);
                 }
+
             }
         }
 
-        // TODO: update all sub node connections
+        // update all sub node connections
         List<GameObject> subObjectList;
         SubNodeManager snManager;
         foreach(KeyValuePair<string, List<GameObject>> kv in subElementObjectMap)
@@ -2208,16 +2183,16 @@ public class DataObjectManager : MonoBehaviour
             subObjectList = kv.Value;
             foreach(GameObject obj in subObjectList)
             {
-                bezierScript = obj.GetComponent<BezierBar>();
-                if (bezierScript != null)
+                curve = obj.GetComponent<BaseCurve>();
+                if (curve != null)
                 {
                     Transform parentTransform = obj.transform.parent;
                     obj.transform.SetParent(null);
-                    bezierScript.radius = barRadius;
-                    bezierScript.refreshVertices();
+                    curve.radius = barRadius;
+                    curve.refreshVertices();
                     obj.transform.SetParent(parentTransform);
                 }
-
+                
                 snManager = obj.GetComponent<SubNodeManager>();
                 if (snManager != null)
                 {
@@ -2296,6 +2271,7 @@ public class DataObjectManager : MonoBehaviour
                 edgeObj = (GameObject)Instantiate(bezierPrefab);
                 InnerGroupEdge bezBar = edgeObj.GetComponent<InnerGroupEdge>();
                 bezBar.radius = barRadius;
+                bezBar.edgeThinningAmount = edgeThinAmount;
                 bezBar.useSphericalInterpolation = interpolateSpherical;
                 bezBar.init(basePts, c0, c1, projSphere.transform);
 
@@ -2359,6 +2335,7 @@ public class DataObjectManager : MonoBehaviour
                 edgeObj = (GameObject)Instantiate(bSplinePrefab);
                 InterGroupEdge bspline = edgeObj.GetComponent<InterGroupEdge>();
                 bspline.radius = barRadius;
+                bspline.edgeThinningAmount = edgeThinAmount;
                 bspline.useSphericalInterpolation = interpolateSpherical;
                 if (invertFarEdgeGradient) bspline.init(basePts, c1, c0, projSphere.transform);
                 else bspline.init(basePts, c0, c1, projSphere.transform);
@@ -2376,6 +2353,9 @@ public class DataObjectManager : MonoBehaviour
 
             nodeManagerMap[edge.startNode.name].addOuterConnection(edgeObj, edge.isSameGroup());
             nodeManagerMap[edge.endNode.name].addOuterConnection(edgeObj, edge.isSameGroup());
+
+            nodeManagerMap[edge.startNode.name].addOuterEdgeInfo(edge);
+            nodeManagerMap[edge.endNode.name].addOuterEdgeInfo(edge);
 
         }
 
@@ -2510,10 +2490,25 @@ public class DataObjectManager : MonoBehaviour
 
     }
 
+    public void updateEdgeThinningAmount()
+    {
+        updateParameterValues();
+
+        BaseCurve curve;
+
+        foreach (GameObject obj in outerEdgeList)
+        {
+            curve = obj.GetComponent<BaseCurve>();
+
+            if (curve == null) continue;
+
+            curve.edgeThinningAmount = edgeThinAmount;
+        }
+
+        recalculateEdgeRadii();
+    }
+
 }
-
-
-
 
 
 public class NodeInfo

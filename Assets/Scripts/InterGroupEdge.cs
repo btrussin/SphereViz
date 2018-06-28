@@ -5,16 +5,6 @@ using UnityEngine;
 public class InterGroupEdge : BasisSpline
 {
 
-    GameObject nodeA = null;
-    GameObject nodeB = null;
-
-    NodeManager nodeManagerA;
-    NodeManager nodeManagerB;
-
-    Material objectMaterial = null;
-
-    public highlightState currHighlightState = highlightState.ONE_HOP;
-
     // Use this for initialization
     void Start () {
 		
@@ -39,12 +29,12 @@ public class InterGroupEdge : BasisSpline
         }
     }
 
-    public void updateHighlightState()
+    public override void updateHighlightState()
     {
         updateHighlightState(currHighlightState);
     }
 
-    public void updateHighlightState(highlightState state)
+    public override void updateHighlightState(highlightState state)
     {
         if (objectMaterial == null)
         {
@@ -79,4 +69,30 @@ public class InterGroupEdge : BasisSpline
         }
 
     }
+
+    public override void updateRadiusBasedOnHighlightState()
+    {
+        updateRadiusBasedOnHighlightState(currHighlightState);
+    }
+
+    public override void updateRadiusBasedOnHighlightState(highlightState state)
+    {
+        switch (state)
+        {
+            case highlightState.NONE:
+            case highlightState.FAR:
+                restoreTheEdgeToOriginalThickness();
+                break;
+            case highlightState.NEAR:
+                thinTheEdge();
+                break;
+            case highlightState.ONE_HOP:
+                if (nodeManagerA.isSelected || nodeManagerB.isSelected) restoreTheEdgeToOriginalThickness();
+                else thinTheEdge();
+
+                break;
+        }
+
+    }
+
 }

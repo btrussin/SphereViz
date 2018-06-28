@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class BezierBar : BaseCurve
 {
-    protected Vector3[] basePoints;
-    protected Vector3[] baseTangents;
 
     // Use this for initialization
     void Start () {
@@ -37,12 +35,13 @@ public class BezierBar : BaseCurve
             Vector3 tmpVec;
             Quaternion rotation;
 
+            /*
             if( transform != null )
             {
 
             }
-
-            /*
+            */
+            
             for (int i = 0; i < basePoints.Length; i++)
             {
                 tmpVec = new Vector3(tmpPoints[i].z, 0.0f, 0.0f);
@@ -57,7 +56,7 @@ public class BezierBar : BaseCurve
                     basePoints[i] = transform.TransformPoint(basePoints[i]);
                 }
             }
-            */
+            
 
             for (int i = 1; i < basePoints.Length; i++)
             {

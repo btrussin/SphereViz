@@ -10,9 +10,6 @@ public class BasisSpline : BaseCurve
     protected int m = 0; // number of weights
     protected int p = 0;
 
-    protected Vector3[] bsPoints;
-    protected Vector3[] bsTangents;
-
 
     // Use this for initialization
     void Start () {
@@ -36,7 +33,7 @@ public class BasisSpline : BaseCurve
         }
 
         setup(transform);
-        populateCurveBarMesh(bsPoints, bsTangents);
+        populateCurveBarMesh(basePoints, baseTangents);
     }
 
     protected void setup(Transform transform = null)
@@ -69,39 +66,39 @@ public class BasisSpline : BaseCurve
         {
     		Vector3 tmpVec;
     		Quaternion rotation;
-    		for( i = 0; i < bsPoints.Length; i++ )
+    		for( i = 0; i < basePoints.Length; i++ )
     		{
-				tmpVec = new Vector3(bsPoints[i].z, 0.0f, 0.0f);
-        		rotation = Quaternion.Euler(0.0f, bsPoints[i].x, bsPoints[i].y);
-        		bsPoints[i] = rotation * tmpVec;
+				tmpVec = new Vector3(basePoints[i].z, 0.0f, 0.0f);
+        		rotation = Quaternion.Euler(0.0f, basePoints[i].x, basePoints[i].y);
+        		basePoints[i] = rotation * tmpVec;
     		}
 
             if (transform != null)
             {
-                for (i = 0; i < bsPoints.Length; i++)
+                for (i = 0; i < basePoints.Length; i++)
                 {
-                    bsPoints[i] = transform.TransformPoint(bsPoints[i]);
+                    basePoints[i] = transform.TransformPoint(basePoints[i]);
                 }
             }
 
-            bsTangents = new Vector3[bsPoints.Length];
+            baseTangents = new Vector3[basePoints.Length];
 
-    		for( i = 1; i < bsPoints.Length; i++ )
+    		for( i = 1; i < basePoints.Length; i++ )
     		{
-    			tmpVec = bsPoints[i] - bsPoints[i-1];
+    			tmpVec = basePoints[i] - basePoints[i-1];
     			tmpVec.Normalize();
-    			bsTangents[i] = tmpVec;
+    			baseTangents[i] = tmpVec;
     		}
 
-    		bsTangents[0] = bsTangents[1];
+    		baseTangents[0] = baseTangents[1];
         }
         else
         {
             if (transform != null)
             {
-                for (i = 0; i < bsPoints.Length; i++)
+                for (i = 0; i < basePoints.Length; i++)
                 {
-                    bsPoints[i] = transform.TransformPoint(bsPoints[i]);
+                    basePoints[i] = transform.TransformPoint(basePoints[i]);
                 }
             }
 
@@ -124,43 +121,43 @@ public class BasisSpline : BaseCurve
             uVals[i] = (float)i * inc;
         }
 
-        bsPoints = new Vector3[uVals.Length];
+        basePoints = new Vector3[uVals.Length];
 
         for( int i = 0; i < uVals.Length; i++ )
         {
-            bsPoints[i] = getPN(uVals[i]);
+            basePoints[i] = getPN(uVals[i]);
         }
     }
 
     void calcBSplineTangents()
     {
-        bsTangents = new Vector3[bsPoints.Length];
+        baseTangents = new Vector3[basePoints.Length];
 
         Vector3 prev, next;
 
-        for( int i = 0; i < bsPoints.Length; i++ )
+        for( int i = 0; i < basePoints.Length; i++ )
         {
             if( i == 0 )
             {
-                prev = bsPoints[1] - bsPoints[0];
+                prev = basePoints[1] - basePoints[0];
                 next = prev;
             }
-            else if( i == (bsPoints.Length-1) )
+            else if( i == (basePoints.Length-1) )
             {
-                prev = bsPoints[bsPoints.Length-1] - bsPoints[bsPoints.Length-2];
+                prev = basePoints[basePoints.Length-1] - basePoints[basePoints.Length-2];
                 next = prev;
             }
             else
             {
-                prev = bsPoints[i] - bsPoints[i-1];
-                next = bsPoints[i+1] - bsPoints[i];
+                prev = basePoints[i] - basePoints[i-1];
+                next = basePoints[i+1] - basePoints[i];
             }
 
             prev.Normalize();
             next.Normalize();
 
-            bsTangents[i] = (prev + next) * 0.5f;
-            bsTangents[i].Normalize();
+            baseTangents[i] = (prev + next) * 0.5f;
+            baseTangents[i].Normalize();
         }
     }
 

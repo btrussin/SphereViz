@@ -30,8 +30,8 @@ public class BasisSplineLine : BasisSpline
 
     void populateLine()
     {
-        lineRend.positionCount = bsPoints.Length;
-        lineRend.SetPositions(bsPoints);
+        lineRend.positionCount = basePoints.Length;
+        lineRend.SetPositions(basePoints);
     }
 
 

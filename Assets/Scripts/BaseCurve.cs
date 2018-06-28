@@ -23,6 +23,24 @@ public class BaseCurve : MonoBehaviour {
     protected Vector3[] m_upVectors;
     protected Vector3[] m_rightVectors;
 
+    protected bool currentlyThinned = false;
+    protected float origThickRadius;
+
+    public float edgeThinningAmount = 0.1f;
+
+    public highlightState currHighlightState = highlightState.ONE_HOP;
+
+    protected GameObject nodeA = null;
+    protected GameObject nodeB = null;
+
+    protected NodeManager nodeManagerA;
+    protected NodeManager nodeManagerB;
+
+    protected Material objectMaterial = null;
+
+    protected Vector3[] basePoints;
+    protected Vector3[] baseTangents;
+
 
     protected void getUpAndRightVectors(Vector3[] basePoints, Vector3[] baseTangents, out Vector3[] upVecs, out Vector3[] rtVecs)
     {
@@ -53,15 +71,22 @@ public class BaseCurve : MonoBehaviour {
 
                 if(!foundSuitableRightVec)
                 {
-                    currRight.x = -baseTangents[i].y;
-                    currRight.y = baseTangents[i].x;
-                    currRight.z = baseTangents[i].z;
+                    currRight.x = -baseTangents[i].z;
+                    currRight.y = baseTangents[i].y;
+                    currRight.z = baseTangents[i].x;
 
                     if (Mathf.Abs(Vector3.Dot(baseTangents[i], currRight)) > 0.95f)
                     {
-                        currRight.x = -baseTangents[i].z;
-                        currRight.y = baseTangents[i].y;
-                        currRight.z = baseTangents[i].x;
+                        currRight.x = -baseTangents[i].y;
+                        currRight.y = baseTangents[i].x;
+                        currRight.z = baseTangents[i].z;
+
+                        if (Mathf.Abs(Vector3.Dot(baseTangents[i], currRight)) > 0.95f)
+                        {
+                            currRight.x = baseTangents[i].x;
+                            currRight.y = baseTangents[i].z;
+                            currRight.z = -baseTangents[i].y;
+                        }
                     }
                 }
             }
@@ -236,5 +261,52 @@ public class BaseCurve : MonoBehaviour {
     public void init(Vector3[] bPts, Color c0, Color c1, Transform transform = null)
     {
 
+    }
+
+    public virtual void updateHighlightState() { }
+    public virtual void updateHighlightState(highlightState state) { }
+
+    public virtual void updateRadiusBasedOnHighlightState() { }
+    public virtual void updateRadiusBasedOnHighlightState(highlightState state) { }
+
+    protected void thinTheEdge()
+    {
+        if (currentlyThinned) return;
+
+        origThickRadius = radius;
+        radius *= edgeThinningAmount;
+
+        refreshVertices();
+
+        currentlyThinned = true;
+    }
+
+    protected void restoreTheEdgeToOriginalThickness()
+    {
+        if (!currentlyThinned) return;
+        radius = origThickRadius;
+
+        refreshVertices();
+        currentlyThinned = false;
+    }
+
+    public virtual void updateBarRadius(float r)
+    {
+        Transform parentTrans = transform.parent;
+        transform.SetParent(null);
+
+        if (currentlyThinned)
+        {
+            origThickRadius = r;
+            radius = origThickRadius * edgeThinningAmount;
+        }
+        else
+        {
+            radius = r;
+        }
+
+        refreshVertices();
+
+        transform.SetParent(parentTrans);
     }
 }

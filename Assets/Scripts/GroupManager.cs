@@ -127,7 +127,7 @@ public class GroupManager : MonoBehaviour {
         centerToPt = transform.position - sphereCenter;
         centerToPt.Normalize();
 
-        transform.position = sphereCenter + centerToPt * projSphereTrans.localScale.x * dataObjManager.radius * 0.8f;
+        transform.position = sphereCenter + centerToPt * projSphereTrans.localScale.x * dataObjManager.mainObjRadius * 0.8f;
         Utils.getYZSphericalCoordinates(projSphereTrans, transform.position, out y, out z);
 
         groupInfo.center2.x = y / dataObjManager.projHorizontalAngle;
