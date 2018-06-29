@@ -1183,7 +1183,9 @@ public class DataObjectManager : MonoBehaviour
             targetObj.transform.position = projSphere.transform.TransformPoint(nodeInfo.position3);
 
             // TODO: move the edges
-            //nm.removeInnerSphereExtention();
+            nm.setRecalcAllAttachedEdges();
+            activesUpdateEdges = true;
+
 
             List<ConnectionManager> connManList = new List<ConnectionManager>();
             nm.getInnerConnections(connManList);
@@ -1257,6 +1259,7 @@ public class DataObjectManager : MonoBehaviour
                     break;
                 case SubNodeDisplayType.INNER_SPHERE:
                     populateSubNodes_innerSphere(newNodeManagers[i]);
+                    activesUpdateEdges = true;
                     break;
             }
 
@@ -1284,6 +1287,7 @@ public class DataObjectManager : MonoBehaviour
                 {
                     populateInnerNodeConnections(newNodeManagers[i], newNodeManagers[j]);
                 }
+
             }
         }
 
@@ -1341,8 +1345,7 @@ public class DataObjectManager : MonoBehaviour
         subElementObjectMap.Add(nodeInfo.name, gObjList);
 
         // TODO: move the edges
-
-        //nodeManager.setupInnerSphereExtension(bezierPrefab, initPos, destPos, getCurrBarRadius());
+        nodeManager.setRecalcAllAttachedEdges();
     }
 
     void populateSubNodes_bloom(NodeManager nodeManager)
@@ -1983,10 +1986,20 @@ public class DataObjectManager : MonoBehaviour
                 if (interpolateSpherical)
                 {
                     basePts[0] = edge.startNode.sphereCoords;
+                    basePts[3] = edge.endNode.sphereCoords;
+
+                    if(subNodeDisplayType == SubNodeDisplayType.INNER_SPHERE)
+                    {
+                        NodeManager nm = nodeManagerMap[edge.startNode.name];
+                        if (nm.isSelected) basePts[0].z *= 0.8f;
+                        nm = nodeManagerMap[edge.endNode.name];
+                        if (nm.isSelected) basePts[3].z *= 0.8f;
+                    }
+
                     basePts[1] = basePts[0];
                     basePts[1].z *= bezEdgeDist; // the radius from the sphere center
 
-                    basePts[3] = edge.endNode.sphereCoords;
+                    
                     basePts[2] = basePts[3];
                     basePts[2].z *= bezEdgeDist;
                 }
@@ -2022,6 +2035,14 @@ public class DataObjectManager : MonoBehaviour
 
                     basePts[0] = edge.startNode.sphereCoords;  // start point
                     basePts[6] = edge.endNode.sphereCoords; // end point
+
+                    if (subNodeDisplayType == SubNodeDisplayType.INNER_SPHERE)
+                    {
+                        NodeManager nm = nodeManagerMap[edge.startNode.name];
+                        if (nm.isSelected) basePts[0].z *= 0.8f;
+                        nm = nodeManagerMap[edge.endNode.name];
+                        if (nm.isSelected) basePts[6].z *= 0.8f;
+                    }
 
                     basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;
                     basePts[1].z *= splineEdgeDistInner;  // group1 node radius 1.1*radius

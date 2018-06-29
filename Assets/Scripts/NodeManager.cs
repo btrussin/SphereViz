@@ -331,4 +331,12 @@ public class NodeManager : MonoBehaviour {
 
         mesh.colors = meshColors;
     }
+
+    public void setRecalcAllAttachedEdges()
+    {
+        foreach(EdgeInfo ei in edgeInfoList)
+        {
+            ei.updateNextFrame = true;
+        }
+    }
 }
