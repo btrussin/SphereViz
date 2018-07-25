@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
 
+using HTC.UnityPlugin;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
 public class ViveController : MonoBehaviour
 {
+
+    //List<RaycastResult> raycastResults = new List<RaycastResult>();
+    //public List<Canvas> targetedCanvases = new List<Canvas>(); 
 
     SteamVR_TrackedObject svrto;
 
     Dictionary<string, NodeManager> currCollisionNodeManagers = new Dictionary<string, NodeManager>();
+    Dictionary<string, GroupManager> currCollisionGroupManagers = new Dictionary<string, GroupManager>();
     List<GameObject> currMenuCollisionObjects = new List<GameObject>();
 
     protected CVRSystem vrSystem;
@@ -36,8 +44,6 @@ public class ViveController : MonoBehaviour
     SliderManager currSliderManagerByContact;
     float beamLength = 5f;
     Vector3[] beamPts = new Vector3[2];
-
-    GroupManager currGrpManager = null;
 
     public GameObject mainMenu;
     public ViveController otherController;
@@ -133,6 +139,54 @@ public class ViveController : MonoBehaviour
         updateState();
 
 
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            releaseAllCollidedObjects();
+            //if (colliderObject.activeInHierarchy) colliderObject.SetActive(false);
+            //else colliderObject.SetActive(true);  
+        }
+
+    }
+
+    void UIRaysCast()
+    {
+        /*
+        raycastResults.Clear();
+
+        foreach (Canvas canvas in targetedCanvases)
+        {
+            var graphics = GraphicRegistry.GetGraphicsForCanvas(canvas);
+
+            for (int i = 0; i < graphics.Count; ++i)
+            {
+                var graphic = graphics[i];
+
+                // -1 means it hasn't been processed by the canvas, which means it isn't actually drawn
+                if (graphic.depth == -1 || !graphic.raycastTarget) { continue; }
+
+                //var dist = Vector3.Dot(transForward, trans.position - ray.origin) / Vector3.Dot(transForward, ray.direction);
+                float dist;
+                new Plane(graphic.transform.forward, graphic.transform.position).Raycast(deviceRay, out dist);
+                if (dist > 20f) { continue; }
+
+                raycastResults.Add(new RaycastResult
+                {
+                    gameObject = graphic.gameObject,
+                    module = raycaster,
+                    distance = dist,
+                    worldPosition = deviceRay.GetPoint(dist),
+                    worldNormal = -graphic.transform.forward,
+                    screenPosition = Vector2.zero,
+                    index = raycastResults.Count,
+                    depth = graphic.depth,
+                    sortingLayer = canvas.sortingLayerID,
+                    sortingOrder = canvas.sortingOrder
+                });
+            }
+        }
+        */
+       
+
     }
     
     void updateState()
@@ -187,6 +241,19 @@ public class ViveController : MonoBehaviour
                 if (prevState.rAxis1.x < 1.0f && state.rAxis1.x == 1.0f)
                 {
                     // trigger just now pulled to the max
+
+                    // new UI stuff
+
+                    UIRaysCast();
+
+
+                    // end new UI stuff
+
+
+
+
+
+
                     if (currSliderManagerByContact != null)
                     {
                         sliderActiveByContact = true;
@@ -245,12 +312,11 @@ public class ViveController : MonoBehaviour
                         nm.beginPullEffect(dataManager.getCurrBarRadius(), restrictCurveRedraw);
                     }
 
-                    if( currGrpManager != null )
+                    if( currCollisionGroupManagers.Count > 1 ) dataManager.deselectAllNodes();
+                    foreach (GroupManager gm in currCollisionGroupManagers.Values)
                     {
-                        // move the group
-                        dataManager.deselectAllNodes();
-                        currGrpManager.gameObject.GetComponent<MoveScaleObject>().grabSphereWithObject(gameObject);
-                        currGrpManager.startMove();
+                        gm.gameObject.GetComponent<MoveScaleObject>().grabSphereWithObject(gameObject);
+                        gm.startMove();
                     }
 
                     if (restrictCurveRedraw) Debug.Log("Restricting the Curves: " + count);
@@ -260,7 +326,8 @@ public class ViveController : MonoBehaviour
                 else if (prevState.rAxis1.x == 1.0f && state.rAxis1.x < 1.0f)
                 {
                     // trigger just now released from the max
-
+                    releaseAllCollidedObjects();
+                    /*
                     if (currCollisionNodeManagers.Count > 0)
                     {
                         foreach (NodeManager nm in currCollisionNodeManagers.Values)
@@ -280,6 +347,7 @@ public class ViveController : MonoBehaviour
                         //currGrpManager = null;
                         dataManager.repopulateEdges();
                     }
+                    */
 
                     if (currSliderManagerByRay != null)
                     {
@@ -357,6 +425,33 @@ public class ViveController : MonoBehaviour
         }
     }
 
+    void releaseAllCollidedObjects()
+    {
+        if (currCollisionNodeManagers.Count > 0)
+        {
+            foreach (NodeManager nm in currCollisionNodeManagers.Values)
+            {
+                MoveScaleObject moveObj = nm.gameObject.GetComponent<MoveScaleObject>();
+                if (moveObj != null) moveObj.releaseSphereWithObject(gameObject);
+                nm.endPullEffect();
+            }
+        }
+
+        if (currCollisionGroupManagers.Count > 0)
+        {
+            foreach (GroupManager gm in currCollisionGroupManagers.Values)
+            {
+                // move the group
+                gm.gameObject.GetComponent<MoveScaleObject>().releaseSphereWithObject(gameObject);
+                gm.endActive();
+                gm.endMove();
+            }
+
+            dataManager.repopulateEdges();
+        }
+
+    }
+
   
     void OnCollisionEnter(Collision collision)
     {
@@ -374,8 +469,13 @@ public class ViveController : MonoBehaviour
         GroupManager grpMan = firstGameObject.GetComponent<GroupManager>();
         if (grpMan != null)
         {
-            currGrpManager = grpMan;
-            currGrpManager.startActive();
+            
+            if (!currCollisionGroupManagers.ContainsKey(grpMan.name))
+            {
+                currCollisionGroupManagers.Add(grpMan.name, grpMan);
+                grpMan.startActive();
+            }
+
             return;
         }
 
@@ -419,8 +519,8 @@ public class ViveController : MonoBehaviour
         GroupManager grpMan = firstGameObject.GetComponent<GroupManager>();
         if (grpMan != null)
         {
+            if (currCollisionGroupManagers.ContainsKey(grpMan.name)) currCollisionGroupManagers.Remove(grpMan.name);
             grpMan.endActive();
-            currGrpManager = null;
             return;
         }
 

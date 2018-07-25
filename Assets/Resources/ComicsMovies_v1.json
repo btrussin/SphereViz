@@ -97,132 +97,6 @@
       ]
     },
     {
-      "comic": "Ant-Man",
-      "movie": "Ant-Man and the Wasp",
-      "year": 2018,
-      "publisher": "Marvel",
-      "grouping": "MCU",
-      "distributor": "Walt Disney",
-      "studios": [
-        "Marvel"
-      ],
-      "roles": [
-        {
-          "role": "Ant-Man",
-          "actor": "Paul Rudd",
-          "name": "Scott Lang"
-        },
-        {
-          "role": "Wasp",
-          "actor": "Evangeline Lily",
-          "name": "Hope Van Dyne"
-        },
-        {
-          "role": "Luis",
-          "actor": "Michael Pena",
-          "name": "Luis"
-        },
-        {
-          "role": "Hank Pym",
-          "actor": "Michael Douglas",
-          "name": "Hank Pym"
-        },
-        {
-          "role": "Janet Van Dyne",
-          "actor": "Michelle Pfeiffer",
-          "name": "Janet Van Dyne"
-        },
-        {
-          "role": "Sonny Burch",
-          "actor": "Walton Goggins",
-          "name": "Sonny Burch"
-        },
-        {
-          "role": "Jim Paxton",
-          "actor": "Bobby Cannavale",
-          "name": "Jim Paxton"
-        },
-        {
-          "role": "Maggie",
-          "actor": "Judy Greer",
-          "name": "Maggie"
-        },
-        {
-          "role": "Ghost",
-          "actor": "Hannah John-Kamen",
-          "name": "Ava Starr"
-        },
-        {
-          "role": "Jimmy Woo",
-          "actor": "Randall Park",
-          "name": "Jimmy Woo"
-        },
-        {
-          "role": "Bill Foster",
-          "actor": "Laurence Fishburne",
-          "name": "Bill Foster"
-        },
-        {
-          "role": "Man",
-          "actor": "Stan Lee",
-          "name": "Man"
-        }
-      ]
-    },
-    {
-      "comic": "Atomic Blonde",
-      "movie": "Atomic Blonde",
-      "year": 2017,
-      "publisher": "Oni Press",
-      "grouping": "Atomic Blonde",
-      "distributor": "Focus Features",
-      "studios": [
-        "Denver and Delilah Productions"
-      ],
-      "roles": [
-        {
-          "role": "Lorraine Broughton",
-          "actor": "Charlize Theron",
-          "name": "Lorraine Broughton"
-        },
-        {
-          "role": "David Percival",
-          "actor": "James McAvoy",
-          "name": "David Percival"
-        },
-        {
-          "role": "Emmett Kurzfeld",
-          "actor": "John Goodman",
-          "name": "Emmett Kurzfeld"
-        },
-        {
-          "role": "Watchmaker",
-          "actor": "Til Schweiger",
-          "name": "Watchmaker"
-        },
-        {
-          "role": "Spyglass",
-          "actor": "Eddie Marsan",
-          "name": "Spyglass"
-        },
-        {
-          "role": "Delphine Lasalle",
-          "actor": "Sofia Boutella",
-          "name": "Delphine Lasalle"
-        },
-        {
-          "role": "Eric Gray",
-          "actor": "Toby Jones",
-          "name": "Eric Gray"
-        },
-        {
-          "role": "C",
-          "actor": "James Faulkner",
-          "name": "C"
-        }
-      ]
-    },
-    {
       "comic": "Avengers",
       "movie": "Avengers",
       "year": 2012,
@@ -375,224 +249,6 @@
           "role": "Veteran",
           "actor": "Stan Lee",
           "name": "Veteran"
-        },
-        {
-          "role": "Klaw",
-          "actor": "Andy Serkis",
-          "name": "Ulysses Klaue"
-        }
-      ]
-    },
-    {
-      "comic": "Avengers",
-      "movie": "Avengers: Infinity War",
-      "year": 2018,
-      "publisher": "Marvel",
-      "grouping": "MCU",
-      "distributor": "Walt Disney",
-      "studios": [
-        "Marvel"
-      ],
-      "roles": [
-        {
-          "role": "Hulk",
-          "actor": "Mark Ruffalo",
-          "name": "Bruce Banner"
-        },
-        {
-          "role": "Thor",
-          "actor": "Chris Hemsworth",
-          "name": "Thor"
-        },
-        {
-          "role": "Iron Man",
-          "actor": "Robert Downey Jr",
-          "name": "Tony Stark"
-        },
-        {
-          "role": "Captain America",
-          "actor": "Chris Evans",
-          "name": "Steve Rogers"
-        },
-        {
-          "role": "Black Widow",
-          "actor": "Scarlett Johansson",
-          "name": "Natasha Romanoff"
-        },
-        {
-          "role": "Loki",
-          "actor": "Tom Hiddleston",
-          "name": "Loki"
-        },
-        {
-          "role": "Nick Fury",
-          "actor": "Samuel L Jackson",
-          "name": "Nick Fury"
-        },
-        {
-          "role": "Star-Lord",
-          "actor": "Chris Pratt",
-          "name": "Peter Quill"
-        },
-        {
-          "role": "Doctor Strange",
-          "actor": "Benedict Cumberbatch",
-          "name": "Stephen Strange"
-        },
-        {
-          "role": "War Machine",
-          "actor": "Don Cheadle",
-          "name": "James Rhodes"
-        },
-        {
-          "role": "Spiderman",
-          "actor": "Tom Holland",
-          "name": "Peter Parker"
-        },
-        {
-          "role": "Scarlet Witch",
-          "actor": "Mary Elizabeth Olsen",
-          "name": "Wanda Maximoff"
-        },
-        {
-          "role": "Vision",
-          "actor": "Paul Bettany",
-          "name": "Vision"
-        },
-        {
-          "role": "Falcon",
-          "actor": "Anthony Mackie",
-          "name": "Sam Wilson"
-        },
-        {
-          "role": "Heimdal",
-          "actor": "Idris Elba",
-          "name": "Heimdal"
-        },
-        {
-          "role": "Black Panther",
-          "actor": "Chadwick Boseman",
-          "name": "T\u0027Challa"
-        },
-        {
-          "role": "Okoye",
-          "actor": "Danai Gurira",
-          "name": "Okoye"
-        },
-        {
-          "role": "Shuri",
-          "actor": "Letitia Wright",
-          "name": "Shuri"
-        },
-        {
-          "role": "Winter Soldier",
-          "actor": "Sebastian Stan",
-          "name": "Bucky Barnes"
-        },
-        {
-          "role": "Thanos",
-          "actor": "Josh Brolin",
-          "name": "Thanos"
-        },
-        {
-          "role": "Collector",
-          "actor": "Benecio Del Toro",
-          "name": "Taneleer Tivan"
-        },
-        {
-          "role": "Etri",
-          "actor": "Peter Dinklage",
-          "name": "Etri"
-        },
-        {
-          "role": "Rocket Racoon",
-          "actor": "Bradley Cooper",
-          "name": "Rocket Racoon"
-        },
-        {
-          "role": "Pepper Potts",
-          "actor": "Gwyneth Paltrow",
-          "name": "Pepper Potts"
-        },
-        {
-          "role": "Groot",
-          "actor": "Vin Diesel",
-          "name": "Groot"
-        },
-        {
-          "role": "Gamora",
-          "actor": "Zoe Soldana",
-          "name": "Gamora"
-        },
-        {
-          "role": "Drax",
-          "actor": "Dave Bautista",
-          "name": "Drax"
-        },
-        {
-          "role": "Nebula",
-          "actor": "Karen Gillen",
-          "name": "Nebula"
-        },
-        {
-          "role": "Mantis",
-          "actor": "Pom Klementieff",
-          "name": "Mantis"
-        },
-        {
-          "role": "Thaddeus Ross",
-          "actor": "William Hurt",
-          "name": "Thaddeus Ross"
-        },
-        {
-          "role": "M\u0027Baku",
-          "actor": "Winston Duke",
-          "name": "M\u0027Baku"
-        },
-        {
-          "role": "Ned",
-          "actor": "Jacob Batalon",
-          "name": "Ned"
-        },
-        {
-          "role": "Maria Hill",
-          "actor": "Cobie Smulders",
-          "name": "Maria Hill"
-        },
-        {
-          "role": "Cull Obsidian",
-          "actor": "Terry Notary",
-          "name": "Cull Obsidian"
-        },
-        {
-          "role": "Ebony Maw",
-          "actor": "Tom Vaughn-Lawlor",
-          "name": "Ebony Maw"
-        },
-        {
-          "role": "Proxima Midnight",
-          "actor": "Carrie Coon",
-          "name": "Proxima Midnight"
-        },
-        {
-          "role": "Corvus Glaive",
-          "actor": "Michael James Shaw",
-          "name": "Corvus Glaive"
-        },
-        {
-          "role": "Wong",
-          "actor": "Benedict Wong",
-          "name": "Wong"
-        },
-        {
-          "role": "Red Skull",
-          "actor": "Ross Marquand",
-          "name": "Johann Schmidt"
-        },
-        {
-          "role": "Bus Driver",
-          "actor": "Stan Lee",
-          "name": "Bus Driver"
         }
       ]
     },
@@ -610,7 +266,7 @@
         {
           "role": "Joker",
           "actor": "Jack Nicholson",
-          "name": "Jack Napier"
+          "name": "Joker"
         },
         {
           "role": "Batman",
@@ -936,79 +592,6 @@
       ]
     },
     {
-      "comic": "Black Panther",
-      "movie": "Black Panther",
-      "year": 2018,
-      "publisher": "Marvel",
-      "grouping": "MCU",
-      "distributor": "Walt Disney",
-      "studios": [
-        "Marvel"
-      ],
-      "roles": [
-        {
-          "role": "Black Panther",
-          "actor": "Chadwick Boseman",
-          "name": "T\u0027Challa"
-        },
-        {
-          "role": "Killmonger",
-          "actor": "Michael B Jordan",
-          "name": "Erik Stevens"
-        },
-        {
-          "role": "Nakia",
-          "actor": "Lupita Nyong\u0027o",
-          "name": "Nakia"
-        },
-        {
-          "role": "Okoye",
-          "actor": "Danai Gurira",
-          "name": "Okoye"
-        },
-        {
-          "role": "Everett Ross",
-          "actor": "Martin Freeman",
-          "name": "Everett Ross"
-        },
-        {
-          "role": "W\u0027Kabi",
-          "actor": "Daniel Kaluuya",
-          "name": "W\u0027Kabi"
-        },
-        {
-          "role": "Shuri",
-          "actor": "Letitia Wright",
-          "name": "Shuri"
-        },
-        {
-          "role": "M\u0027Baku",
-          "actor": "Winston Duke",
-          "name": "M\u0027Baku"
-        },
-        {
-          "role": "Ramonda",
-          "actor": "Angela Bassett",
-          "name": "Ramonda"
-        },
-        {
-          "role": "Zuri",
-          "actor": "Forest Whitaker",
-          "name": "Zuri"
-        },
-        {
-          "role": "Klaw",
-          "actor": "Andy Serkis",
-          "name": "Ulysses Klaue"
-        },
-        {
-          "role": "Casino Patron",
-          "actor": "Stan Lee",
-          "name": "Casino Patron"
-        }
-      ]
-    },
-    {
       "comic": "Blade",
       "movie": "Blade",
       "year": 1998,
@@ -1181,11 +764,6 @@
           "role": "General",
           "actor": "Stan Lee",
           "name": "General"
-        },
-        {
-          "role": "Arnim Zola",
-          "actor": "Toby Jones",
-          "name": "Arnim Zola"
         }
       ]
     },
@@ -1239,11 +817,6 @@
           "role": "Security Guard",
           "actor": "Stan Lee",
           "name": "Security Guard"
-        },
-        {
-          "role": "Arnim Zola",
-          "actor": "Toby Jones",
-          "name": "Arnim Zola"
         }
       ]
     },
@@ -1530,70 +1103,6 @@
           "role": "Weasel",
           "actor": "TJ Miller",
           "name": "Weasel"
-        }
-      ]
-    },
-    {
-      "comic": "Deadpool",
-      "movie": "Deadpool 2",
-      "year": 2018,
-      "publisher": "Marvel",
-      "grouping": "X-Men",
-      "distributor": "20th Century Fox",
-      "studios": [
-        "Marvel",
-        "The Donners\u0027 Company"
-      ],
-      "roles": [
-        {
-          "role": "Deadpool",
-          "actor": "Ryan Reynolds",
-          "name": "Wade Wilson"
-        },
-        {
-          "role": "Vanessa",
-          "actor": "Morena Baccarin",
-          "name": "Vanessa"
-        },
-        {
-          "role": "Colossus",
-          "actor": "Stefan Kapucic",
-          "name": "Peter Rasputin"
-        },
-        {
-          "role": "Weasel",
-          "actor": "TJ Miller",
-          "name": "Weasel"
-        },
-        {
-          "role": "Cable",
-          "actor": "Josh Brolin",
-          "name": "Cable"
-        },
-        {
-          "role": "Headmaster",
-          "actor": "Eddie Marsan",
-          "name": "Headmaster"
-        },
-        {
-          "role": "Firefist",
-          "actor": "Julian Dennison",
-          "name": "Russell Collins"
-        },
-        {
-          "role": "Domino",
-          "actor": "Zazie Beets",
-          "name": "Domino"
-        },
-        {
-          "role": "Negasonic Teenage Warhead",
-          "actor": "Brianna Hildebrand",
-          "name": "Negasonic Teenage Warhead"
-        },
-        {
-          "role": "Peter",
-          "actor": "Rob Delaney",
-          "name": "Peter"
         }
       ]
     },
@@ -2007,79 +1516,6 @@
           "role": "Howard the Duck",
           "actor": "Seth Green",
           "name": "Howard the Duck"
-        }
-      ]
-    },
-    {
-      "comic": "Guardians of the Galaxy",
-      "movie": "Guardians of the Galaxy Vol. 2",
-      "year": 2017,
-      "publisher": "Marvel",
-      "grouping": "MCU",
-      "distributor": "Walt Disney",
-      "studios": [
-        "Marvel"
-      ],
-      "roles": [
-        {
-          "role": "Star-Lord",
-          "actor": "Chris Pratt",
-          "name": "Peter Quill"
-        },
-        {
-          "role": "Gamora",
-          "actor": "Zoe Saldana",
-          "name": "Gamora"
-        },
-        {
-          "role": "Drax",
-          "actor": "David Bautista",
-          "name": "Drax"
-        },
-        {
-          "role": "Groot",
-          "actor": "Vin Diesel",
-          "name": "Groot"
-        },
-        {
-          "role": "Rocket Raccoon",
-          "actor": "Bradley Cooper",
-          "name": "Rocket Raccoon"
-        },
-        {
-          "role": "Yondu",
-          "actor": "Michael Rooker",
-          "name": "Yondu"
-        },
-        {
-          "role": "Nebula",
-          "actor": "Karen Gillen",
-          "name": "Nebula"
-        },
-        {
-          "role": "Mantis",
-          "actor": "Pom Klementieff",
-          "name": "Mantis"
-        },
-        {
-          "role": "Ego",
-          "actor": "Kurt Russel",
-          "name": "Ego"
-        },
-        {
-          "role": "Ayesha",
-          "actor": "Elizabeth Debicki",
-          "name": "Ayesha"
-        },
-        {
-          "role": "Taserface",
-          "actor": "Chris Sullivan",
-          "name": "Taserface"
-        },
-        {
-          "role": "Informant",
-          "actor": "Stan Lee",
-          "name": "Informant"
         }
       ]
     },
@@ -2635,95 +2071,6 @@
       ]
     },
     {
-      "comic": "Justice League",
-      "movie": "Justice League",
-      "year": 2017,
-      "publisher": "DC",
-      "grouping": "DC Extended Universe",
-      "distributor": "Warner Brothers",
-      "studios": [
-        "DC Entertainment",
-        "RatPac-Dune Entertainment"
-      ],
-      "roles": [
-        {
-          "role": "Superman",
-          "actor": "Henry Cavill",
-          "name": "Clark Kent"
-        },
-        {
-          "role": "Batman",
-          "actor": "Ben Affleck",
-          "name": "Bruce Wayne"
-        },
-        {
-          "role": "Lois Lane",
-          "actor": "Amy Adams",
-          "name": "Lois Lane"
-        },
-        {
-          "role": "Lex Luthor",
-          "actor": "Jesse Eisenberg",
-          "name": "Lex Luthor"
-        },
-        {
-          "role": "Wonder Woman",
-          "actor": "Gal Gadot",
-          "name": "Diana Prince"
-        },
-        {
-          "role": "Alfred",
-          "actor": "Jeremy Irons",
-          "name": "Alfred"
-        },
-        {
-          "role": "Perry White",
-          "actor": "Laurence Fishburne",
-          "name": "Perry White"
-        },
-        {
-          "role": "Flash",
-          "actor": "Ezra Miller",
-          "name": "Barry Allen"
-        },
-        {
-          "role": "Steppenwolf",
-          "actor": "Ciaran Hinds",
-          "name": "Steppenwolf"
-        },
-        {
-          "role": "Aquaman",
-          "actor": "Jason Momoa",
-          "name": "Arthur Curry"
-        },
-        {
-          "role": "Jim Gordon",
-          "actor": "JK Simmons",
-          "name": "Jim Gordon"
-        },
-        {
-          "role": "Hippolyta",
-          "actor": "Connie Nielsen",
-          "name": "Hippolyta"
-        },
-        {
-          "role": "Martha Kent",
-          "actor": "Diane Lane",
-          "name": "Martha Kent"
-        },
-        {
-          "role": "Cyborg",
-          "actor": "Ray Fisher",
-          "name": "Victor Stone"
-        },
-        {
-          "role": "Deathstroke",
-          "actor": "Joe Mangianello",
-          "name": "Slade Wilson"
-        }
-      ]
-    },
-    {
       "comic": "Kick-ass",
       "movie": "Kick-ass",
       "year": 2010,
@@ -2864,75 +2211,6 @@
           "role": "James Arnold",
           "actor": "Mark Hamill",
           "name": "James Arnold"
-        }
-      ]
-    },
-    {
-      "comic": "Kingsman",
-      "movie": "Kingsman: The Golden Circle",
-      "year": 2017,
-      "publisher": "Icon",
-      "grouping": "Kingsman",
-      "distributor": "20th Century Fox",
-      "studios": [
-        "Marv Films",
-        "TSG Entertainment"
-      ],
-      "roles": [
-        {
-          "role": "Galahad",
-          "actor": "Colin Firth",
-          "name": "Harry Hart"
-        },
-        {
-          "role": "Poppy Adams",
-          "actor": "Julianne Moore",
-          "name": "Poppy Adams"
-        },
-        {
-          "role": "Eggsy",
-          "actor": "Taron Egerton",
-          "name": "Gary Unwin"
-        },
-        {
-          "role": "Merlin",
-          "actor": "Mark Strong",
-          "name": "Merlin"
-        },
-        {
-          "role": "Ginger Ale",
-          "actor": "Halle Berry",
-          "name": "Ginger Ale"
-        },
-        {
-          "role": "Elton John",
-          "actor": "Elton John",
-          "name": "Elton John"
-        },
-        {
-          "role": "Tequilla",
-          "actor": "Channing Tatum",
-          "name": "Tequilla"
-        },
-        {
-          "role": "Champ",
-          "actor": "Jeff Bridges",
-          "name": "Champ"
-        },
-        {
-          "role": "Whiskey",
-          "actor": "Pedro Pascal",
-          "name": "Jack Daniels"
-        },
-        {
-          "role": "Lancelot",
-          "actor": "Sophie Cookson",
-          "name": "Roxanne Morton"
-        },
-        {
-          "role": "Arthur",
-          "actor": "Michael Gambon",
-          "name": "Arthur"
         }
       ]
     },
@@ -3738,11 +3016,6 @@
           "role": "New Yorker",
           "actor": "Stan Lee",
           "name": "New Yorker"
-        },
-        {
-          "role": "J Jonah Jameson",
-          "actor": "JK Simmons",
-          "name": "J Jonah Jameson"
         }
       ]
     },
@@ -3796,11 +3069,6 @@
           "role": "New Yorker",
           "actor": "Stan Lee",
           "name": "New Yorker"
-        },
-        {
-          "role": "J Jonah Jameson",
-          "actor": "JK Simmons",
-          "name": "J Jonah Jameson"
         }
       ]
     },
@@ -3864,11 +3132,6 @@
           "role": "New Yorker",
           "actor": "Stan Lee",
           "name": "New Yorker"
-        },
-        {
-          "role": "J Jonah Jameson",
-          "actor": "JK Simmons",
-          "name": "J Jonah Jameson"
         }
       ]
     },
@@ -3970,85 +3233,6 @@
           "role": "Man at Graduation",
           "actor": "Stan Lee",
           "name": "Man at Graduation"
-        }
-      ]
-    },
-    {
-      "comic": "Spiderman",
-      "movie": "Spiderman: Homecoming",
-      "year": 2017,
-      "publisher": "Marvel",
-      "grouping": "MCU",
-      "distributor": "Sony Pictures Releasing",
-      "studios": [
-        "Columbia Pictures",
-        "Marvel Studios"
-      ],
-      "roles": [
-        {
-          "role": "Spiderman",
-          "actor": "Tom Holland",
-          "name": "Peter Parker"
-        },
-        {
-          "role": "Vulture",
-          "actor": "Michael Keaton",
-          "name": "Adrian Toomes"
-        },
-        {
-          "role": "Happy Hogan",
-          "actor": "Jon Favreau",
-          "name": "Happy Hogan"
-        },
-        {
-          "role": "MJ",
-          "actor": "Zendaya",
-          "name": "MJ"
-        },
-        {
-          "role": "Prowler",
-          "actor": "Donald Glover",
-          "name": "Aaron Davis"
-        },
-        {
-          "role": "Anne Marie Hoag",
-          "actor": "Tyne Daly",
-          "name": "Anne Marie Hoag"
-        },
-        {
-          "role": "May Parker",
-          "actor": "Marisa Tomei",
-          "name": "May Parker"
-        },
-        {
-          "role": "Iron Man",
-          "actor": "Robert Downey Jr",
-          "name": "Tony Stark"
-        },
-        {
-          "role": "Pepper Potts",
-          "actor": "Gwyneth Paltrow",
-          "name": "Pepper Potts"
-        },
-        {
-          "role": "Captain America",
-          "actor": "Chris Evans",
-          "name": "Steve Rogers"
-        },
-        {
-          "role": "Ned",
-          "actor": "Jacob Batalon",
-          "name": "Ned"
-        },
-        {
-          "role": "Tinkerer",
-          "actor": "Michael Chernus",
-          "name": "Phineas Mason"
-        },
-        {
-          "role": "Scorpion",
-          "actor": "Michael Mando",
-          "name": "Mac Gargan"
         }
       ]
     },
@@ -5077,84 +4261,6 @@
       ]
     },
     {
-      "comic": "Thor",
-      "movie": "Thor: Ragnarok",
-      "year": 2017,
-      "publisher": "Marvel",
-      "grouping": "MCU",
-      "distributor": "Walt Disney",
-      "studios": [
-        "Marvel"
-      ],
-      "roles": [
-        {
-          "role": "Hela",
-          "actor": "Cate Blanchett",
-          "name": "Hela"
-        },
-        {
-          "role": "Odin",
-          "actor": "Anthony Hopkins",
-          "name": "Odin"
-        },
-        {
-          "role": "Thor",
-          "actor": "Chris Hemsworth",
-          "name": "Thor"
-        },
-        {
-          "role": "Loki",
-          "actor": "Tom Hiddleston",
-          "name": "Loki"
-        },
-        {
-          "role": "Hulk",
-          "actor": "Mark Ruffalo",
-          "name": "Bruce Banner"
-        },
-        {
-          "role": "Valkyrie",
-          "actor": "Tessa Thompson",
-          "name": "Valkyrie"
-        },
-        {
-          "role": "Grandmaster",
-          "actor": "Jeff Goldblum",
-          "name": "Grandmaster"
-        },
-        {
-          "role": "Heimdal",
-          "actor": "Idris Elba",
-          "name": "Heimdal"
-        },
-        {
-          "role": "Skurge",
-          "actor": "Karl Urban",
-          "name": "Skurge"
-        },
-        {
-          "role": "Korg",
-          "actor": "Taika Waititi",
-          "name": "Korg"
-        },
-        {
-          "role": "Doctor Strange",
-          "actor": "Benedict Cumberbatch",
-          "name": "Stephen Strange"
-        },
-        {
-          "role": "Surtur",
-          "actor": "Clancy Brown",
-          "name": "Surtur"
-        },
-        {
-          "role": "Barber",
-          "actor": "Stan Lee",
-          "name": "Barber"
-        }
-      ]
-    },
-    {
       "comic": "V for Vendetta",
       "movie": "V for Vendetta",
       "year": 2006,
@@ -5189,54 +4295,6 @@
           "role": "Gordon Deitrich",
           "actor": "Stephen Fry",
           "name": "Gordon Deitrich"
-        }
-      ]
-    },
-    {
-      "comic": "Valerian and Laureline",
-      "movie": "Valerian and the City of a Thousand Planets",
-      "year": 2017,
-      "publisher": "Pilote",
-      "grouping": "Valerian",
-      "distributor": "EuropaCorp Distribution",
-      "studios": [
-        "EuropaCorp"
-      ],
-      "roles": [
-        {
-          "role": "Valerian",
-          "actor": "Dane DeHaan",
-          "name": "Valerian"
-        },
-        {
-          "role": "Laureline",
-          "actor": "Cara Delavingne",
-          "name": "Laureline"
-        },
-        {
-          "role": "Arun Filitt",
-          "actor": "Clive Owen",
-          "name": "Arun Filitt"
-        },
-        {
-          "role": "Bubble",
-          "actor": "Rihanna",
-          "name": "Bubble"
-        },
-        {
-          "role": "Jolly",
-          "actor": "Ethan Hawke",
-          "name": "Jolly"
-        },
-        {
-          "role": "Neza",
-          "actor": "Kris Wu",
-          "name": "Neza"
-        },
-        {
-          "role": "President",
-          "actor": "Rutger Hauer",
-          "name": "President"
         }
       ]
     },
@@ -5332,7 +4390,7 @@
         },
         {
           "role": "Silk Spectre",
-          "actor": "Carla Gugiino",
+          "actor": "Carla Gugino",
           "name": "Sally Jupiter"
         }
       ]
@@ -5447,99 +4505,6 @@
           "role": "Noburo Mori",
           "actor": "Brian Tee",
           "name": "Noburo Mori"
-        }
-      ]
-    },
-    {
-      "comic": "Wonder Woman",
-      "movie": "Wonder Woman",
-      "year": 2017,
-      "publisher": "DC",
-      "grouping": "DC Extended Universe",
-      "distributor": "Warner Brothers",
-      "studios": [
-        "DC Entertainment",
-        "RatPac-Dune Entertainment"
-      ],
-      "roles": [
-        {
-          "role": "Wonder Woman",
-          "actor": "Gal Gadot",
-          "name": "Diana Prince"
-        },
-        {
-          "role": "Steve Trevor",
-          "actor": "Chris Pine",
-          "name": "Steve Trevor"
-        },
-        {
-          "role": "Antiope",
-          "actor": "Robin Wright",
-          "name": "Antiope"
-        },
-        {
-          "role": "Hippolyta",
-          "actor": "Connie Nielsen",
-          "name": "Hippolyta"
-        },
-        {
-          "role": "Erich Ludendorff",
-          "actor": "Danny Huston",
-          "name": "Erich Ludendorff"
-        },
-        {
-          "role": "Ares",
-          "actor": "David Thewlis",
-          "name": "Patrick Morgan"
-        },
-        {
-          "role": "Doctor Poison",
-          "actor": "Elena Anaya",
-          "name": "Isabel Maru"
-        }
-      ]
-    },
-    {
-      "comic": "X-Men",
-      "movie": "Logan",
-      "year": 2017,
-      "publisher": "Marvel",
-      "grouping": "X-Men",
-      "distributor": "20th Century Fox",
-      "studios": [
-        "Marvel",
-        "The Donners\u0027 Company"
-      ],
-      "roles": [
-        {
-          "role": "Wolverine",
-          "actor": "Hugh Jackman",
-          "name": "Logan"
-        },
-        {
-          "role": "Professor X",
-          "actor": "Patrick Stewart",
-          "name": "Charles Xavier"
-        },
-        {
-          "role": "X-23",
-          "actor": "Dafne Keene",
-          "name": "Laura"
-        },
-        {
-          "role": "Caliban",
-          "actor": "Stephen Merchant",
-          "name": "Caliban"
-        },
-        {
-          "role": "Zander Rice",
-          "actor": "Richard E Grant",
-          "name": "Zander Rice"
-        },
-        {
-          "role": "Donald Pierce",
-          "actor": "Boyd Holbrook",
-          "name": "Donald Pierce"
         }
       ]
     },

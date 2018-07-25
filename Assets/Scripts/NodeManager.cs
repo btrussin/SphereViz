@@ -25,6 +25,7 @@ public class NodeManager : MonoBehaviour {
     Quaternion snapRotation;
     Vector3 snapPosition;
     public Transform baseSphereTransform = null;
+    public Transform innerSphereTransform = null;
     GameObject stretchCurve = null;
     BezierBar bezBar;
 
@@ -53,6 +54,8 @@ public class NodeManager : MonoBehaviour {
     public bool isSelected = false;
 
     public highlightState currHighlightState = highlightState.NONE;
+
+    public SubNodeDisplayType subNodeDisplayType = SubNodeDisplayType.BLOOM;
 
     bool dynamicNodeColor = true;
 
@@ -205,7 +208,14 @@ public class NodeManager : MonoBehaviour {
         if (stretchCurve == null) return;
 
         //curveBasePoints[0] = baseSphereTransform.TransformPoint(positionOnSphere);
-        curveBasePoints[0] = baseSphereTransform.TransformPoint(nodeInfo.position3);
+        if(subNodeDisplayType == SubNodeDisplayType.INNER_SPHERE && isSelected)
+        {
+            curveBasePoints[0] = innerSphereTransform.TransformPoint(nodeInfo.position3);
+        }
+        else
+        {
+            curveBasePoints[0] = baseSphereTransform.TransformPoint(nodeInfo.position3);
+        }
         curveBasePoints[3] = gameObject.transform.position;
 
         Vector3 centerVec = baseSphereTransform.position - curveBasePoints[0];
@@ -234,7 +244,14 @@ public class NodeManager : MonoBehaviour {
         gameObject.transform.localRotation = Quaternion.Slerp(snapRotation, origRotation, snapTime * timeToSnapBack_inv);
 
         //gameObject.transform.position = Vector3.Slerp(snapPosition, baseSphereTransform.TransformPoint(positionOnSphere), snapTime * timeToSnapBack_inv);
-        gameObject.transform.position = Vector3.Slerp(snapPosition, baseSphereTransform.TransformPoint(nodeInfo.position3), snapTime * timeToSnapBack_inv);
+        if (subNodeDisplayType == SubNodeDisplayType.INNER_SPHERE && isSelected)
+        {
+            gameObject.transform.position = Vector3.Slerp(snapPosition, innerSphereTransform.TransformPoint(nodeInfo.position3), snapTime * timeToSnapBack_inv);
+        }
+        else
+        {
+            gameObject.transform.position = Vector3.Slerp(snapPosition, baseSphereTransform.TransformPoint(nodeInfo.position3), snapTime * timeToSnapBack_inv);
+        }
 
         if (snapTime >= timeToSnapBack)
         {

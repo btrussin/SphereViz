@@ -52,6 +52,8 @@ public class DataObjectManager : MonoBehaviour
     public GameObject innerSphere;
     public GameObject projSphereCenterReference;
 
+    public float innerSpherePercentage = 0.8f;
+
     //public bool useBezierBars = true;
     //public bool useBSplineBars = true;
     public bool useSLERP = false;
@@ -140,6 +142,7 @@ public class DataObjectManager : MonoBehaviour
     void Start()
     {
         projSphere.transform.localScale = Vector3.one * mainObjRadius;
+        innerSphere.transform.localScale = Vector3.one * mainObjRadius * innerSpherePercentage;
 
         loadData();
 
@@ -173,16 +176,19 @@ public class DataObjectManager : MonoBehaviour
 
     float currVis = 0.2f;
 
+    // new variables
+    bool doInitialRecenter = true;
+
     // Update is called once per frame
     void Update()
     {
 
-        if (doFirstPosition)
+        if (doInitialRecenter)
         {
             recenterProjectionSphere();
-            doFirstPosition = false;
+            doInitialRecenter = false;
         }
-
+        
         if (activesUpdateEdges) recalcAllEdges();
 
         if (recenterSphereAnim) recenterAnimation();
@@ -242,11 +248,6 @@ public class DataObjectManager : MonoBehaviour
         rightController.setColliderValues(colliderScale, meshScale);
 
     }
-
-
-
-    // new variables
-    bool doFirstPosition = true;
 
     bool recenterSphereAnim = false;
 
@@ -1108,6 +1109,8 @@ public class DataObjectManager : MonoBehaviour
             manager.nodeInfo = currNodeInfo;
             //manager.positionOnSphere = currNodeInfo.position3;
             manager.baseSphereTransform = projSphere.transform;
+            manager.innerSphereTransform = innerSphere.transform;
+            manager.subNodeDisplayType = subNodeDisplayType;
             manager.timeToSnapBack = timeToSnapBack;
 
             manager.setMeshColors(groupColorMap[currNodeInfo.groupName]);
@@ -1991,9 +1994,9 @@ public class DataObjectManager : MonoBehaviour
                     if(subNodeDisplayType == SubNodeDisplayType.INNER_SPHERE)
                     {
                         NodeManager nm = nodeManagerMap[edge.startNode.name];
-                        if (nm.isSelected) basePts[0].z *= 0.8f;
+                        if (nm.isSelected) basePts[0].z *= innerSpherePercentage;
                         nm = nodeManagerMap[edge.endNode.name];
-                        if (nm.isSelected) basePts[3].z *= 0.8f;
+                        if (nm.isSelected) basePts[3].z *= innerSpherePercentage;
                     }
 
                     basePts[1] = basePts[0];
@@ -2039,9 +2042,9 @@ public class DataObjectManager : MonoBehaviour
                     if (subNodeDisplayType == SubNodeDisplayType.INNER_SPHERE)
                     {
                         NodeManager nm = nodeManagerMap[edge.startNode.name];
-                        if (nm.isSelected) basePts[0].z *= 0.8f;
+                        if (nm.isSelected) basePts[0].z *= innerSpherePercentage;
                         nm = nodeManagerMap[edge.endNode.name];
-                        if (nm.isSelected) basePts[6].z *= 0.8f;
+                        if (nm.isSelected) basePts[6].z *= innerSpherePercentage;
                     }
 
                     basePts[1] = basePts[2] = tVec1 * groupWeight + basePts[0] * nodeWeight;

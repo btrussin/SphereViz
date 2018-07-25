@@ -16,6 +16,8 @@ public class GroupManager : MonoBehaviour {
 
     Transform projSphereTrans;
 
+    bool moveGroupTogether = true;
+
     // Use this for initialization
     void Start () {
 		
@@ -97,32 +99,9 @@ public class GroupManager : MonoBehaviour {
         NodeInfo info;
         GameObject node;
         float y, z;
-        foreach (KeyValuePair<NodeInfo, GameObject> kv in nodeInfoMap)
-        {
-            info = kv.Key;
-            node = kv.Value;
 
-            node.transform.SetParent(null);
-
-            centerToPt = node.transform.position - sphereCenter;
-            centerToPt.Normalize();
-
-            node.transform.position = sphereCenter + projSphereTrans.localScale.x * centerToPt;
-            Utils.getYZSphericalCoordinates(projSphereTrans, sphereCenter + projSphereTrans.localScale.x * centerToPt, out y, out z);
-
-            
-            info.position2.x = y / dataObjManager.projHorizontalAngle;
-            info.position2.y = z / dataObjManager.projVerticalAngle;
-
-           
-
-            dataObjManager.updateProjectedPointsForNodeInfo(info);
-
-            node.transform.position = projSphereTrans.TransformPoint(info.position3);
-
-
-            node.transform.SetParent(projSphereTrans);
-        }
+        float yOffset = 0f, zOffset = 0f;
+        
 
         centerToPt = transform.position - sphereCenter;
         centerToPt.Normalize();
@@ -130,14 +109,72 @@ public class GroupManager : MonoBehaviour {
         transform.position = sphereCenter + centerToPt * projSphereTrans.localScale.x * dataObjManager.mainObjRadius * 0.8f;
         Utils.getYZSphericalCoordinates(projSphereTrans, transform.position, out y, out z);
 
-        groupInfo.center2.x = y / dataObjManager.projHorizontalAngle;
-        groupInfo.center2.y = z / dataObjManager.projVerticalAngle;
+        if (moveGroupTogether)
+        {
+            yOffset = y / dataObjManager.projHorizontalAngle - groupInfo.center2.x;
+            zOffset = z / dataObjManager.projVerticalAngle - groupInfo.center2.y;
+
+            groupInfo.center2.x += yOffset;
+            groupInfo.center2.y += zOffset;
+        }
+        else
+        {
+            groupInfo.center2.x = y / dataObjManager.projHorizontalAngle;
+            groupInfo.center2.y = z / dataObjManager.projVerticalAngle;
+        }
+
         dataObjManager.updateProjectedPointsForGroupInfo(groupInfo);
 
-        
+        if( moveGroupTogether )
+        {
+            foreach (KeyValuePair<NodeInfo, GameObject> kv in nodeInfoMap)
+            {
+                info = kv.Key;
+                node = kv.Value;
+
+                node.transform.SetParent(null);
+
+                info.position2.x += yOffset;
+                info.position2.y += zOffset;
+
+                dataObjManager.updateProjectedPointsForNodeInfo(info);
+
+                node.transform.position = projSphereTrans.TransformPoint(info.position3);
+                node.transform.SetParent(projSphereTrans);
+            }
+        }
+
+        else
+        {
+            foreach (KeyValuePair<NodeInfo, GameObject> kv in nodeInfoMap)
+            {
+                info = kv.Key;
+                node = kv.Value;
+
+                node.transform.SetParent(null);
+
+                centerToPt = node.transform.position - sphereCenter;
+                centerToPt.Normalize();
+
+                node.transform.position = sphereCenter + projSphereTrans.localScale.x * centerToPt;
+                Utils.getYZSphericalCoordinates(projSphereTrans, sphereCenter + projSphereTrans.localScale.x * centerToPt, out y, out z);
+
+
+                info.position2.x = y / dataObjManager.projHorizontalAngle;
+                info.position2.y = z / dataObjManager.projVerticalAngle;
+
+
+
+                dataObjManager.updateProjectedPointsForNodeInfo(info);
+
+                node.transform.position = projSphereTrans.TransformPoint(info.position3);
+
+
+                node.transform.SetParent(projSphereTrans);
+            }
+        }
 
         gameObject.transform.SetParent(projSphereTrans);
 
-        Debug.Log("Group Distance from center: " + projSphereTrans.localScale.x);
     }
 }
